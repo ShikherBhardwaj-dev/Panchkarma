@@ -14,9 +14,12 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  phone: {
+  userType: {
     type: String,
+    enum: ["patient", "practitioner"], // only these two values
+    default: "patient",
   },
 });
 
 module.exports = mongoose.model("User", UserSchema);
+

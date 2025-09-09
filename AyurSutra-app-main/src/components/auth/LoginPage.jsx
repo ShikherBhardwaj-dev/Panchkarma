@@ -65,8 +65,14 @@ const LoginPage = ({
 
       if (res.ok) {
         alert("Login successful ✅");
+
         if (onAuthSuccess) {
-          onAuthSuccess(data);
+          // ✅ Check backend response for userType
+          if (data.userType === "practitioner") {
+            onAuthSuccess({ ...data, role: "practitioner" });
+          } else {
+            onAuthSuccess({ ...data, role: "patient" });
+          }
         }
       } else {
         alert(data.msg || "Login failed ❌");
@@ -260,4 +266,3 @@ const LoginPage = ({
 };
 
 export default LoginPage;
-

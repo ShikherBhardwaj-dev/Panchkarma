@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Bell, User, Leaf } from "lucide-react";
 import Header from "./components/Header";
 import Navigation from "./components/Navigation";
 import Dashboard from "./components/Dashboard";
@@ -10,6 +9,7 @@ import FloatingActionButton from "./components/FloatingActionButton";
 import Footer from "./components/Footer";
 import AuthContainer from "./components/auth/AuthContainer";
 import LandingPage from "./components/LandingPage";
+import PractitionerHomePage from "./components/PractitionerHomePage"; // ✅ new page
 import { useAppData } from "./hooks/useAppData";
 
 const App = () => {
@@ -18,7 +18,7 @@ const App = () => {
   const [isMenuSticky, setIsMenuSticky] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
-  const [showLanding, setShowLanding] = useState(true); // New state for landing page
+  const [showLanding, setShowLanding] = useState(true);
 
   const {
     notifications,
@@ -32,7 +32,7 @@ const App = () => {
   const handleAuthSuccess = (userData) => {
     setUser(userData);
     setIsAuthenticated(true);
-    setShowLanding(false); // Hide landing page after auth
+    setShowLanding(false);
   };
 
   // Handle logout
@@ -40,16 +40,15 @@ const App = () => {
     setIsAuthenticated(false);
     setUser(null);
     setActiveTab("dashboard");
-    setShowLanding(true); // Show landing page again
+    setShowLanding(true);
   };
 
   // Handle "Get Started" button from landing page
   const handleGetStarted = () => {
     setShowLanding(false);
-    // This will show the auth container since isAuthenticated is false
   };
 
-  // Get user role from user data
+  // Get user role (patient or practitioner)
   const getUserRole = () => {
     return user?.userType || "patient";
   };
@@ -59,6 +58,9 @@ const App = () => {
 
     switch (activeTab) {
       case "dashboard":
+        if (userRole === "practitioner") {
+          return <PractitionerHomePage user={user} />;
+        }
         return (
           <Dashboard
             userRole={userRole}
@@ -89,6 +91,9 @@ const App = () => {
           />
         );
       default:
+        if (userRole === "practitioner") {
+          return <PractitionerHomePage user={user} />;
+        }
         return (
           <Dashboard
             userRole={userRole}

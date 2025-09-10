@@ -1,25 +1,27 @@
 import React, { useState } from "react";
 import { Bell, User, Leaf, LogOut, Settings } from "lucide-react";
 
-const Header = ({ userRole, notifications, user, onLogout }) => {
+const Header = ({ userRole, notifications = [], user, onLogout }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
 
   const getUserDisplayName = () => {
-    if (user?.fullName) {
-      const names = user.fullName.split(" ");
+    const name = user?.fullName || user?.name;
+    if (name) {
+      const names = name.split(" ");
       return names.length > 1 ? `${names[0]} ${names[1][0]}.` : names[0];
     }
-    return userRole === "patient" ? "Priya S." : "Dr. Rajesh K.";
+    return "Guest";
   };
 
   const getUserRole = () => {
-    return user?.userType || userRole;
+    return user?.userType || userRole || "patient";
   };
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
+          {/* Logo */}
           <div className="flex items-center space-x-4">
             <div className="flex items-center">
               <Leaf className="h-8 w-8 text-green-600" />
@@ -32,8 +34,9 @@ const Header = ({ userRole, notifications, user, onLogout }) => {
             </span>
           </div>
 
+          {/* Right Section */}
           <div className="flex items-center space-x-4">
-            {/* User Role Badge (Read-only) */}
+            {/* Role */}
             <span className="text-sm text-gray-600 px-3 py-1 bg-blue-100 rounded-full capitalize">
               {getUserRole()}
             </span>
@@ -55,29 +58,23 @@ const Header = ({ userRole, notifications, user, onLogout }) => {
                 onClick={() => setShowUserMenu(!showUserMenu)}
               >
                 <User className="h-8 w-8 text-gray-600 bg-gray-200 rounded-full p-1" />
-                <span className="text-sm font-medium">
-                  {getUserDisplayName()}
-                </span>
+                <span className="text-sm font-medium">{getUserDisplayName()}</span>
               </div>
 
-              {/* Dropdown Menu */}
+              {/* Dropdown */}
               {showUserMenu && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50">
                   <div className="px-4 py-2 text-sm text-gray-900 border-b border-gray-100">
-                    <div className="font-medium">{getUserDisplayName()}</div>
-                    <div className="text-gray-500">
-                      {user?.email || "user@example.com"}
-                    </div>
-                    <div className="text-xs text-blue-600 capitalize mt-1">
-                      {getUserRole()}
-                    </div>
+                    <div className="font-medium">{user?.fullName || user?.name || "Guest"}</div>
+                    <div className="text-gray-500">{user?.email || "user@example.com"}</div>
+                    <div className="text-xs text-blue-600 capitalize mt-1">{getUserRole()}</div>
                   </div>
 
                   <button
                     className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     onClick={() => {
                       setShowUserMenu(false);
-                      // Add settings functionality here
+                      // ⚙️ Future: settings handler
                     }}
                   >
                     <Settings className="h-4 w-4 mr-3" />
@@ -101,7 +98,7 @@ const Header = ({ userRole, notifications, user, onLogout }) => {
         </div>
       </div>
 
-      {/* Click outside to close menu */}
+      {/* Click outside to close */}
       {showUserMenu && (
         <div
           className="fixed inset-0 z-40"
@@ -113,3 +110,4 @@ const Header = ({ userRole, notifications, user, onLogout }) => {
 };
 
 export default Header;
+

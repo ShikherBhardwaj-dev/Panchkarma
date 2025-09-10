@@ -67,12 +67,13 @@ const LoginPage = ({
         alert("Login successful ✅");
 
         if (onAuthSuccess) {
-          // ✅ Check backend response for userType
-          if (data.userType === "practitioner") {
-            onAuthSuccess({ ...data, role: "practitioner" });
-          } else {
-            onAuthSuccess({ ...data, role: "patient" });
-          }
+          // ✅ Pass the complete user object from backend
+          onAuthSuccess({
+            _id: data._id,
+            name: data.name,
+            email: data.email,
+            userType: data.userType, // "patient" or "practitioner"
+          });
         }
       } else {
         alert(data.msg || "Login failed ❌");

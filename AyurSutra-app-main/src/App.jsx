@@ -9,7 +9,7 @@ import FloatingActionButton from "./components/FloatingActionButton";
 import Footer from "./components/Footer";
 import AuthContainer from "./components/auth/AuthContainer";
 import LandingPage from "./components/LandingPage";
-import PractitionerHomePage from "./components/PractitionerHomePage"; // ✅ new page
+import PractitionerHomePage from "./components/PractitionerHomePage";
 import { useAppData } from "./hooks/useAppData";
 
 const App = () => {
@@ -28,14 +28,19 @@ const App = () => {
     feedbackData,
   } = useAppData();
 
-  // Handle successful authentication
+  // ✅ Called after login/signup success
   const handleAuthSuccess = (userData) => {
-    setUser(userData);
+    setUser({
+      _id: userData._id,
+      name: userData.name,
+      email: userData.email,
+      userType: userData.userType,
+    });
     setIsAuthenticated(true);
     setShowLanding(false);
   };
 
-  // Handle logout
+  // ✅ Logout
   const handleLogout = () => {
     setIsAuthenticated(false);
     setUser(null);
@@ -43,16 +48,17 @@ const App = () => {
     setShowLanding(true);
   };
 
-  // Handle "Get Started" button from landing page
+  // ✅ When "Get Started" is clicked on landing page
   const handleGetStarted = () => {
     setShowLanding(false);
   };
 
-  // Get user role (patient or practitioner)
+  // ✅ Utility: Get current role
   const getUserRole = () => {
     return user?.userType || "patient";
   };
 
+  // ✅ Render tab contents
   const renderActiveTab = () => {
     const userRole = getUserRole();
 
@@ -69,13 +75,16 @@ const App = () => {
             user={user}
           />
         );
+
       case "scheduling":
         return (
           <TherapyScheduling
             userRole={userRole}
+            user={user} // ✅ pass user for backend calls
             therapySessions={therapySessions}
           />
         );
+
       case "notifications":
         return (
           <Notifications
@@ -83,6 +92,7 @@ const App = () => {
             setNotifications={setNotifications}
           />
         );
+
       case "progress":
         return (
           <Progress
@@ -90,6 +100,7 @@ const App = () => {
             feedbackData={feedbackData}
           />
         );
+
       default:
         if (userRole === "practitioner") {
           return <PractitionerHomePage user={user} />;
@@ -105,12 +116,12 @@ const App = () => {
     }
   };
 
-  // Show landing page first
+  // ✅ Show landing page first
   if (showLanding) {
     return <LandingPage onGetStarted={handleGetStarted} />;
   }
 
-  // If not authenticated, show auth pages
+  // ✅ Show login/signup if not authenticated
   if (!isAuthenticated) {
     return (
       <AuthContainer
@@ -120,7 +131,7 @@ const App = () => {
     );
   }
 
-  // Main application (authenticated user)
+  // ✅ Main application after login/signup
   return (
     <div className="min-h-screen bg-gray-50">
       <Header

@@ -21,7 +21,7 @@ router.post("/signup", async (req, res) => {
       name,
       email,
       phone,
-      userType, // ✅ now storing userType (patient/practitioner)
+      userType, // ✅ store userType (patient/practitioner)
     });
 
     // hash password
@@ -62,11 +62,13 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ msg: "Invalid credentials" });
     }
 
-    // return user info
+    // return user info (include _id so frontend can schedule sessions)
     res.json({
       success: true,
+      _id: user._id,
+      name: user.name,
       email: user.email,
-      userType: user.userType, // ✅ frontend needs this
+      userType: user.userType,
     });
   } catch (err) {
     console.error("Login error:", err.message);
@@ -74,4 +76,18 @@ router.post("/login", async (req, res) => {
   }
 });
 
+// ======================
+// Get All Patients (for practitioners)
+// ======================
+router.get("/patients", async (req, res) => {
+  try {
+    const patients = await User.find({ userType: "patient" }).select("name email _id");
+    res.json(patients);
+  } catch (err) {
+    console.error("Fetch patients error:", err.message);
+    res.status(500).send("Server error");
+  }
+});
+
 module.exports = router;
+

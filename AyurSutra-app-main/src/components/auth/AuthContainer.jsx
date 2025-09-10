@@ -3,28 +3,27 @@ import LoginPage from "./LoginPage";
 import SignupPage from "./SignupPage";
 
 const AuthContainer = ({ onAuthSuccess, onBackToLanding }) => {
-  const [currentPage, setCurrentPage] = useState("login"); // 'login' or 'signup'
+  const [isLogin, setIsLogin] = useState(true);
 
-  const handleSwitchToSignup = () => {
-    setCurrentPage("signup");
-  };
-
-  const handleSwitchToLogin = () => {
-    setCurrentPage("login");
+  const handleAuthSuccess = (userData) => {
+    // ✅ Pass the full user object (_id, name, email, userType) to App.jsx
+    if (onAuthSuccess) {
+      onAuthSuccess(userData);
+    }
   };
 
   return (
-    <div>
-      {currentPage === "login" ? (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-blue-50 to-purple-50">
+      {isLogin ? (
         <LoginPage
-          onSwitchToSignup={handleSwitchToSignup}
-          onAuthSuccess={onAuthSuccess}
+          onSwitchToSignup={() => setIsLogin(false)}
+          onAuthSuccess={handleAuthSuccess}
           onBackToLanding={onBackToLanding}
         />
       ) : (
         <SignupPage
-          onSwitchToLogin={handleSwitchToLogin}
-          onAuthSuccess={onAuthSuccess}
+          onSwitchToLogin={() => setIsLogin(true)}
+          onAuthSuccess={handleAuthSuccess}
           onBackToLanding={onBackToLanding}
         />
       )}
@@ -33,3 +32,4 @@ const AuthContainer = ({ onAuthSuccess, onBackToLanding }) => {
 };
 
 export default AuthContainer;
+

@@ -1,47 +1,68 @@
-import React from "react";
-import { Calendar, Users, ClipboardList, Stethoscope } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const PractitionerHomePage = ({ user }) => {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    if (user?._id) {
+      axios
+        .get(`http://localhost:5000/api/dashboard/practitioner/${user._id}`)
+        .then((res) => setData(res.data))
+        .catch((err) =>
+          console.error("Error fetching practitioner dashboard:", err)
+        );
+    }
+  }, [user]);
+
+  if (!data) return <p>Loading practitioner dashboard...</p>;
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-2xl p-6 shadow-lg">
-        <h1 className="text-2xl font-bold mb-2">
+      <div className="bg-gradient-to-r from-green-400 to-blue-500 p-6 rounded-lg shadow text-white">
+        <h2 className="text-xl font-semibold">
           Welcome back, Dr. {user?.name || "Practitioner"} 👋
-        </h1>
-        <p className="text-white/90">
-          Manage your patients, schedule therapies, and track progress all in one place.
-        </p>
+        </h2>
+        <p className="text-sm">You have {data.upcomingPatients.length} upcoming sessions.</p>
       </div>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition">
-          <Calendar className="h-8 w-8 text-green-600 mb-3" />
-          <h2 className="text-lg font-semibold">Appointments</h2>
-          <p className="text-gray-500 text-sm">View and manage your schedule</p>
+      {/* Quick Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white p-4 rounded-lg shadow border">
+          <p className="text-sm text-gray-500">Total Patients</p>
+          <p className="font-bold text-lg">{data.totalPatients}</p>
         </div>
+        <div className="bg-white p-4 rounded-lg shadow border">
+          <p className="text-sm text-gray-500">Upcoming Sessions</p>
+          <p className="font-bold text-lg">{data.upcomingPatients.length}</p>
+        </div>
+      </div>
 
-        <div className="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition">
-          <Users className="h-8 w-8 text-blue-600 mb-3" />
-          <h2 className="text-lg font-semibold">My Patients</h2>
-          <p className="text-gray-500 text-sm">Track patient progress & feedback</p>
-        </div>
-
-        <div className="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition">
-          <ClipboardList className="h-8 w-8 text-purple-600 mb-3" />
-          <h2 className="text-lg font-semibold">Therapies</h2>
-          <p className="text-gray-500 text-sm">Create and assign therapies</p>
-        </div>
-
-        <div className="p-6 bg-white rounded-2xl shadow hover:shadow-lg transition">
-          <Stethoscope className="h-8 w-8 text-red-600 mb-3" />
-          <h2 className="text-lg font-semibold">Consultations</h2>
-          <p className="text-gray-500 text-sm">Provide online consultations</p>
-        </div>
+      {/* Upcoming Sessions */}
+      <div className="bg-white p-6 rounded-lg shadow border">
+        <h3 className="text-md font-semibold text-gray-700 mb-3">
+          Upcoming Sessions
+        </h3>
+        <ul className="space-y-2">
+          {data.upcomingPatients.map((session) => (
+            <li
+              key={session._id}
+              className="border p-3 rounded-md flex justify-between"
+            >
+              <span>
+                {session.date} - {session.time}
+              </span>
+              <span className="font-medium">
+                Patient: {session.patient?.name || "Unknown"}
+              </span>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
 };
 
 export default PractitionerHomePage;
+

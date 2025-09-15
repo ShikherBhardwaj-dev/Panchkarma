@@ -91,9 +91,27 @@ const LoginPage = ({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-ayurveda-chandana/20 via-ayurveda-haldi/10 to-ayurveda-kumkum/10 flex items-center justify-center p-4">
-      {/* Decorative Mandala Background */}
-      <div className="absolute inset-0 bg-mandala-pattern opacity-5 animate-spin-slow"></div>
+    <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-ayurveda-chandana/30 via-ayurveda-haldi/20 to-ayurveda-kumkum/20">
+      {/* Main background with multiple layers */}
+      <div className="fixed inset-0">
+        {/* Base gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-ayurveda-chandana/40 via-ayurveda-haldi/30 to-ayurveda-kumkum/30"></div>
+
+        {/* Pattern overlays */}
+        <div className="absolute inset-0 bg-mandala-pattern opacity-5 animate-spin-slow"></div>
+        <div className="absolute inset-0 bg-[url('/patterns/lotus-pattern.png')] bg-repeat opacity-10"></div>
+
+        {/* Large decorative circles */}
+        <div className="absolute -top-48 -left-48 w-[800px] h-[800px] bg-ayurveda-brahmi/20 rounded-full filter blur-3xl"></div>
+        <div className="absolute -bottom-48 -right-48 w-[800px] h-[800px] bg-ayurveda-kumkum/20 rounded-full filter blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 w-[1000px] h-[1000px] bg-ayurveda-haldi/15 rounded-full filter blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+
+        {/* Small animated elements */}
+        <div className="absolute top-1/4 left-1/4 w-12 h-12 bg-ayurveda-brahmi/30 rounded-full animate-float-slow"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-16 h-16 bg-ayurveda-kumkum/30 rounded-full animate-float-medium"></div>
+        <div className="absolute top-3/4 left-1/3 w-10 h-10 bg-ayurveda-haldi/30 rounded-full animate-float-fast"></div>
+        <div className="absolute top-1/3 right-1/3 w-14 h-14 bg-ayurveda-neem/30 rounded-full animate-float-medium"></div>
+      </div>
 
       {/* Back to Landing Button */}
       {onBackToLanding && (

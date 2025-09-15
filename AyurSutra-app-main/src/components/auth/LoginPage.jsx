@@ -91,51 +91,69 @@ const LoginPage = ({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-ayurveda-chandana/20 via-ayurveda-haldi/10 to-ayurveda-kumkum/10 flex items-center justify-center p-4">
+      {/* Decorative Mandala Background */}
+      <div className="absolute inset-0 bg-mandala-pattern opacity-5 animate-spin-slow"></div>
+
       {/* Back to Landing Button */}
       {onBackToLanding && (
         <button
           onClick={onBackToLanding}
-          className="fixed top-6 left-6 flex items-center text-gray-600 hover:text-green-600 font-medium transition-colors z-50"
+          className="fixed top-6 left-6 flex items-center text-gray-600 hover:text-ayurveda-brahmi font-medium transition-colors z-50"
         >
           <ArrowLeft className="h-5 w-5 mr-2" />
           Back to Home
         </button>
       )}
 
-      <div className="max-w-md w-full">
+      <div className="max-w-md w-full relative">
+        {/* Floating Herbs Animation */}
+        <div className="absolute -top-20 -left-20 w-40 h-40">
+          <div className="absolute w-16 h-16 bg-ayurveda-brahmi/10 rounded-full animate-float-slow"></div>
+          <div className="absolute top-10 left-10 w-20 h-20 bg-ayurveda-haldi/10 rounded-full animate-float-medium"></div>
+        </div>
+
         {/* Logo and Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 relative">
           <div className="flex items-center justify-center mb-4">
-            <div className="bg-white p-3 rounded-full shadow-lg">
-              <Leaf className="h-8 w-8 text-green-600" />
+            <div className="bg-gradient-to-r from-ayurveda-brahmi to-ayurveda-neem p-3 rounded-lotus shadow-lg">
+              <Leaf className="h-8 w-8 text-white" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Welcome to AyurSutra
+          {/* Sanskrit Blessing */}
+          <div className="mb-4">
+            <p className="text-xl text-ayurveda-triphala font-decorative opacity-75">
+              स्वागतम्
+            </p>
+            <p className="text-sm text-gray-500">Welcome Back</p>
+          </div>
+          <h1 className="text-4xl font-display text-dosha-kapha mb-2">
+            <span className="bg-gradient-to-r from-ayurveda-haldi via-ayurveda-kumkum to-ayurveda-brahmi bg-clip-text text-transparent">
+              AyurSutra
+            </span>
           </h1>
-          <p className="text-gray-600">
-            Sign in to continue your wellness journey
+          <p className="text-gray-600 font-body">
+            Continue your journey towards wellness
           </p>
         </div>
 
         {/* Login Form */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+        <div className="bg-white/95 backdrop-blur-sm rounded-xl shadow-xl p-8 border border-ayurveda-chandana/20">
           <div className="space-y-6">
             {/* Email Field */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-dosha-kapha">
                 Email Address
               </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <div className="relative group">
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 group-hover:text-ayurveda-kumkum transition-colors" />
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
                   onKeyPress={handleKeyPress}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                  className="w-full pl-10 pr-4 py-3 bg-white/90 backdrop-blur-sm border border-ayurveda-chandana/20 rounded-lg focus:ring-2 focus:ring-ayurveda-kumkum focus:border-transparent transition-all duration-200"
                   placeholder="Enter your email"
                   required
                 />
@@ -144,18 +162,18 @@ const LoginPage = ({
 
             {/* Password Field */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-dosha-kapha">
                 Password
               </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <div className="relative group">
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 group-hover:text-ayurveda-kumkum transition-colors" />
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
                   onKeyPress={handleKeyPress}
-                  className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                  className="w-full pl-10 pr-12 py-3 bg-white/90 backdrop-blur-sm border border-ayurveda-chandana/20 rounded-lg focus:ring-2 focus:ring-ayurveda-kumkum focus:border-transparent transition-all duration-200"
                   placeholder="Enter your password"
                   required
                 />
@@ -196,20 +214,21 @@ const LoginPage = ({
             {/* Login Button */}
             <button
               onClick={handleLogin}
-              className="w-full bg-gradient-to-r from-green-600 to-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:from-green-700 hover:to-blue-700 transform hover:scale-[1.02] transition-all duration-200 shadow-lg"
+              className="w-full bg-gradient-to-r from-ayurveda-brahmi to-ayurveda-neem text-white px-6 py-3 rounded-lotus font-medium hover:from-dosha-kapha hover:to-ayurveda-brahmi transform hover:scale-105 transition-all duration-200 shadow-lg"
             >
-              Sign In
+              <span className="text-lg font-display">प्रवेश करें</span>
+              <span className="block text-sm">Sign In</span>
             </button>
 
-            {/* Divider */}
-            <div className="relative my-6">
+            {/* Divider with Mandala */}
+            <div className="relative my-8">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
+                <div className="w-full h-px bg-gradient-to-r from-transparent via-ayurveda-kumkum/30 to-transparent"></div>
               </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">
-                  Or continue with
-                </span>
+              <div className="relative flex justify-center">
+                <div className="bg-white px-4">
+                  <div className="w-8 h-8 bg-[url('/patterns/om-symbol.png')] opacity-20"></div>
+                </div>
               </div>
             </div>
 
@@ -217,49 +236,71 @@ const LoginPage = ({
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
-                className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                className="flex items-center justify-center px-4 py-2 bg-white/80 backdrop-blur-sm border border-ayurveda-chandana/20 rounded-lotus hover:bg-ayurveda-chandana/5 transition-all duration-200 group"
               >
                 <img
                   src="https://developers.google.com/identity/images/g-logo.png"
                   alt="Google"
                   className="w-5 h-5 mr-2"
                 />
-                Google
+                <span className="text-gray-600 group-hover:text-ayurveda-kumkum transition-colors">
+                  Google
+                </span>
               </button>
               <button
                 type="button"
-                className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                className="flex items-center justify-center px-4 py-2 bg-white/80 backdrop-blur-sm border border-ayurveda-chandana/20 rounded-lotus hover:bg-ayurveda-chandana/5 transition-all duration-200 group"
               >
-                <div className="w-5 h-5 mr-2 bg-blue-600 rounded text-white text-xs flex items-center justify-center font-bold">
+                <div className="w-5 h-5 mr-2 bg-[#1877f2] rounded text-white text-xs flex items-center justify-center font-bold">
                   f
                 </div>
-                Facebook
+                <span className="text-gray-600 group-hover:text-ayurveda-kumkum transition-colors">
+                  Facebook
+                </span>
               </button>
             </div>
           </div>
 
-          {/* Sign Up Link */}
-          <div className="mt-6 text-center">
-            <span className="text-gray-600">Don't have an account? </span>
-            <button
-              onClick={onSwitchToSignup}
-              className="text-green-600 hover:text-green-700 font-medium"
-            >
-              Sign up here
-            </button>
+          {/* Sign Up Link with Sanskrit */}
+          <div className="mt-8 text-center space-y-2">
+            <p className="text-sm text-ayurveda-triphala font-decorative">
+              नूतन खाता
+            </p>
+            <div>
+              <span className="text-gray-600">Don't have an account? </span>
+              <button
+                onClick={onSwitchToSignup}
+                className="text-ayurveda-kumkum hover:text-ayurveda-brahmi font-medium transition-colors"
+              >
+                Sign up here
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="text-center mt-6 text-sm text-gray-500">
-          By signing in, you agree to our{" "}
-          <a href="#" className="text-green-600 hover:underline">
-            Terms of Service
-          </a>{" "}
-          and{" "}
-          <a href="#" className="text-green-600 hover:underline">
-            Privacy Policy
-          </a>
+        {/* Footer with Sanskrit */}
+        <div className="text-center mt-6 space-y-2">
+          <div className="flex items-center justify-center space-x-2 text-ayurveda-triphala/60">
+            <div className="h-px w-8 bg-gradient-to-r from-transparent to-ayurveda-kumkum/30"></div>
+            <span className="text-sm font-decorative">नियम एवं गोपनीयता</span>
+            <div className="h-px w-8 bg-gradient-to-l from-transparent to-ayurveda-kumkum/30"></div>
+          </div>
+          <div className="text-sm text-gray-500">
+            By signing in, you agree to our{" "}
+            <a
+              href="#"
+              className="text-ayurveda-kumkum hover:text-ayurveda-brahmi transition-colors"
+            >
+              Terms of Service
+            </a>{" "}
+            and{" "}
+            <a
+              href="#"
+              className="text-ayurveda-kumkum hover:text-ayurveda-brahmi transition-colors"
+            >
+              Privacy Policy
+            </a>
+          </div>
         </div>
       </div>
     </div>

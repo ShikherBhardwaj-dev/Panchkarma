@@ -24,8 +24,119 @@ const LandingPage = ({ onGetStarted }) => {
   };
 
   const [showFloatingNav, setShowFloatingNav] = React.useState(false);
-
   const [scrollProgress, setScrollProgress] = React.useState(0);
+  const [activeDosha, setActiveDosha] = React.useState("Vata");
+  const [activeTreatment, setActiveTreatment] = React.useState(null);
+
+  const treatments = [
+    {
+      name: "Vamana",
+      sanskrit: "वमन",
+      desc: "Therapeutic Emesis",
+      icon: "/treatments/vamana.svg",
+      image: "/treatments/vamana.jpg",
+      details: `When there is congestion in the lungs causing repeated attacks of bronchitis, colds, cough, or asthma, the Ayurvedic treatment is therapeutic vomiting, vamana, to eliminate the kapha causing the excess mucus.
+
+Oftentimes this also releases repressed emotions that have been held in the kapha areas of the lungs and stomach along with the accumulated dosha. Once the mucus is released, the patient will feel instantly relieved.`,
+      benefits: [
+        "Relief from chronic asthma",
+        "Treats diabetes and chronic cold",
+        "Helps with lymphatic congestion",
+        "Improves chronic indigestion",
+        "Reduces edema",
+      ],
+      results: [
+        "Relaxation in lungs",
+        "Free breathing",
+        "Lightness in chest",
+        "Clear thinking",
+        "Clear voice",
+        "Good appetite",
+      ],
+    },
+    {
+      name: "Virechana",
+      sanskrit: "विरेचन",
+      desc: "Purgation Therapy",
+      icon: "/treatments/virechana.svg",
+      image: "/treatments/virechana.jpg",
+      details: `When excess bile, pitta, is secreted and accumulated in the gallbladder, liver, and small intestine, it tends to result in rashes, skin inflammation, acne, chronic attacks of fever, biliary vomiting, nausea, and jaundice. 
+
+Purgatives help relieve the excess pitta causing the bile disturbance in the body. In fact, purgatives can completely cure the problem of excess pitta.`,
+      benefits: [
+        "Treats skin inflammation",
+        "Helps with chronic fever",
+        "Reduces biliary issues",
+        "Balances pitta dosha",
+        "Improves liver function",
+      ],
+    },
+    {
+      name: "Basti",
+      sanskrit: "बस्ति",
+      desc: "Enema Therapy",
+      icon: "/treatments/basti.svg",
+      image: "/treatments/basti.jpg",
+      details: `Vata is a very active principle in pathogenesis. If we can control vata through the use of basti, we have gone a long way in going to the root cause of the vast majority of diseases. 
+
+The medication administered rectally affects asthi dhatu (bone tissue). The mucus membrane of the colon is related to the outer covering of the bones, which nourishes them.`,
+      benefits: [
+        "Controls vata disorders",
+        "Affects bone tissue health",
+        "Balances elimination processes",
+        "Helps with deep tissue healing",
+        "Manages various vata conditions",
+      ],
+    },
+    {
+      name: "Nasya",
+      sanskrit: "नस्य",
+      desc: "Nasal Administration",
+      icon: "/treatments/nasya.svg",
+      image: "/treatments/nasya.jpg",
+      details: `The nose is the doorway to the brain and consciousness. An excess of bodily humors accumulated in the sinus, throat, nose, or head areas is eliminated through the nose. 
+
+Prana enters the body through breath taken in through the nose and maintains sensory and motor functions. It also governs mental activities, memory, and concentration.`,
+      benefits: [
+        "Treats prana disorders",
+        "Relieves sinus congestion",
+        "Helps with migraine headaches",
+        "Improves sensory perception",
+        "Enhances memory and concentration",
+      ],
+      procedure: [
+        "Nasal massage with ghee",
+        "Clockwise and counter-clockwise movements",
+        "Regular morning and evening practice",
+        "Gentle and careful application",
+      ],
+    },
+    {
+      name: "Rakta Moksha",
+      sanskrit: "रक्त मोक्ष",
+      desc: "Blood Purification",
+      icon: "/treatments/raktamoksha.svg",
+      image: "/treatments/raktamoksha.jpg",
+      details: `Toxins present in the gastrointestinal tract are absorbed into the blood and circulated throughout the body. This condition, called toxemia, is the basic cause of repeated infections and certain circulatory conditions.
+
+This treatment is particularly effective for skin disorders, enlarged liver, spleen, and gout. Pitta and blood have a very close relationship.`,
+      benefits: [
+        "Purifies blood",
+        "Treats skin disorders",
+        "Helps with liver enlargement",
+        "Manages gout",
+        "Stimulates immune system",
+      ],
+      restrictions: [
+        "Sugar",
+        "Salt",
+        "Yogurt",
+        "Sour-tasting foods",
+        "Alcohol",
+        "Fermented foods",
+      ],
+    },
+  ];
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -49,7 +160,7 @@ const LandingPage = ({ onGetStarted }) => {
       subtitle: "Smart Scheduling",
       description:
         "Harmonize your therapy sessions with natural rhythms and biorhythms",
-      gradient: "from-ayurveda-haldi to-ayurveda-kumkum",
+      gradient: "from-brand-yellow to-brand-red",
     },
     {
       icon: TrendingUp,
@@ -57,7 +168,7 @@ const LandingPage = ({ onGetStarted }) => {
       subtitle: "Wellness Tracking",
       description:
         "Monitor your journey through the five stages of Panchakarma",
-      gradient: "from-ayurveda-brahmi to-ayurveda-neem",
+      gradient: "from-brand-teal to-brand-sage-dark",
     },
     {
       icon: Bell,
@@ -65,14 +176,14 @@ const LandingPage = ({ onGetStarted }) => {
       subtitle: "Care Alerts",
       description:
         "Timely guidance for pre and post-therapy protocols (Purvakarma & Paschatkarma)",
-      gradient: "from-dosha-vata to-dosha-kapha",
+      gradient: "from-brand-sage to-brand-teal",
     },
     {
       icon: Heart,
       title: "आरोग्य (Wellness)",
       subtitle: "Holistic Health",
       description: "Balance the three doshas - Vata, Pitta, and Kapha",
-      gradient: "from-ayurveda-chandana to-ayurveda-triphala",
+      gradient: "from-brand-red to-brand-yellow",
     },
   ];
 
@@ -110,50 +221,57 @@ const LandingPage = ({ onGetStarted }) => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-ayurveda-chandana/20 via-ayurveda-haldi/10 to-ayurveda-kumkum/10">
+    <div className="min-h-screen bg-gradient-to-br from-ayurveda-chandana/20 via-ayurveda-haldi/10 to-ayurveda-kumkum/10 relative">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-[url('/patterns/mandala-bg.svg')] opacity-5 pointer-events-none bg-repeat"></div>
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-md border-b border-ayurveda-chandana/20 sticky top-0 z-50">
+      <header className="bg-white/60 backdrop-blur-md border-b border-sage-200/50 sticky top-0 z-50">
         {/* Scroll Progress Bar */}
-        <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gray-100">
+        <div className="absolute bottom-0 left-0 w-full h-0.5 bg-sage-100">
           <div
-            className="h-full bg-gradient-to-r from-ayurveda-kumkum to-ayurveda-brahmi transition-all duration-300"
+            className="h-full bg-gradient-to-r from-yellow-500 via-red-500 to-teal-600 transition-all duration-300"
             style={{ width: `${scrollProgress}%` }}
           ></div>
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
+            {/* Logo */}
             <div className="flex items-center space-x-3">
-              <div className="bg-gradient-to-r from-ayurveda-brahmi to-ayurveda-neem p-2 rounded-lotus">
+              <div className="bg-gradient-to-r from-teal-600 to-teal-700 p-2 rounded-full">
                 <Leaf className="h-6 w-6 text-white" />
               </div>
-              <span className="text-2xl font-bold font-display bg-gradient-to-r from-ayurveda-brahmi to-ayurveda-neem bg-clip-text text-transparent">
+              <span className="text-2xl font-bold font-display text-teal-700">
                 आयुरसूत्र
               </span>
             </div>
+
+            {/* Navigation */}
             <nav className="hidden md:flex space-x-8">
               <button
                 onClick={() => scrollToSection("features")}
-                className="text-gray-700 hover:text-ayurveda-brahmi font-medium transition-colors cursor-pointer"
+                className="text-sage-700 hover:text-teal-700 font-medium transition-colors cursor-pointer"
               >
                 Features
               </button>
               <button
                 onClick={() => scrollToSection("benefits")}
-                className="text-gray-700 hover:text-ayurveda-brahmi font-medium transition-colors cursor-pointer"
+                className="text-sage-700 hover:text-teal-700 font-medium transition-colors cursor-pointer"
               >
                 Benefits
               </button>
               <button
                 onClick={() => scrollToSection("testimonials")}
-                className="text-gray-700 hover:text-ayurveda-brahmi font-medium transition-colors cursor-pointer"
+                className="text-sage-700 hover:text-teal-700 font-medium transition-colors cursor-pointer"
               >
                 Testimonials
               </button>
             </nav>
+
+            {/* Action Button */}
             <button
               onClick={onGetStarted}
-              className="bg-gradient-to-r from-ayurveda-brahmi to-ayurveda-neem text-white px-6 py-2 rounded-lotus font-medium hover:from-dosha-kapha hover:to-ayurveda-brahmi transform hover:scale-105 transition-all duration-200 shadow-lg"
+              className="bg-teal-700 text-white px-6 py-2 rounded-lg font-medium hover:bg-teal-800 transition-colors"
             >
               Begin Your Journey
             </button>
@@ -162,140 +280,1072 @@ const LandingPage = ({ onGetStarted }) => {
       </header>
 
       {/* Hero Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-        {/* Decorative Mandala Background */}
-        <div className="absolute inset-0 bg-mandala-pattern opacity-5 animate-spin-slow"></div>
+      <section className="min-h-screen flex flex-col justify-center pt-10 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-gradient-to-br from-brand-sage-light/50 via-transparent to-brand-sage-light/30">
+        {/* Decorative Top Elements */}
+        <div className="absolute top-0 right-0 w-[40rem] h-[40rem] bg-brand-sage-light/30 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+        <div className="absolute top-0 left-0 w-[30rem] h-[30rem] bg-brand-sage-light/20 rounded-full blur-2xl -translate-y-1/4 -translate-x-1/4"></div>
 
-        {/* Floating Herbs Animation */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-10 left-10 w-16 h-16 bg-ayurveda-brahmi/10 rounded-full animate-float-slow"></div>
-          <div className="absolute top-20 right-20 w-20 h-20 bg-ayurveda-haldi/10 rounded-full animate-float-medium"></div>
-          <div className="absolute bottom-20 left-1/4 w-24 h-24 bg-ayurveda-kumkum/10 rounded-full animate-float-fast"></div>
-        </div>
-
-        <div className="max-w-7xl mx-auto relative">
-          <div className="text-center">
+        {/* Main Hero Content */}
+        <div className="max-w-7xl mx-auto w-full flex flex-col items-center">
+          <div className="flex flex-col items-center max-w-3xl w-full relative z-10 text-center">
             {/* Sanskrit Blessing */}
-            <div className="mb-8">
-              <p className="text-xl text-ayurveda-triphala font-decorative opacity-75">
+            <div className="mb-12 animate-fade-in">
+              <p className="text-xl text-brand-sage-dark font-decorative">
                 ॐ सर्वे भवन्तु सुखिनः
               </p>
-              <p className="text-sm text-gray-500">May All Beings Be Happy</p>
+              <p className="text-sm text-brand-sage/80 mt-1">
+                May All Beings Be Happy
+              </p>
             </div>
 
-            <h1 className="text-5xl md:text-7xl font-display mb-6 relative">
-              <span className="bg-gradient-to-r from-ayurveda-haldi via-ayurveda-kumkum to-ayurveda-brahmi bg-clip-text text-transparent animate-shimmer">
-                Discover Balance
-              </span>
-              <br />
-              <span className="text-dosha-kapha font-decorative relative">
-                Through Panchakarma
-                <span className="absolute -top-6 left-1/2 transform -translate-x-1/2 text-base text-ayurveda-triphala font-normal">
-                  पञ्चकर्म द्वारा
+            {/* Main Title */}
+            <h1 className="leading-tight w-full animate-slide-up">
+              <div className="text-6xl md:text-7xl lg:text-8xl font-display mb-4">
+                <span className="bg-gradient-to-r from-brand-yellow via-brand-red to-brand-teal bg-clip-text text-transparent inline-block">
+                  Discover Balance
                 </span>
-              </span>
+              </div>
+              <div className="text-5xl md:text-6xl lg:text-7xl font-display text-brand-teal mt-2">
+                Through Panchakarma
+              </div>
             </h1>
 
-            <div className="relative">
-              <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed font-body">
-                <span className="block mb-4 group">
-                  <span className="text-2xl font-decorative text-ayurveda-triphala">
-                    हर्षश्च । सौख्यम् । आरोग्यम् ।
-                  </span>
-                  <span className="block text-base text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                    Joy • Comfort • Well-being
-                  </span>
-                </span>
-                Experience the harmony of ancient Ayurvedic wisdom empowered by
-                modern technology for a transformative healing journey.
-              </p>
-
-              {/* Decorative Divider */}
-              <div className="w-24 h-1 bg-gradient-to-r from-ayurveda-kumkum to-ayurveda-haldi mx-auto mb-8"></div>
+            {/* Sanskrit Subtitle */}
+            <div
+              className="mt-8 text-xl text-brand-sage-dark font-decorative animate-fade-in"
+              style={{ animationDelay: "0.3s" }}
+            >
+              हर्षश्च । सौख्यम् । आरोग्यम् ।
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+            {/* Description */}
+            <p
+              className="mt-8 text-lg text-brand-sage-dark max-w-2xl leading-relaxed mx-auto animate-fade-in"
+              style={{ animationDelay: "0.4s" }}
+            >
+              Experience the harmony of ancient Ayurvedic wisdom empowered by
+              modern technology for a transformative healing journey.
+            </p>
+
+            {/* Action Buttons */}
+            <div
+              className="flex flex-col sm:flex-row items-center justify-center mt-12 space-y-4 sm:space-y-0 sm:space-x-8 animate-fade-in"
+              style={{ animationDelay: "0.5s" }}
+            >
               <button
                 onClick={onGetStarted}
-                className="bg-gradient-to-r from-dosha-kapha to-ayurveda-brahmi text-white px-10 py-4 rounded-xl font-display text-lg hover:from-ayurveda-brahmi hover:to-dosha-kapha transform hover:scale-102 transition-all duration-300 shadow-lg flex flex-col items-center group border border-white/10"
+                className="group bg-gradient-to-r from-brand-teal to-brand-teal-dark text-white px-8 py-4 rounded-xl shadow-elevation-2 hover:shadow-elevation-3 transition-all duration-300 flex items-center"
               >
-                <span className="text-2xl mb-1.5 font-medium">
-                  यात्रा आरंभ करें
-                </span>
-                <span className="text-base flex items-center text-white/95 tracking-wide">
-                  Begin Your Journey
-                  <ArrowRight className="ml-2.5 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                </span>
+                <div className="flex flex-col items-start">
+                  <span className="text-lg font-medium">यात्रा आरंभ करें</span>
+                  <span className="text-sm text-white/90">
+                    Begin Your Journey
+                  </span>
+                </div>
+                <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform" />
               </button>
-              <button className="text-ayurveda-triphala hover:text-ayurveda-kumkum font-display text-lg flex flex-col items-center transition-colors">
-                <span className="text-xl">प्रदर्शन</span>
-                <span className="text-sm flex items-center">
-                  Watch Demo
-                  <div className="ml-2 w-8 h-8 bg-white/80 backdrop-blur-sm rounded-lotus flex items-center justify-center shadow-md border border-ayurveda-chandana/20">
-                    <div className="w-0 h-0 border-l-[6px] border-l-ayurveda-kumkum border-t-[4px] border-t-transparent border-b-[4px] border-b-transparent ml-1"></div>
-                  </div>
-                </span>
+              <button className="group flex items-center space-x-4 text-brand-teal hover:text-brand-teal-dark transition-colors">
+                <div className="flex flex-col items-start">
+                  <span className="text-lg font-medium">प्रदर्शन</span>
+                  <span className="text-sm">Watch Demo</span>
+                </div>
+                <div className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-elevation-1 group-hover:shadow-elevation-2 transition-all duration-300 border border-brand-sage-light/20">
+                  <div className="w-0 h-0 border-l-[8px] border-l-brand-teal group-hover:border-l-brand-teal-dark border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent ml-1 transition-colors"></div>
+                </div>
               </button>
             </div>
 
             {/* Trust Indicators */}
-            <div className="flex flex-wrap justify-center items-center gap-8 text-gray-500">
-              <div className="flex items-center space-x-2">
-                <Users className="h-5 w-5" />
-                <span>500+ Practitioners</span>
+            <div
+              className="flex flex-wrap justify-center mt-16 gap-8 sm:gap-12 animate-fade-in"
+              style={{ animationDelay: "0.6s" }}
+            >
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-brand-sage-light/20 rounded-full">
+                  <Users className="h-5 w-5 text-brand-sage-dark" />
+                </div>
+                <div>
+                  <span className="text-brand-sage-dark font-medium block">
+                    500+
+                  </span>
+                  <span className="text-sm text-brand-sage">Practitioners</span>
+                </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <Heart className="h-5 w-5" />
-                <span>10,000+ Patients</span>
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-brand-sage-light/20 rounded-full">
+                  <Heart className="h-5 w-5 text-brand-sage-dark" />
+                </div>
+                <div>
+                  <span className="text-brand-sage-dark font-medium block">
+                    10,000+
+                  </span>
+                  <span className="text-sm text-brand-sage">Patients</span>
+                </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <Star className="h-5 w-5 text-yellow-500" />
-                <span>4.9/5 Rating</span>
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-brand-yellow/10 rounded-full">
+                  <Star className="h-5 w-5 text-brand-yellow" />
+                </div>
+                <div>
+                  <span className="text-brand-sage-dark font-medium block">
+                    4.9/5
+                  </span>
+                  <span className="text-sm text-brand-sage">Rating</span>
+                </div>
               </div>
             </div>
+          </div>
+        </div>
 
-            {/* Floating Navigation */}
-            <div
-              className={`fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-500 ${
-                showFloatingNav
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-8"
-              }`}
-            >
-              <div className="bg-white/90 backdrop-blur-md px-6 py-3 rounded-full shadow-lg border border-ayurveda-chandana/20 flex items-center space-x-6">
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToSection("features");
-                  }}
-                  className="text-sm text-gray-600 hover:text-ayurveda-kumkum transition-colors"
+        {/* Essential Elements of Wellness */}
+        <div className="mt-24 relative">
+          {/* Background Decoration */}
+          <div className="absolute inset-0 bg-mandala-pattern opacity-5"></div>
+          <div className="relative">
+            {/* Section Title */}
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-display mb-4 relative inline-block">
+                <span className="relative">
+                  Essential Elements
+                  <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-[url('/patterns/mandala-small.png')] opacity-10"></div>
+                </span>
+                <span className="bg-gradient-to-r from-brand-red to-brand-teal bg-clip-text text-transparent">
+                  {" "}
+                  of Wellness
+                </span>
+              </h2>
+              <p className="text-xl text-brand-sage-dark font-decorative mt-2">
+                आरोग्य के मूल तत्व
+              </p>
+            </div>
+
+            {/* Elements Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 max-w-6xl mx-auto px-4">
+              {[
+                {
+                  name: "Snehana",
+                  icon: "💧",
+                  sanskrit: "स्नेहन",
+                  desc: "Oil Therapy",
+                },
+                {
+                  name: "Swedana",
+                  icon: "💨",
+                  sanskrit: "स्वेदन",
+                  desc: "Steam Therapy",
+                },
+                {
+                  name: "Swedana",
+                  icon: "🌿",
+                  sanskrit: "स्वेदन",
+                  desc: "Herbal Steam",
+                },
+                { name: "Vamana", icon: "🌊", sanskrit: "वमन", desc: "Emesis" },
+                {
+                  name: "Virechana",
+                  icon: "🌸",
+                  sanskrit: "विरेचन",
+                  desc: "Purgation",
+                },
+                {
+                  name: "Nasya",
+                  icon: "👃",
+                  sanskrit: "नस्य",
+                  desc: "Nasal Therapy",
+                },
+              ].map((element, index) => (
+                <div
+                  key={index}
+                  className="group relative transform hover:-translate-y-2 transition-all duration-500"
                 >
-                  Features
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToSection("benefits");
-                  }}
-                  className="text-sm text-gray-600 hover:text-ayurveda-kumkum transition-colors"
+                  {/* Card with hover effects */}
+                  <div className="relative bg-white rounded-2xl p-6 shadow-elevation-1 hover:shadow-elevation-3 transition-all duration-500">
+                    {/* Icon Container */}
+                    <div className="relative mb-4">
+                      {/* Animated Background Circle */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-brand-yellow via-brand-red to-brand-teal rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-500 animate-pulse"></div>
+
+                      {/* Icon Circle */}
+                      <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-brand-sage-light/50 to-white flex items-center justify-center relative overflow-hidden group-hover:scale-110 transition-transform duration-500">
+                        <span className="text-3xl relative z-10">
+                          {element.icon}
+                        </span>
+                        {/* Hover Effect Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-brand-yellow/20 via-brand-red/20 to-brand-teal/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      </div>
+                    </div>
+
+                    {/* Text Content */}
+                    <div className="text-center space-y-1">
+                      <h3 className="font-medium text-lg text-brand-sage-dark group-hover:text-brand-red transition-colors duration-300">
+                        {element.name}
+                      </h3>
+                      <p className="text-xl font-decorative text-brand-teal">
+                        {element.sanskrit}
+                      </p>
+                      <p className="text-sm text-brand-sage">{element.desc}</p>
+                    </div>
+
+                    {/* Bottom Border Animation */}
+                    <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-brand-yellow via-brand-red to-brand-teal transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 rounded-b-2xl"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* The Path to Purification */}
+        <div className="mt-32 mb-20 relative">
+          {/* Background Elements */}
+          <div className="absolute inset-0">
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-brand-sage-light/5 to-transparent"></div>
+            <div className="absolute inset-0 bg-[url('/patterns/lotus-bg.png')] opacity-5"></div>
+          </div>
+
+          {/* Content Container */}
+          <div className="relative">
+            {/* Section Title */}
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-display mb-4 relative inline-block">
+                <span className="relative">
+                  The Path to
+                  <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-[url('/patterns/mandala-small.png')] opacity-10"></div>
+                </span>
+                <span className="bg-gradient-to-r from-brand-red to-brand-teal bg-clip-text text-transparent">
+                  {" "}
+                  Purification
+                </span>
+              </h2>
+              <p className="text-xl text-brand-sage-dark font-decorative mt-2">
+                शुद्धि का मार्ग
+              </p>
+              <p className="mt-4 text-lg text-brand-sage max-w-3xl mx-auto">
+                Experience the transformative journey of Panchakarma through
+                three essential phases, each designed to restore your body's
+                natural balance and vitality.
+              </p>
+            </div>
+
+            {/* Steps Timeline */}
+            <div className="max-w-6xl mx-auto px-4">
+              <div className="flex flex-col md:flex-row justify-between items-stretch gap-8 relative">
+                {/* Connecting Line */}
+                <div className="hidden md:block absolute w-full h-1 top-28 left-0">
+                  <div className="h-full bg-gradient-to-r from-brand-yellow via-brand-red to-brand-teal"></div>
+                </div>
+
+                {/* Steps */}
+                {[
+                  {
+                    number: "1",
+                    title: "Preparation",
+                    sanskrit: "पूर्वकर्म",
+                    desc: "Poorvakarma",
+                    icon: "🌿",
+                    color: "from-brand-yellow to-brand-red",
+                    benefits: [
+                      "Personalized diet planning",
+                      "Lifestyle adjustments",
+                      "Mental preparation",
+                    ],
+                    features: [
+                      "Customized regimen",
+                      "Daily routine setup",
+                      "Preliminary therapies",
+                    ],
+                  },
+                  {
+                    number: "2",
+                    title: "Main Therapies",
+                    sanskrit: "प्रधानकर्म",
+                    desc: "Pradhanakarma",
+                    icon: "✨",
+                    color: "from-brand-red to-brand-teal",
+                    benefits: [
+                      "Deep cleansing",
+                      "Toxin elimination",
+                      "Energy balancing",
+                    ],
+                    features: [
+                      "Core treatments",
+                      "Therapeutic procedures",
+                      "Healing sessions",
+                    ],
+                  },
+                  {
+                    number: "3",
+                    title: "Rejuvenation",
+                    sanskrit: "पश्चात्कर्म",
+                    desc: "Paschatkarma",
+                    icon: "🌸",
+                    color: "from-brand-teal to-brand-sage-dark",
+                    benefits: [
+                      "Restored vitality",
+                      "Enhanced immunity",
+                      "Sustained wellness",
+                    ],
+                    features: [
+                      "Recovery support",
+                      "Wellness maintenance",
+                      "Follow-up care",
+                    ],
+                  },
+                ].map((step, index) => (
+                  <div key={index} className="flex-1 relative z-10 group">
+                    {/* Step Card */}
+                    <div className="h-full bg-white rounded-2xl p-8 shadow-elevation-2 hover:shadow-elevation-3 transition-all duration-500 transform hover:-translate-y-2">
+                      {/* Top Section */}
+                      <div className="relative mb-6">
+                        {/* Icon Circle */}
+                        <div className="relative">
+                          <div
+                            className={`w-20 h-20 mx-auto rounded-full bg-gradient-to-br ${step.color} flex items-center justify-center text-4xl relative overflow-hidden group-hover:scale-110 transition-transform duration-500`}
+                          >
+                            {step.icon}
+                            {/* Hover Animation */}
+                            <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-500"></div>
+                          </div>
+                          {/* Number Badge */}
+                          <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-white text-brand-teal text-lg font-bold flex items-center justify-center shadow-xl border-2 border-brand-teal">
+                            {step.number}
+                          </div>
+                        </div>
+
+                        {/* Title Section */}
+                        <div className="text-center mt-4 space-y-2">
+                          <h3 className="text-2xl font-medium text-brand-sage-dark group-hover:text-brand-teal transition-colors duration-300">
+                            {step.title}
+                          </h3>
+                          <p className="text-xl font-decorative text-brand-red">
+                            {step.sanskrit}
+                          </p>
+                          <p className="text-sm text-brand-sage">
+                            ({step.desc})
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Content Sections */}
+                      <div className="space-y-6">
+                        {/* Benefits */}
+                        <div className="space-y-2">
+                          <h4 className="text-lg font-medium text-brand-teal mb-3">
+                            Benefits
+                          </h4>
+                          {step.benefits.map((benefit, i) => (
+                            <div
+                              key={i}
+                              className="flex items-center space-x-2 text-brand-sage-dark group-hover:transform group-hover:translate-x-2 transition-transform duration-300"
+                              style={{ transitionDelay: `${i * 100}ms` }}
+                            >
+                              <div className="w-1.5 h-1.5 rounded-full bg-brand-red"></div>
+                              <p className="text-sm">{benefit}</p>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Features */}
+                        <div className="space-y-2">
+                          <h4 className="text-lg font-medium text-brand-teal mb-3">
+                            Features
+                          </h4>
+                          {step.features.map((feature, i) => (
+                            <div
+                              key={i}
+                              className="flex items-center space-x-2 text-brand-sage-dark group-hover:transform group-hover:translate-x-2 transition-transform duration-300"
+                              style={{ transitionDelay: `${(i + 3) * 100}ms` }}
+                            >
+                              <div className="w-1.5 h-1.5 rounded-full bg-brand-yellow"></div>
+                              <p className="text-sm">{feature}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Bottom Border Animation */}
+                      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-brand-yellow via-brand-red to-brand-teal transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 rounded-b-2xl"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Begin Journey Button */}
+        <div className="text-center mt-12 mb-20">
+          <button
+            onClick={onGetStarted}
+            className="bg-brand-teal hover:bg-brand-teal-dark text-white px-8 py-3 rounded-lg transition-colors"
+          >
+            Begin Your Healing Journey
+          </button>
+        </div>
+
+        {/* Floating Herbs Animation */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-10 left-10 w-16 h-16 bg-brand-teal/10 rounded-full animate-float-slow"></div>
+          <div className="absolute top-20 right-20 w-20 h-20 bg-brand-yellow/10 rounded-full animate-float-medium"></div>
+          <div className="absolute bottom-20 left-1/4 w-24 h-24 bg-brand-red/10 rounded-full animate-float-fast"></div>
+        </div>
+      </section>
+
+      {/* Ayurvedic Wisdom Section */}
+      <section className="py-24 relative overflow-hidden bg-gradient-to-b from-white to-brand-sage-light/10">
+        <div className="absolute inset-0 bg-[url('/patterns/mandala-pattern.png')] opacity-5"></div>
+
+        {/* Section Header */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative mb-16">
+          <div className="text-center">
+            <h2 className="text-4xl md:text-5xl font-display mb-4 relative inline-block">
+              <span className="relative">
+                Understanding
+                <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-[url('/patterns/mandala-small.png')] opacity-10"></div>
+              </span>
+              <span className="bg-gradient-to-r from-brand-red to-brand-teal bg-clip-text text-transparent">
+                {" "}
+                Ayurvedic Wisdom
+              </span>
+            </h2>
+            <p className="text-xl text-brand-sage-dark font-decorative mt-2">
+              आयुर्वेद ज्ञान
+            </p>
+          </div>
+        </div>
+
+        {/* Interactive Sections */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Tridosha Section */}
+          <div className="mb-20">
+            <div className="text-center mb-12">
+              <h3 className="text-3xl font-display text-brand-sage-dark mb-4">
+                Ayurvedic Tridosha
+              </h3>
+              <p className="text-lg text-brand-sage max-w-3xl mx-auto">
+                Understanding the imbalance of your unique body is the basis for
+                treatment.
+              </p>
+            </div>
+
+            {/* Dosha Icons */}
+            <div className="flex justify-center gap-8 mb-12">
+              {[
+                { name: "Vata", icon: "🌪️", element: "Air & Ether" },
+                { name: "Pitta", icon: "🔥", element: "Fire & Water" },
+                { name: "Kapha", icon: "🌊", element: "Earth & Water" },
+              ].map((dosha) => (
+                <div
+                  key={dosha.name}
+                  className="text-center group cursor-pointer"
                 >
-                  Benefits
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToSection("testimonials");
-                  }}
-                  className="text-sm text-gray-600 hover:text-ayurveda-kumkum transition-colors"
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-brand-sage-light to-white flex items-center justify-center text-4xl mb-4 transform group-hover:scale-110 transition-all duration-300 shadow-elevation-2 group-hover:shadow-elevation-3">
+                    {dosha.icon}
+                  </div>
+                  <h4 className="text-xl font-medium text-brand-sage-dark group-hover:text-brand-teal transition-colors">
+                    {dosha.name}
+                  </h4>
+                  <p className="text-sm text-brand-sage">{dosha.element}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Dosha Content Area */}
+            <div className="bg-white rounded-2xl p-8 shadow-elevation-2">
+              <div className="flex justify-center mb-8">
+                {["Vata", "Pitta", "Kapha"].map((dosha, index) => (
+                  <button
+                    key={dosha}
+                    onClick={() => setActiveDosha(dosha)}
+                    className={`px-6 py-3 text-lg font-medium transition-all duration-300 relative
+                      ${
+                        activeDosha === dosha
+                          ? "text-brand-teal"
+                          : "text-brand-sage hover:text-brand-sage-dark"
+                      }`}
+                  >
+                    {dosha}
+                    {activeDosha === dosha && (
+                      <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-brand-yellow via-brand-red to-brand-teal"></div>
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              {/* Vata Content */}
+              {activeDosha === "Vata" && (
+                <div className="grid md:grid-cols-2 gap-8 animate-fade-in">
+                  <div className="space-y-6">
+                    <div>
+                      <h4 className="text-xl font-medium text-brand-red mb-4 flex items-center">
+                        <span className="w-8 h-8 rounded-full bg-brand-red/10 flex items-center justify-center mr-2">
+                          ⚠️
+                        </span>
+                        Out of Balance
+                      </h4>
+                      <ul className="space-y-2">
+                        {[
+                          "hypertension",
+                          "constipation",
+                          "weight loss",
+                          "weakness",
+                          "arthritis",
+                          "prone to worry",
+                          "insomnia",
+                          "digestive challenges",
+                        ].map((item, i) => (
+                          <li
+                            key={i}
+                            className="flex items-center space-x-2 text-brand-sage-dark"
+                          >
+                            <div className="w-1.5 h-1.5 rounded-full bg-brand-red"></div>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                  <div className="space-y-6">
+                    <div>
+                      <h4 className="text-xl font-medium text-brand-teal mb-4 flex items-center">
+                        <span className="w-8 h-8 rounded-full bg-brand-teal/10 flex items-center justify-center mr-2">
+                          ✨
+                        </span>
+                        In Balance
+                      </h4>
+                      <ul className="space-y-2">
+                        {[
+                          "excellent agility",
+                          "dry skin and hair",
+                          "thin frame",
+                          "creative",
+                          "energetic",
+                          "flexible",
+                          "love excitement and new experiences",
+                        ].map((item, i) => (
+                          <li
+                            key={i}
+                            className="flex items-center space-x-2 text-brand-sage-dark"
+                          >
+                            <div className="w-1.5 h-1.5 rounded-full bg-brand-teal"></div>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Pitta Content */}
+              {activeDosha === "Pitta" && (
+                <div className="grid md:grid-cols-2 gap-8 animate-fade-in">
+                  <div className="space-y-6">
+                    <div>
+                      <h4 className="text-xl font-medium text-brand-red mb-4 flex items-center">
+                        <span className="w-8 h-8 rounded-full bg-brand-red/10 flex items-center justify-center mr-2">
+                          ⚠️
+                        </span>
+                        Out of Balance
+                      </h4>
+                      <ul className="space-y-2">
+                        {[
+                          "hypertension",
+                          "constipation",
+                          "weight loss",
+                          "weakness",
+                          "arthritis",
+                          "prone to worry",
+                          "insomnia",
+                          "digestive challenges",
+                        ].map((item, i) => (
+                          <li
+                            key={i}
+                            className="flex items-center space-x-2 text-brand-sage-dark"
+                          >
+                            <div className="w-1.5 h-1.5 rounded-full bg-brand-red"></div>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                  <div className="space-y-6">
+                    <div>
+                      <h4 className="text-xl font-medium text-brand-teal mb-4 flex items-center">
+                        <span className="w-8 h-8 rounded-full bg-brand-teal/10 flex items-center justify-center mr-2">
+                          ✨
+                        </span>
+                        In Balance
+                      </h4>
+                      <ul className="space-y-2">
+                        {[
+                          "excellent agility",
+                          "dry skin and hair",
+                          "thin frame",
+                          "creative",
+                          "energetic",
+                          "flexible",
+                          "love excitement and new experiences",
+                        ].map((item, i) => (
+                          <li
+                            key={i}
+                            className="flex items-center space-x-2 text-brand-sage-dark"
+                          >
+                            <div className="w-1.5 h-1.5 rounded-full bg-brand-teal"></div>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Kapha Content */}
+              {activeDosha === "Kapha" && (
+                <div className="grid md:grid-cols-2 gap-8 animate-fade-in">
+                  <div className="space-y-6">
+                    <div>
+                      <h4 className="text-xl font-medium text-brand-red mb-4 flex items-center">
+                        <span className="w-8 h-8 rounded-full bg-brand-red/10 flex items-center justify-center mr-2">
+                          ⚠️
+                        </span>
+                        Out of Balance
+                      </h4>
+                      <ul className="space-y-2">
+                        {[
+                          "sleep excessively",
+                          "overweight",
+                          "suffer from asthma",
+                          "depression",
+                          "diabetes",
+                          "resistance to change",
+                          "stubbornness",
+                        ].map((item, i) => (
+                          <li
+                            key={i}
+                            className="flex items-center space-x-2 text-brand-sage-dark"
+                          >
+                            <div className="w-1.5 h-1.5 rounded-full bg-brand-red"></div>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                  <div className="space-y-6">
+                    <div>
+                      <h4 className="text-xl font-medium text-brand-teal mb-4 flex items-center">
+                        <span className="w-8 h-8 rounded-full bg-brand-teal/10 flex items-center justify-center mr-2">
+                          ✨
+                        </span>
+                        In Balance
+                      </h4>
+                      <ul className="space-y-2">
+                        {[
+                          "excellent stamina",
+                          "large and soft eyes",
+                          "strong build",
+                          "thick hair",
+                          "smooth skin",
+                          "loyal",
+                          "patient",
+                          "steady",
+                          "supportive",
+                        ].map((item, i) => (
+                          <li
+                            key={i}
+                            className="flex items-center space-x-2 text-brand-sage-dark"
+                          >
+                            <div className="w-1.5 h-1.5 rounded-full bg-brand-teal"></div>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Panchakarma Treatments Section */}
+          <div>
+            <div className="text-center mb-12">
+              <h3 className="text-3xl font-display text-brand-sage-dark mb-4">
+                Panchakarma Treatments
+              </h3>
+              <p className="text-lg text-brand-sage max-w-3xl mx-auto">
+                Five primary treatments for deep cleansing and rejuvenation.
+              </p>
+            </div>
+
+            {/* Treatment Icons */}
+            <div className="flex flex-wrap justify-center gap-8 mb-12">
+              {[
+                { name: "Vamana", icon: "🌿", desc: "Therapeutic Emesis" },
+                { name: "Virechana", icon: "🍃", desc: "Purgation Therapy" },
+                { name: "Basti", icon: "💫", desc: "Medicated Enema" },
+                { name: "Nasya", icon: "👃", desc: "Nasal Treatment" },
+                {
+                  name: "Rakta Moksha",
+                  icon: "💉",
+                  desc: "Blood Purification",
+                },
+              ].map((treatment) => (
+                <div
+                  key={treatment.name}
+                  className="text-center group cursor-pointer"
                 >
-                  Testimonials
-                </button>
-                <button
-                  onClick={onGetStarted}
-                  className="bg-gradient-to-r from-ayurveda-brahmi to-ayurveda-kumkum text-white px-4 py-1.5 rounded-full text-sm hover:from-ayurveda-kumkum hover:to-ayurveda-brahmi transition-all duration-300"
-                >
-                  Get Started
-                </button>
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-brand-sage-light to-white flex items-center justify-center text-3xl mb-3 transform group-hover:scale-110 transition-all duration-300 shadow-elevation-1 group-hover:shadow-elevation-2">
+                    {treatment.icon}
+                  </div>
+                  <h4 className="text-lg font-medium text-brand-sage-dark group-hover:text-brand-teal transition-colors">
+                    {treatment.name}
+                  </h4>
+                  <p className="text-sm text-brand-sage">{treatment.desc}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Treatment Details */}
+            <div className="bg-white rounded-2xl p-8 shadow-elevation-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="space-y-4 p-6 bg-brand-sage-light/5 rounded-xl mb-6">
+                  <h3 className="text-3xl font-display text-brand-sage-dark">
+                    Treatment Details
+                  </h3>
+                  <p className="text-gray-500">
+                    Select a treatment to learn more about its benefits and
+                    procedures.
+                  </p>
+
+                  {/* Treatment List */}
+                  <div className="space-y-4 mt-6">
+                    {[
+                      {
+                        name: "Vamana",
+                        sanskrit: "वमन",
+                        desc: "Therapeutic Emesis",
+                        icon: "/treatments/vamana.svg",
+                        details: `When there is congestion in the lungs causing repeated attacks of bronchitis, colds, cough, or asthma, the Ayurvedic treatment is therapeutic vomiting, vamana, to eliminate the kapha causing the excess mucus.
+
+Oftentimes this also releases repressed emotions that have been held in the kapha areas of the lungs and stomach along with the accumulated dosha. Once the mucus is released, the patient will feel instantly relieved.`,
+                        benefits: [
+                          "Relief from chronic asthma",
+                          "Treats diabetes and chronic cold",
+                          "Helps with lymphatic congestion",
+                          "Improves chronic indigestion",
+                          "Reduces edema",
+                        ],
+                        results: [
+                          "Relaxation in lungs",
+                          "Free breathing",
+                          "Lightness in chest",
+                          "Clear thinking",
+                          "Clear voice",
+                          "Good appetite",
+                        ],
+                      },
+                      {
+                        name: "Virechana",
+                        sanskrit: "विरेचन",
+                        desc: "Purgation Therapy",
+                        icon: "/treatments/virechana.svg",
+                        details: `When excess bile, pitta, is secreted and accumulated in the gallbladder, liver, and small intestine, it tends to result in rashes, skin inflammation, acne, chronic attacks of fever, biliary vomiting, nausea, and jaundice. 
+
+Purgatives help relieve the excess pitta causing the bile disturbance in the body. In fact, purgatives can completely cure the problem of excess pitta.`,
+                        benefits: [
+                          "Treats skin inflammation",
+                          "Helps with chronic fever",
+                          "Reduces biliary issues",
+                          "Balances pitta dosha",
+                          "Improves liver function",
+                        ],
+                      },
+                      {
+                        name: "Basti",
+                        sanskrit: "बस्ति",
+                        desc: "Enema Therapy",
+                        icon: "/treatments/basti.svg",
+                        details: `Vata is a very active principle in pathogenesis. If we can control vata through the use of basti, we have gone a long way in going to the root cause of the vast majority of diseases. 
+
+The medication administered rectally affects asthi dhatu (bone tissue). The mucus membrane of the colon is related to the outer covering of the bones, which nourishes them.`,
+                        benefits: [
+                          "Controls vata disorders",
+                          "Affects bone tissue health",
+                          "Balances elimination processes",
+                          "Helps with deep tissue healing",
+                          "Manages various vata conditions",
+                        ],
+                      },
+                      {
+                        name: "Nasya",
+                        sanskrit: "नस्य",
+                        desc: "Nasal Administration",
+                        icon: "/treatments/nasya.svg",
+                        details: `The nose is the doorway to the brain and consciousness. An excess of bodily humors accumulated in the sinus, throat, nose, or head areas is eliminated through the nose. 
+
+Prana enters the body through breath taken in through the nose and maintains sensory and motor functions. It also governs mental activities, memory, and concentration.`,
+                        benefits: [
+                          "Treats prana disorders",
+                          "Relieves sinus congestion",
+                          "Helps with migraine headaches",
+                          "Improves sensory perception",
+                          "Enhances memory and concentration",
+                        ],
+                        procedure: [
+                          "Nasal massage with ghee",
+                          "Clockwise and counter-clockwise movements",
+                          "Regular morning and evening practice",
+                          "Gentle and careful application",
+                        ],
+                      },
+                      {
+                        name: "Rakta Moksha",
+                        sanskrit: "रक्त मोक्ष",
+                        desc: "Blood Purification",
+                        icon: "/treatments/raktamoksha.svg",
+                        details: `Toxins present in the gastrointestinal tract are absorbed into the blood and circulated throughout the body. This condition, called toxemia, is the basic cause of repeated infections and certain circulatory conditions.
+
+This treatment is particularly effective for skin disorders, enlarged liver, spleen, and gout. Pitta and blood have a very close relationship.`,
+                        benefits: [
+                          "Purifies blood",
+                          "Treats skin disorders",
+                          "Helps with liver enlargement",
+                          "Manages gout",
+                          "Stimulates immune system",
+                        ],
+                        restrictions: [
+                          "Sugar",
+                          "Salt",
+                          "Yogurt",
+                          "Sour-tasting foods",
+                          "Alcohol",
+                          "Fermented foods",
+                        ],
+                      },
+                    ].map((treatment) => (
+                      <button
+                        key={treatment.name}
+                        onClick={() => setActiveTreatment(treatment.name)}
+                        className={`w-full text-left p-6 transition-all duration-300 mb-2 relative group ${
+                          activeTreatment === treatment.name
+                            ? "bg-white shadow-md rounded-xl"
+                            : "hover:bg-white hover:shadow-sm hover:rounded-xl"
+                        }`}
+                      >
+                        {/* Highlight bar */}
+                        <div
+                          className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-xl transition-all duration-300 ${
+                            activeTreatment === treatment.name
+                              ? "bg-brand-teal h-full"
+                              : "bg-transparent group-hover:bg-brand-sage-light h-4/5 group-hover:h-full my-auto"
+                          }`}
+                        ></div>
+
+                        <div className="flex items-center space-x-6">
+                          {/* Treatment Icon */}
+                          <div
+                            className={`w-16 h-16 rounded-lg overflow-hidden transition-all duration-300 ${
+                              activeTreatment === treatment.name
+                                ? "bg-brand-teal shadow-lg"
+                                : "bg-brand-sage-light/20 group-hover:bg-brand-teal/10"
+                            }`}
+                          >
+                            <img
+                              src={treatment.icon}
+                              alt={treatment.name}
+                              className={`w-full h-full object-contain p-3 transition-transform duration-300 ${
+                                activeTreatment === treatment.name
+                                  ? "scale-110"
+                                  : "group-hover:scale-110"
+                              }`}
+                            />
+                          </div>
+
+                          {/* Treatment Info */}
+                          <div className="flex-1">
+                            <h4
+                              className={`text-xl font-medium transition-colors duration-300 ${
+                                activeTreatment === treatment.name
+                                  ? "text-brand-teal"
+                                  : "text-brand-sage-dark group-hover:text-brand-teal"
+                              }`}
+                            >
+                              {treatment.name}
+                            </h4>
+                            <p className="text-sm text-brand-sage mt-1">
+                              {treatment.desc}
+                            </p>
+                          </div>
+
+                          {/* Sanskrit Name */}
+                          <div
+                            className={`text-xl font-decorative transition-colors duration-300 self-center ${
+                              activeTreatment === treatment.name
+                                ? "text-brand-teal"
+                                : "text-brand-sage group-hover:text-brand-teal"
+                            }`}
+                          >
+                            {treatment.sanskrit}
+                          </div>
+                        </div>
+
+                        {/* Bottom border that shows on hover */}
+                        <div
+                          className={`absolute bottom-0 left-1 right-1 h-px transition-all duration-300 ${
+                            activeTreatment === treatment.name
+                              ? "bg-transparent"
+                              : "bg-gray-100 group-hover:bg-transparent"
+                          }`}
+                        ></div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Treatment Information Display */}
+                <div className="bg-white rounded-xl p-6 space-y-6 shadow-sm">
+                  {activeTreatment ? (
+                    treatments.find((t) => t.name === activeTreatment) && (
+                      <div className="animate-fade-in">
+                        <h3 className="text-2xl font-display text-brand-sage-dark mb-4">
+                          {
+                            treatments.find((t) => t.name === activeTreatment)
+                              .sanskrit
+                          }
+                          <span className="block text-lg text-brand-teal">
+                            {
+                              treatments.find((t) => t.name === activeTreatment)
+                                .name
+                            }
+                          </span>
+                        </h3>
+
+                        {/* Treatment Image */}
+                        <div className="mb-6 overflow-hidden rounded-lg shadow-lg">
+                          <img
+                            src={
+                              treatments.find((t) => t.name === activeTreatment)
+                                .image
+                            }
+                            alt={
+                              treatments.find((t) => t.name === activeTreatment)
+                                .name
+                            }
+                            className="w-full h-56 object-cover transform hover:scale-105 transition-transform duration-500"
+                          />
+                        </div>
+
+                        <div className="prose prose-sage max-w-none">
+                          <p className="text-brand-sage-dark leading-relaxed">
+                            {
+                              treatments.find((t) => t.name === activeTreatment)
+                                .details
+                            }
+                          </p>
+
+                          {/* Benefits */}
+                          <div className="mt-6">
+                            <h4 className="text-lg font-medium text-brand-teal mb-3">
+                              Benefits
+                            </h4>
+                            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              {treatments
+                                .find((t) => t.name === activeTreatment)
+                                .benefits.map((benefit, index) => (
+                                  <li
+                                    key={index}
+                                    className="flex items-center space-x-2 text-brand-sage-dark"
+                                  >
+                                    <div className="w-1.5 h-1.5 rounded-full bg-brand-teal"></div>
+                                    <span className="text-sm">{benefit}</span>
+                                  </li>
+                                ))}
+                            </ul>
+                          </div>
+
+                          {/* Procedure or Results or Restrictions based on treatment */}
+                          {treatments.find((t) => t.name === activeTreatment)
+                            .procedure && (
+                            <div className="mt-6">
+                              <h4 className="text-lg font-medium text-brand-teal mb-3">
+                                Procedure
+                              </h4>
+                              <ul className="space-y-2">
+                                {treatments
+                                  .find((t) => t.name === activeTreatment)
+                                  .procedure.map((step, index) => (
+                                    <li
+                                      key={index}
+                                      className="flex items-center space-x-2 text-brand-sage-dark"
+                                    >
+                                      <div className="w-5 h-5 rounded-full bg-brand-teal/10 flex items-center justify-center text-sm text-brand-teal">
+                                        {index + 1}
+                                      </div>
+                                      <span className="text-sm">{step}</span>
+                                    </li>
+                                  ))}
+                              </ul>
+                            </div>
+                          )}
+
+                          {treatments.find((t) => t.name === activeTreatment)
+                            .results && (
+                            <div className="mt-6">
+                              <h4 className="text-lg font-medium text-brand-teal mb-3">
+                                Expected Results
+                              </h4>
+                              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                {treatments
+                                  .find((t) => t.name === activeTreatment)
+                                  .results.map((result, index) => (
+                                    <li
+                                      key={index}
+                                      className="flex items-center space-x-2 text-brand-sage-dark"
+                                    >
+                                      <div className="w-1.5 h-1.5 rounded-full bg-brand-yellow"></div>
+                                      <span className="text-sm">{result}</span>
+                                    </li>
+                                  ))}
+                              </ul>
+                            </div>
+                          )}
+
+                          {treatments.find((t) => t.name === activeTreatment)
+                            .restrictions && (
+                            <div className="mt-6">
+                              <h4 className="text-lg font-medium text-brand-red mb-3">
+                                Dietary Restrictions
+                              </h4>
+                              <div className="flex flex-wrap gap-2">
+                                {treatments
+                                  .find((t) => t.name === activeTreatment)
+                                  .restrictions.map((restriction, index) => (
+                                    <span
+                                      key={index}
+                                      className="px-3 py-1 rounded-full bg-brand-red/10 text-brand-red text-sm"
+                                    >
+                                      {restriction}
+                                    </span>
+                                  ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  ) : (
+                    <div className="text-center text-brand-sage py-12">
+                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-brand-sage-light/20 flex items-center justify-center">
+                        <span className="text-2xl">🌿</span>
+                      </div>
+                      <p>Select a treatment to view details</p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -305,7 +1355,7 @@ const LandingPage = ({ onGetStarted }) => {
       {/* Features Section */}
       <section id="features" className="py-20 relative overflow-hidden">
         {/* Decorative Background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-white/50 to-ayurveda-chandana/10">
+        <div className="absolute inset-0 bg-gradient-to-b from-white/50 to-brand-sage-light/10">
           <div className="absolute inset-0 bg-[url('/patterns/lotus-bg.png')] opacity-5"></div>
         </div>
 
@@ -313,18 +1363,18 @@ const LandingPage = ({ onGetStarted }) => {
           <div className="text-center mb-16">
             {/* Sanskrit Title */}
             <div className="mb-4">
-              <p className="text-xl text-ayurveda-triphala font-decorative">
+              <p className="text-xl text-brand-red font-decorative">
                 आयुर्वेद के मूल तत्व
               </p>
               <p className="text-sm text-gray-500">Foundations of Ayurveda</p>
             </div>
 
-            <h2 className="text-5xl md:text-6xl font-display text-dosha-kapha mb-6 relative">
+            <h2 className="text-5xl md:text-6xl font-display text-brand-sage-dark mb-6 relative">
               <span className="relative inline-block">
                 Essential Elements of
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-[url('/patterns/mandala-small.png')] opacity-10"></div>
               </span>
-              <span className="bg-gradient-to-r from-ayurveda-kumkum to-dosha-kapha bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-brand-red to-brand-teal bg-clip-text text-transparent">
                 {" "}
                 Wellness
               </span>
@@ -336,15 +1386,11 @@ const LandingPage = ({ onGetStarted }) => {
 
             {/* Decorative Divider */}
             <div className="flex items-center justify-center my-8">
-              <div className="h-px w-12 bg-gradient-to-r from-transparent to-ayurveda-kumkum"></div>
+              <div className="h-px w-12 bg-gradient-to-r from-transparent to-brand-red"></div>
               <div className="mx-4">
-                <img
-                  src="/patterns/om-symbol.png"
-                  alt="Om"
-                  className="w-8 h-8 opacity-50"
-                />
+                <div className="w-8 h-8 bg-om-symbol opacity-50"></div>
               </div>
-              <div className="h-px w-12 bg-gradient-to-l from-transparent to-ayurveda-kumkum"></div>
+              <div className="h-px w-12 bg-gradient-to-l from-transparent to-brand-red"></div>
             </div>
           </div>
 
@@ -354,9 +1400,9 @@ const LandingPage = ({ onGetStarted }) => {
               return (
                 <div key={index} className="group relative">
                   {/* Card Background with Border Animation */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-ayurveda-haldi/30 via-ayurveda-kumkum/30 to-ayurveda-brahmi/30 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-brand-yellow/30 via-brand-red/30 to-brand-teal/30 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-                  <div className="relative bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 border border-ayurveda-chandana/10 h-full flex flex-col overflow-hidden">
+                  <div className="relative bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 border border-brand-sage-light/10 h-full flex flex-col overflow-hidden">
                     {/* Feature Icon */}
                     <div
                       className={`w-16 h-16 bg-gradient-to-r ${feature.gradient} rounded-lotus flex items-center justify-center mb-4 group-hover:scale-105 transition-transform relative`}
@@ -367,10 +1413,10 @@ const LandingPage = ({ onGetStarted }) => {
 
                     {/* Feature Content */}
                     <div className="space-y-2">
-                      <h3 className="font-display text-xl text-dosha-kapha group-hover:text-ayurveda-kumkum transition-colors">
+                      <h3 className="font-display text-xl text-brand-sage-dark group-hover:text-brand-red transition-colors">
                         {feature.title}
                       </h3>
-                      <h4 className="text-base font-medium text-ayurveda-triphala">
+                      <h4 className="text-base font-medium text-brand-red">
                         {feature.subtitle}
                       </h4>
                       <p className="text-gray-600 leading-relaxed font-body text-sm">
@@ -379,7 +1425,7 @@ const LandingPage = ({ onGetStarted }) => {
                     </div>
 
                     {/* Hover Decoration */}
-                    <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-ayurveda-haldi via-ayurveda-kumkum to-ayurveda-brahmi transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+                    <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-brand-yellow via-brand-red to-brand-teal transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
                   </div>
                 </div>
               );
@@ -393,7 +1439,7 @@ const LandingPage = ({ onGetStarted }) => {
         {/* Decorative Background */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-mandala-pattern bg-fixed opacity-5"></div>
-          <div className="absolute inset-0 bg-gradient-to-br from-ayurveda-chandana/5 via-transparent to-ayurveda-haldi/5"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-brand-sage-light/5 via-transparent to-brand-yellow/5"></div>
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
@@ -407,15 +1453,15 @@ const LandingPage = ({ onGetStarted }) => {
               <div className="relative">
                 {/* Sanskrit Title */}
                 <div className="mb-4">
-                  <p className="text-xl text-ayurveda-triphala font-decorative">
+                  <p className="text-xl text-brand-red font-decorative">
                     आरोग्य पथ
                   </p>
                   <p className="text-sm text-gray-500">Path to Wellness</p>
                 </div>
 
-                <h2 className="text-4xl md:text-5xl font-decorative text-dosha-kapha mb-6">
+                <h2 className="text-4xl md:text-5xl font-decorative text-brand-sage-dark mb-6">
                   The Path to
-                  <span className="bg-gradient-to-r from-ayurveda-kumkum to-ayurveda-haldi bg-clip-text text-transparent animate-shimmer">
+                  <span className="bg-gradient-to-r from-brand-red to-brand-yellow bg-clip-text text-transparent animate-shimmer">
                     {" "}
                     Wellness
                   </span>
@@ -424,7 +1470,7 @@ const LandingPage = ({ onGetStarted }) => {
                 <div className="relative mb-8">
                   <p className="text-xl text-gray-600 font-body relative z-10">
                     <span className="block mb-4 group">
-                      <span className="inline-block text-2xl font-decorative text-ayurveda-triphala">
+                      <span className="inline-block text-2xl font-decorative text-brand-red">
                         संतुलन । शुद्धि । स्वास्थ्य
                       </span>
                       <span className="block text-sm text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -435,7 +1481,7 @@ const LandingPage = ({ onGetStarted }) => {
                     designed for your healing journey.
                   </p>
                   {/* Background Decoration */}
-                  <div className="absolute -top-4 -right-4 w-24 h-24 bg-ayurveda-haldi/5 rounded-full blur-2xl"></div>
+                  <div className="absolute -top-4 -right-4 w-24 h-24 bg-brand-yellow/5 rounded-full blur-2xl"></div>
                 </div>
 
                 {/* Benefits List */}
@@ -446,15 +1492,15 @@ const LandingPage = ({ onGetStarted }) => {
                       className="group flex items-start space-x-4 p-3 rounded-lg hover:bg-white/50 transition-colors duration-300"
                     >
                       <div className="relative">
-                        <CheckCircle className="h-6 w-6 text-ayurveda-kumkum group-hover:text-ayurveda-haldi transition-colors duration-300" />
-                        <div className="absolute inset-0 bg-ayurveda-kumkum/20 blur-lg group-hover:bg-ayurveda-haldi/20 transition-colors duration-300 opacity-0 group-hover:opacity-100"></div>
+                        <CheckCircle className="h-6 w-6 text-brand-red group-hover:text-brand-yellow transition-colors duration-300" />
+                        <div className="absolute inset-0 bg-brand-red/20 blur-lg group-hover:bg-brand-yellow/20 transition-colors duration-300 opacity-0 group-hover:opacity-100"></div>
                       </div>
                       <div>
-                        <span className="text-gray-700 text-lg group-hover:text-dosha-kapha transition-colors duration-300">
+                        <span className="text-gray-700 text-lg group-hover:text-brand-sage-dark transition-colors duration-300">
                           {benefit}
                         </span>
                         {/* Subtle line decoration */}
-                        <div className="h-px w-0 group-hover:w-full bg-gradient-to-r from-ayurveda-kumkum to-transparent transition-all duration-500"></div>
+                        <div className="h-px w-0 group-hover:w-full bg-gradient-to-r from-brand-red to-transparent transition-all duration-500"></div>
                       </div>
                     </div>
                   ))}
@@ -462,7 +1508,7 @@ const LandingPage = ({ onGetStarted }) => {
               </div>
               <button
                 onClick={onGetStarted}
-                className="mt-8 bg-gradient-to-r from-green-600 to-blue-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:from-green-700 hover:to-blue-700 transform hover:scale-105 transition-all duration-200 shadow-xl"
+                className="mt-8 bg-gradient-to-r from-brand-teal to-brand-yellow text-white px-8 py-4 rounded-full font-semibold text-lg hover:from-brand-teal-dark hover:to-brand-yellow-dark transform hover:scale-105 transition-all duration-200 shadow-xl"
               >
                 Start Free Trial
               </button>
@@ -471,34 +1517,42 @@ const LandingPage = ({ onGetStarted }) => {
             {/* Mock Dashboard Preview */}
             <div className="relative">
               <div className="bg-white rounded-2xl shadow-2xl p-6 transform rotate-3 hover:rotate-0 transition-transform duration-300">
-                <div className="bg-gradient-to-r from-green-100 to-blue-100 rounded-lg p-4 mb-4">
+                <div className="bg-gradient-to-r from-brand-sage-light/50 to-brand-teal/20 rounded-lg p-4 mb-4">
                   <div className="flex items-center justify-between mb-2">
-                    <div className="text-sm font-medium text-gray-700">
+                    <div className="text-sm font-medium text-brand-sage-dark">
                       Wellness Progress
                     </div>
-                    <div className="text-2xl font-bold text-green-600">85%</div>
+                    <div className="text-2xl font-bold text-brand-teal">
+                      85%
+                    </div>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-3">
+                  <div className="w-full bg-white/50 rounded-full h-3">
                     <div
-                      className="bg-gradient-to-r from-green-500 to-blue-500 h-3 rounded-full"
+                      className="bg-gradient-to-r from-brand-teal to-brand-yellow h-3 rounded-full"
                       style={{ width: "85%" }}
                     ></div>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-gray-50 rounded-lg p-3">
-                    <div className="text-xs text-gray-500 mb-1">
+                  <div className="bg-brand-sage-light/10 rounded-lg p-3">
+                    <div className="text-xs text-brand-sage mb-1">
                       Next Session
                     </div>
-                    <div className="font-medium">Abhyanga</div>
-                    <div className="text-xs text-gray-600">Sep 8, 10:00 AM</div>
+                    <div className="font-medium text-brand-sage-dark">
+                      Abhyanga
+                    </div>
+                    <div className="text-xs text-brand-sage">
+                      Sep 8, 10:00 AM
+                    </div>
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-3">
-                    <div className="text-xs text-gray-500 mb-1">
+                  <div className="bg-brand-sage-light/10 rounded-lg p-3">
+                    <div className="text-xs text-brand-sage mb-1">
                       Wellness Score
                     </div>
-                    <div className="font-medium">8.5/10</div>
-                    <div className="text-xs text-green-600">
+                    <div className="font-medium text-brand-sage-dark">
+                      8.5/10
+                    </div>
+                    <div className="text-xs text-brand-teal">
                       ↗ +0.8 this week
                     </div>
                   </div>
@@ -513,7 +1567,7 @@ const LandingPage = ({ onGetStarted }) => {
       <section id="testimonials" className="py-20 relative overflow-hidden">
         {/* Decorative Background */}
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-ayurveda-chandana/10 to-white/50"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-brand-sage-light/10 to-white/50"></div>
           <div className="absolute inset-0 bg-[url('/patterns/herbs-bg.png')] opacity-5"></div>
         </div>
 
@@ -521,13 +1575,13 @@ const LandingPage = ({ onGetStarted }) => {
           <div className="text-center mb-16">
             {/* Sanskrit Title with Decorative Elements */}
             <div className="inline-block relative">
-              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 w-16 h-16 bg-[url('/patterns/mandala-detailed.png')] opacity-10"></div>
-              <h2 className="text-4xl md:text-5xl font-decorative text-dosha-kapha mb-4">
+              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 w-16 h-16 bg-mandala-pattern opacity-10"></div>
+              <h2 className="text-4xl md:text-5xl font-decorative text-brand-sage-dark mb-4">
                 <span className="relative">
                   प्रशंसा
-                  <span className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-transparent via-ayurveda-kumkum to-transparent"></span>
+                  <span className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-red to-transparent"></span>
                 </span>
-                <span className="bg-gradient-to-r from-ayurveda-kumkum to-ayurveda-haldi bg-clip-text text-transparent animate-shimmer">
+                <span className="bg-gradient-to-r from-brand-red to-brand-yellow bg-clip-text text-transparent animate-shimmer">
                   {" "}
                   Testimonials
                 </span>
@@ -535,7 +1589,7 @@ const LandingPage = ({ onGetStarted }) => {
             </div>
 
             <p className="text-xl text-gray-600 max-w-3xl mx-auto font-body relative">
-              <span className="block mb-2 text-ayurveda-triphala font-decorative">
+              <span className="block mb-2 text-brand-red font-decorative">
                 अनुभवी वैद्यों की राय
               </span>
               Join our growing community of Vaidyas and wellness seekers who
@@ -551,15 +1605,15 @@ const LandingPage = ({ onGetStarted }) => {
                 className="group relative transform hover:-translate-y-1 transition-all duration-500"
               >
                 {/* Card Background with Gradient Border */}
-                <div className="absolute inset-0 bg-gradient-to-r from-ayurveda-haldi via-ayurveda-kumkum to-ayurveda-brahmi rounded-xl opacity-0 group-hover:opacity-20 transition-opacity duration-500"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-brand-yellow via-brand-red to-brand-teal rounded-xl opacity-0 group-hover:opacity-20 transition-opacity duration-500"></div>
 
-                <div className="relative bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-ayurveda-chandana/10 flex flex-col h-full overflow-hidden">
+                <div className="relative bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-brand-sage-light/10 flex flex-col h-full overflow-hidden">
                   {/* Rating Stars with Animation */}
                   <div className="flex items-center mb-4 space-x-1">
                     {Array.from({ length: testimonial.rating }).map((_, i) => (
                       <Star
                         key={i}
-                        className="h-5 w-5 text-ayurveda-haldi fill-current transform group-hover:scale-110 transition-transform duration-300"
+                        className="h-5 w-5 text-brand-yellow fill-current transform group-hover:scale-110 transition-transform duration-300"
                         style={{ transitionDelay: `${i * 50}ms` }}
                       />
                     ))}
@@ -567,21 +1621,21 @@ const LandingPage = ({ onGetStarted }) => {
 
                   {/* Testimonial Text */}
                   <div className="relative mb-6 flex-grow">
-                    <div className="absolute -top-2 -left-2 text-4xl text-ayurveda-kumkum/20 font-decorative">
+                    <div className="absolute -top-2 -left-2 text-4xl text-brand-red/20 font-decorative">
                       "
                     </div>
                     <p className="text-gray-700 font-body text-base leading-relaxed relative z-10 pl-4">
                       {testimonial.text}
                     </p>
-                    <div className="absolute -bottom-2 -right-2 text-4xl text-ayurveda-kumkum/20 font-decorative">
+                    <div className="absolute -bottom-2 -right-2 text-4xl text-brand-red/20 font-decorative">
                       "
                     </div>
                   </div>
 
                   {/* Author Info with Hover Effects */}
-                  <div className="flex items-center mt-auto pt-4 border-t border-ayurveda-chandana/10">
+                  <div className="flex items-center mt-auto pt-4 border-t border-brand-sage-light/10">
                     <div className="relative">
-                      <div className="w-14 h-14 bg-gradient-to-r from-dosha-kapha to-ayurveda-brahmi rounded-lotus flex items-center justify-center text-white text-base font-medium transform group-hover:rotate-12 transition-transform duration-300">
+                      <div className="w-14 h-14 bg-gradient-to-r from-brand-sage-dark to-brand-teal rounded-lotus flex items-center justify-center text-white text-base font-medium transform group-hover:rotate-12 transition-transform duration-300">
                         {testimonial.name
                           .split(" ")
                           .map((n) => n[0])
@@ -591,10 +1645,10 @@ const LandingPage = ({ onGetStarted }) => {
                     </div>
 
                     <div className="ml-4 min-w-0 flex-1">
-                      <div className="font-display text-lg text-dosha-kapha truncate group-hover:text-ayurveda-kumkum transition-colors duration-300">
+                      <div className="font-display text-lg text-brand-sage-dark truncate group-hover:text-brand-red transition-colors duration-300">
                         {testimonial.name}
                       </div>
-                      <div className="text-base font-medium text-ayurveda-triphala truncate">
+                      <div className="text-base font-medium text-brand-red truncate">
                         {testimonial.role}
                       </div>
                       <div className="text-sm text-gray-600 truncate">
@@ -604,7 +1658,7 @@ const LandingPage = ({ onGetStarted }) => {
                   </div>
 
                   {/* Decorative Bottom Border */}
-                  <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-ayurveda-haldi via-ayurveda-kumkum to-ayurveda-brahmi transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+                  <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-brand-yellow via-brand-red to-brand-teal transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
                 </div>
               </div>
             ))}
@@ -613,33 +1667,33 @@ const LandingPage = ({ onGetStarted }) => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-ayurveda-brahmi to-dosha-kapha relative overflow-hidden">
+      <section className="py-20 bg-gradient-to-r from-brand-sage-dark to-brand-teal relative overflow-hidden">
         <div className="absolute inset-0 bg-mandala-pattern opacity-10"></div>
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8 relative z-10">
           <h2 className="text-4xl md:text-5xl font-decorative text-white mb-6">
             आरम्भ करें
-            <span className="block text-ayurveda-haldi">
+            <span className="block text-brand-yellow">
               Begin Your Healing Journey
             </span>
           </h2>
-          <p className="text-xl text-ayurveda-chandana mb-8 max-w-2xl mx-auto font-body">
+          <p className="text-xl text-brand-sage-light mb-8 max-w-2xl mx-auto font-body">
             Join our growing संघ (community) of practitioners and seekers on the
             path to holistic wellness through the ancient wisdom of Panchakarma.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={onGetStarted}
-              className="bg-white/90 backdrop-blur-sm text-ayurveda-brahmi px-8 py-4 rounded-lotus font-display text-lg hover:bg-white transform hover:scale-105 transition-all duration-200 shadow-xl border border-white/20"
+              className="bg-white/90 backdrop-blur-sm text-brand-sage-dark px-8 py-4 rounded-lotus font-display text-lg hover:bg-white transform hover:scale-105 transition-all duration-200 shadow-xl border border-white/20"
             >
               प्रारंभ करें
               <span className="block text-sm">Start Free Trial</span>
             </button>
-            <button className="border-2 border-ayurveda-chandana text-white px-8 py-4 rounded-lotus font-display text-lg hover:bg-white/10 transition-all duration-200">
+            <button className="border-2 border-brand-sage-light text-white px-8 py-4 rounded-lotus font-display text-lg hover:bg-white/10 transition-all duration-200">
               परिचय
               <span className="block text-sm">Schedule Demo</span>
             </button>
           </div>
-          <div className="mt-8 text-ayurveda-chandana">
+          <div className="mt-8 text-brand-sage-light">
             <div className="flex flex-wrap justify-center items-center gap-6 text-sm">
               <div className="flex items-center">
                 <Shield className="h-4 w-4 mr-2" />
@@ -659,25 +1713,25 @@ const LandingPage = ({ onGetStarted }) => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gradient-to-b from-dosha-kapha to-gray-900 text-gray-300 py-12 relative overflow-hidden">
+      <footer className="bg-gradient-to-b from-brand-sage-dark to-gray-900 text-gray-300 py-12 relative overflow-hidden">
         <div className="absolute inset-0 bg-lotus-pattern opacity-5"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center space-x-3 mb-4">
-                <div className="bg-gradient-to-r from-ayurveda-kumkum to-ayurveda-haldi p-2 rounded-lotus">
+                <div className="bg-gradient-to-r from-brand-red to-brand-yellow p-2 rounded-lotus">
                   <Leaf className="h-5 w-5 text-white" />
                 </div>
                 <div>
                   <span className="text-xl font-display text-white">
                     आयुरसूत्र
                   </span>
-                  <span className="block text-sm text-ayurveda-chandana">
+                  <span className="block text-sm text-brand-sage-light">
                     AyurSutra
                   </span>
                 </div>
               </div>
-              <p className="text-ayurveda-chandana mb-4 font-body">
+              <p className="text-brand-sage-light mb-4 font-body">
                 "आरोग्यं परमं भाग्यं" <br />
                 <span className="text-sm text-gray-400">
                   Health is the greatest blessing
@@ -687,12 +1741,12 @@ const LandingPage = ({ onGetStarted }) => {
 
             <div>
               <h3 className="text-white font-display mb-4">सेवाएं</h3>
-              <h4 className="text-sm text-ayurveda-chandana mb-2">Services</h4>
+              <h4 className="text-sm text-brand-sage-light mb-2">Services</h4>
               <ul className="space-y-2 text-sm">
                 <li>
                   <a
                     href="#"
-                    className="hover:text-ayurveda-haldi transition-colors"
+                    className="hover:text-brand-yellow transition-colors"
                   >
                     Panchakarma Tracking
                   </a>
@@ -700,7 +1754,7 @@ const LandingPage = ({ onGetStarted }) => {
                 <li>
                   <a
                     href="#"
-                    className="hover:text-ayurveda-haldi transition-colors"
+                    className="hover:text-brand-yellow transition-colors"
                   >
                     Dosha Analysis
                   </a>
@@ -708,7 +1762,7 @@ const LandingPage = ({ onGetStarted }) => {
                 <li>
                   <a
                     href="#"
-                    className="hover:text-ayurveda-haldi transition-colors"
+                    className="hover:text-brand-yellow transition-colors"
                   >
                     Treatment Protocols
                   </a>
@@ -716,7 +1770,7 @@ const LandingPage = ({ onGetStarted }) => {
                 <li>
                   <a
                     href="#"
-                    className="hover:text-ayurveda-haldi transition-colors"
+                    className="hover:text-brand-yellow transition-colors"
                   >
                     Wellness Calendar
                   </a>
@@ -726,12 +1780,12 @@ const LandingPage = ({ onGetStarted }) => {
 
             <div>
               <h3 className="text-white font-display mb-4">सहायता</h3>
-              <h4 className="text-sm text-ayurveda-chandana mb-2">Support</h4>
+              <h4 className="text-sm text-brand-sage-light mb-2">Support</h4>
               <ul className="space-y-2 text-sm">
                 <li>
                   <a
                     href="#"
-                    className="hover:text-ayurveda-haldi transition-colors"
+                    className="hover:text-brand-yellow transition-colors"
                   >
                     Knowledge Base
                   </a>
@@ -739,7 +1793,7 @@ const LandingPage = ({ onGetStarted }) => {
                 <li>
                   <a
                     href="#"
-                    className="hover:text-ayurveda-haldi transition-colors"
+                    className="hover:text-brand-yellow transition-colors"
                   >
                     Vaidya Connect
                   </a>
@@ -747,7 +1801,7 @@ const LandingPage = ({ onGetStarted }) => {
                 <li>
                   <a
                     href="#"
-                    className="hover:text-ayurveda-haldi transition-colors"
+                    className="hover:text-brand-yellow transition-colors"
                   >
                     Training Videos
                   </a>
@@ -755,7 +1809,7 @@ const LandingPage = ({ onGetStarted }) => {
                 <li>
                   <a
                     href="#"
-                    className="hover:text-ayurveda-haldi transition-colors"
+                    className="hover:text-brand-yellow transition-colors"
                   >
                     Community Forum
                   </a>
@@ -765,12 +1819,12 @@ const LandingPage = ({ onGetStarted }) => {
 
             <div>
               <h3 className="text-white font-display mb-4">संपर्क</h3>
-              <h4 className="text-sm text-ayurveda-chandana mb-2">Connect</h4>
+              <h4 className="text-sm text-brand-sage-light mb-2">Connect</h4>
               <ul className="space-y-2 text-sm">
                 <li>
                   <a
                     href="#"
-                    className="hover:text-ayurveda-haldi transition-colors"
+                    className="hover:text-brand-yellow transition-colors"
                   >
                     About Our Mission
                   </a>
@@ -778,7 +1832,7 @@ const LandingPage = ({ onGetStarted }) => {
                 <li>
                   <a
                     href="#"
-                    className="hover:text-ayurveda-haldi transition-colors"
+                    className="hover:text-brand-yellow transition-colors"
                   >
                     Ayurvedic Blog
                   </a>
@@ -786,7 +1840,7 @@ const LandingPage = ({ onGetStarted }) => {
                 <li>
                   <a
                     href="#"
-                    className="hover:text-ayurveda-haldi transition-colors"
+                    className="hover:text-brand-yellow transition-colors"
                   >
                     Join Our Team
                   </a>
@@ -794,7 +1848,7 @@ const LandingPage = ({ onGetStarted }) => {
                 <li>
                   <a
                     href="#"
-                    className="hover:text-ayurveda-haldi transition-colors"
+                    className="hover:text-brand-yellow transition-colors"
                   >
                     Privacy Promise
                   </a>
@@ -803,22 +1857,22 @@ const LandingPage = ({ onGetStarted }) => {
             </div>
           </div>
 
-          <div className="border-t border-ayurveda-chandana/20 mt-8 pt-8 text-center">
+          <div className="border-t border-brand-sage-light/20 mt-8 pt-8 text-center">
             <div className="flex flex-wrap justify-center gap-4 mb-4">
-              <span className="text-ayurveda-chandana text-sm px-3 py-1 border border-ayurveda-chandana/20 rounded-lotus">
+              <span className="text-brand-sage-light text-sm px-3 py-1 border border-brand-sage-light/20 rounded-lotus">
                 HIPAA Compliant
               </span>
-              <span className="text-ayurveda-chandana text-sm px-3 py-1 border border-ayurveda-chandana/20 rounded-lotus">
+              <span className="text-brand-sage-light text-sm px-3 py-1 border border-brand-sage-light/20 rounded-lotus">
                 ISO 27001 Certified
               </span>
-              <span className="text-ayurveda-chandana text-sm px-3 py-1 border border-ayurveda-chandana/20 rounded-lotus">
+              <span className="text-brand-sage-light text-sm px-3 py-1 border border-brand-sage-light/20 rounded-lotus">
                 NABH Standards
               </span>
             </div>
             <p className="text-sm text-gray-400">
               &copy; 2025 आयुरसूत्र | AyurSutra. सर्वाधिकार सुरक्षित | All
               rights reserved. <br />
-              <span className="text-ayurveda-chandana">
+              <span className="text-brand-sage-light">
                 Made with ❤️ for the global Ayurvedic community
               </span>
             </p>

@@ -3,7 +3,23 @@ const router = express.Router();
 const TherapySession = require("../models/TherapySession");
 const User = require("../models/User");
 
-// ✅ Create slots (practitioner)
+// --- Panchakarma Therapy Templates ---
+const therapyTemplates = {
+  Virechana: [
+    { phase: "Pre", name: "Snehana", days: 3, durationMins: 60 },
+    { phase: "Pre", name: "Swedana", days: 3, durationMins: 30 },
+    { phase: "Main", name: "Virechana", days: 1, durationMins: 180 },
+    { phase: "Post", name: "Recovery", days: 3, durationMins: 20 },
+  ],
+  Vamana: [
+    { phase: "Pre", name: "Snehana", days: 3, durationMins: 60 },
+    { phase: "Pre", name: "Swedana", days: 3, durationMins: 30 },
+    { phase: "Main", name: "Vamana", days: 1, durationMins: 180 },
+    { phase: "Post", name: "Recovery", days: 4, durationMins: 20 },
+  ],
+};
+
+// ✅ Practitioner creates custom free slots (your existing logic)
 router.post("/create", async (req, res) => {
   try {
     const { practitioner, date, times } = req.body;
@@ -15,14 +31,61 @@ router.post("/create", async (req, res) => {
 
     const slots = times.map((time) => ({
       practitioner: practitionerUser._id,
-      date,
-      time,
+      date: new Date(date),
+      startTime: time,
+      durationMins: 60,
+      therapyType: "Custom",
+      phase: "Pre",
+      sessionName: "General Slot",
     }));
 
     await TherapySession.insertMany(slots);
     res.json({ message: "Slots created successfully" });
   } catch (err) {
     console.error("Error creating slots:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// ✅ Auto-generate therapy schedule
+router.post("/autogenerate", async (req, res) => {
+  try {
+    const { practitionerEmail, patientEmail, therapyType, startDate } = req.body;
+
+    const practitioner = await User.findOne({ email: practitionerEmail });
+    const patient = await User.findOne({ email: patientEmail });
+
+    if (!practitioner || !patient) {
+      return res.status(404).json({ error: "Practitioner or patient not found" });
+    }
+    if (!therapyTemplates[therapyType]) {
+      return res.status(400).json({ error: "Invalid therapy type" });
+    }
+
+    let currentDate = new Date(startDate);
+    const sessions = [];
+
+    therapyTemplates[therapyType].forEach((step) => {
+      for (let i = 0; i < step.days; i++) {
+        sessions.push({
+          practitioner: practitioner._id,
+          patient: patient._id,
+          therapyType,
+          phase: step.phase,
+          sessionName: step.name,
+          date: new Date(currentDate),
+          startTime: "09:00", // default, can be edited later
+          durationMins: step.durationMins,
+          isBooked: true,
+        });
+        currentDate.setDate(currentDate.getDate() + 1); // move to next day
+      }
+    });
+
+    await TherapySession.insertMany(sessions);
+    res.json({ message: "Therapy schedule created", sessions });
+  } catch (err) {
+    console.error("Error auto-generating schedule:", err);
     res.status(500).json({ error: "Server error" });
   }
 });
@@ -39,7 +102,7 @@ router.get("/available", async (req, res) => {
   }
 });
 
-// ✅ Get patient’s booked slots
+// ✅ Get patient’s booked sessions
 router.get("/my-slots/:email", async (req, res) => {
   try {
     const patient = await User.findOne({ email: req.params.email });
@@ -54,7 +117,7 @@ router.get("/my-slots/:email", async (req, res) => {
   }
 });
 
-// ✅ Get practitioner’s slots
+// ✅ Get practitioner’s sessions
 router.get("/practitioner-slots/:email", async (req, res) => {
   try {
     const practitioner = await User.findOne({ email: req.params.email });
@@ -69,7 +132,7 @@ router.get("/practitioner-slots/:email", async (req, res) => {
   }
 });
 
-// ✅ Book a slot (patient)
+// ✅ Book a free slot (patient)
 router.post("/book/:id", async (req, res) => {
   try {
     const { patientEmail } = req.body;
@@ -92,7 +155,24 @@ router.post("/book/:id", async (req, res) => {
   }
 });
 
-// ✅ Delete a slot (practitioner only, if not booked)
+// ✅ Practitioner edits a session
+router.put("/edit/:id", async (req, res) => {
+  try {
+    const { date, startTime, durationMins, notes } = req.body;
+    const updatedSlot = await TherapySession.findByIdAndUpdate(
+      req.params.id,
+      { date, startTime, durationMins, notes },
+      { new: true }
+    );
+    if (!updatedSlot) return res.status(404).json({ error: "Session not found" });
+    res.json({ message: "Session updated", updatedSlot });
+  } catch (err) {
+    console.error("Error editing session:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// ✅ Delete a slot (only if not booked)
 router.delete("/delete/:id", async (req, res) => {
   try {
     const slot = await TherapySession.findById(req.params.id);
@@ -111,3 +191,4 @@ router.delete("/delete/:id", async (req, res) => {
 });
 
 module.exports = router;
+

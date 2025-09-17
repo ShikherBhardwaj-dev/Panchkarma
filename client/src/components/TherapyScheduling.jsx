@@ -2,232 +2,127 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { Clock, Calendar, AlertCircle, CheckCircle, XCircle } from "lucide-react";
 
 const TherapyScheduling = ({ userRole, user }) => {
-  const [date, setDate] = useState(new Date());
-  const [selectedTimes, setSelectedTimes] = useState([]);
-  const [availableSlots, setAvailableSlots] = useState([]);
-  const [mySlots, setMySlots] = useState([]);
+  const [startDate, setStartDate] = useState(new Date());
+  const [therapyType, setTherapyType] = useState("Virechana");
+  const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const timeOptions = [
-    "09:00 AM",
-    "10:00 AM",
-    "11:00 AM",
-    "12:00 PM",
-    "02:00 PM",
-    "03:00 PM",
-    "04:00 PM",
-    "05:00 PM",
-  ];
+  const therapyOptions = ["Virechana", "Vamana"];
 
-  const fetchAvailableSlots = async () => {
+  // -------------------- Fetch User's Sessions --------------------
+  const fetchSessions = async () => {
+    if (!user || !user.email) return;
     try {
-      const res = await axios.get("http://localhost:5000/therapy/available");
-      setAvailableSlots(res.data);
+      const res = await axios.get("http://localhost:5000/sessions", {
+        params: { userId: user.email, role: userRole },
+      });
+      setSessions(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
-      console.error("Error fetching available slots:", err);
-    }
-  };
-
-  const fetchMySlots = async () => {
-    if (!user?.email) return;
-
-    try {
-      if (userRole === "patient") {
-        const res = await axios.get(
-          `http://localhost:5000/therapy/my-slots/${user.email}`
-        );
-        setMySlots(res.data);
-      } else {
-        const res = await axios.get(
-          `http://localhost:5000/therapy/practitioner-slots/${user.email}`
-        );
-        setMySlots(res.data);
-      }
-    } catch (err) {
-      console.error("Error fetching my slots:", err);
+      console.error("Error fetching sessions:", err);
+      setSessions([]);
     }
   };
 
   useEffect(() => {
-    if (userRole === "patient") {
-      fetchAvailableSlots();
-      fetchMySlots();
-    } else if (userRole === "practitioner") {
-      fetchMySlots();
-    }
-  }, [userRole, user]);
+    fetchSessions();
+  }, [user]);
 
-  const handleCreateSlots = async () => {
-    if (selectedTimes.length === 0) {
-      alert("Please select at least one time slot");
+  // -------------------- Generate Therapy Schedule --------------------
+  const handleGenerateSchedule = async () => {
+    if (!therapyType || !startDate) {
+      alert("Please select therapy type and start date");
       return;
     }
-
     setLoading(true);
     try {
-      await axios.post("http://localhost:5000/therapy/create", {
-        practitioner: user.email,
-        date: date.toISOString().split("T")[0],
-        times: selectedTimes,
+      await axios.post("http://localhost:5000/sessions", {
+        patientId: user.email,
+        therapyType,
+        startDate: startDate.toISOString().split("T")[0],
       });
-
-      alert("Slots created successfully");
-      setSelectedTimes([]);
-      fetchMySlots();
+      alert("Therapy schedule generated successfully!");
+      fetchSessions();
     } catch (err) {
-      console.error("Error creating slots:", err);
-      alert("Error creating slots");
+      console.error("Error generating schedule:", err);
+      alert("Failed to generate schedule");
     }
     setLoading(false);
   };
 
-  const handleBookSlot = async (slotId) => {
-    setLoading(true);
-    try {
-      await axios.post(`http://localhost:5000/therapy/book/${slotId}`, {
-        patientEmail: user.email,
-      });
+  // -------------------- Render --------------------
+  if (!user || !user.email) {
+    return <div className="p-6 text-gray-600">Loading user info...</div>;
+  }
 
-      alert("Slot booked successfully");
-      fetchAvailableSlots();
-      fetchMySlots();
-    } catch (err) {
-      console.error("Error booking slot:", err);
-      alert("Error booking slot");
-    }
-    setLoading(false);
-  };
-
-  const handleDeleteSlot = async (slotId) => {
-    if (!window.confirm("Are you sure you want to delete this slot?")) return;
-
-    setLoading(true);
-    try {
-      await axios.delete(`http://localhost:5000/therapy/delete/${slotId}`);
-      alert("Slot deleted successfully");
-      fetchMySlots();
-    } catch (err) {
-      console.error("Error deleting slot:", err);
-      alert("Error deleting slot");
-    }
-    setLoading(false);
-  };
+  const safeSessions = Array.isArray(sessions) ? sessions : [];
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      {userRole === "practitioner" && (
-        <>
-          <h2 className="text-xl font-semibold mb-4">Create Therapy Slots</h2>
-          <div className="flex flex-col space-y-4">
+    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
+      {/* -------------------- Generate Schedule -------------------- */}
+      {userRole === "patient" && (
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold mb-4 text-gray-800">Generate Panchakarma Schedule</h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <select
+              value={therapyType}
+              onChange={(e) => setTherapyType(e.target.value)}
+              className="border rounded p-2 w-full"
+            >
+              {therapyOptions.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
+
             <DatePicker
-              selected={date}
-              onChange={(d) => setDate(d)}
+              selected={startDate}
+              onChange={(d) => setStartDate(d)}
               dateFormat="yyyy-MM-dd"
-              className="border p-2 rounded w-full"
+              className="border rounded p-2 w-full"
             />
 
-            <div className="grid grid-cols-2 gap-2">
-              {timeOptions.map((time) => (
-                <label key={time} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    value={time}
-                    checked={selectedTimes.includes(time)}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setSelectedTimes([...selectedTimes, time]);
-                      } else {
-                        setSelectedTimes(
-                          selectedTimes.filter((t) => t !== time)
-                        );
-                      }
-                    }}
-                  />
-                  <span>{time}</span>
-                </label>
-              ))}
-            </div>
-
             <button
-              onClick={handleCreateSlots}
+              onClick={handleGenerateSchedule}
               disabled={loading}
-              className="bg-green-600 text-white px-4 py-2 rounded"
+              className="bg-green-600 text-white rounded p-2 w-full hover:bg-green-700"
             >
-              {loading ? "Creating..." : "Add Slots"}
+              {loading ? "Generating..." : "Generate Schedule"}
             </button>
           </div>
-
-          <h2 className="text-xl font-semibold mt-8 mb-4">My Slots</h2>
-          <ul className="space-y-2">
-            {mySlots.map((slot) => (
-              <li
-                key={slot._id}
-                className="border p-3 rounded flex justify-between items-center"
-              >
-                <span>
-                  {slot.date} - {slot.time}{" "}
-                  {slot.isBooked
-                    ? `(Booked by ${slot.patient?.name || slot.patient?.email || "Unknown"})`
-                    : "(Available)"}
-                </span>
-                {!slot.isBooked && (
-                  <button
-                    onClick={() => handleDeleteSlot(slot._id)}
-                    className="bg-red-500 text-white px-2 py-1 rounded"
-                  >
-                    Delete
-                  </button>
-                )}
-              </li>
-            ))}
-          </ul>
-        </>
+        </div>
       )}
 
-      {userRole === "patient" && (
-        <>
-          <h2 className="text-xl font-semibold mb-4">Available Slots</h2>
-          <ul className="space-y-2">
-            {availableSlots.map((slot) => (
-              <li
-                key={slot._id}
-                className="border p-3 rounded flex justify-between items-center"
-              >
-                <span>
-                  {slot.date} - {slot.time} with{" "}
-                  {slot.practitioner?.name || slot.practitioner?.email || "Unknown"}
-                </span>
-                <button
-                  onClick={() => handleBookSlot(slot._id)}
-                  disabled={loading}
-                  className="bg-blue-600 text-white px-2 py-1 rounded"
-                >
-                  Book
-                </button>
-              </li>
-            ))}
-          </ul>
-
-          <h2 className="text-xl font-semibold mt-8 mb-4">My Booked Slots</h2>
-          <ul className="space-y-2">
-            {mySlots.map((slot) => (
-              <li
-                key={slot._id}
-                className="border p-3 rounded flex justify-between items-center"
-              >
-                <span>
-                  {slot.date} - {slot.time} with{" "}
-                  {slot.practitioner?.name || slot.practitioner?.email || "Unknown"}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </>
+      {/* -------------------- My Sessions -------------------- */}
+      <h2 className="text-2xl font-bold mb-4 text-gray-800">My Therapy Sessions</h2>
+      {safeSessions.length === 0 ? (
+        <p className="text-gray-600">No sessions scheduled yet.</p>
+      ) : (
+        <ul className="space-y-3">
+          {safeSessions.map((s) => (
+            <li
+              key={s._id}
+              className="border p-4 rounded shadow flex flex-col md:flex-row md:justify-between md:items-center"
+            >
+              <div>
+                <span className="font-semibold text-gray-800">{s.sessionName}</span>{" "}
+                <span className="text-sm text-gray-500">({s.phase})</span>
+                <div className="text-gray-600 text-sm">
+                  Date: {s.date} | Time: {s.startTime} | Status: {s.status}
+                  {s.notes && ` | Notes: ${s.notes}`}
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );
 };
 
 export default TherapyScheduling;
+

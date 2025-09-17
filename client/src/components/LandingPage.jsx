@@ -397,6 +397,171 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
           </div>
         </div>
 
+        {/* What is Panchakarma Section */}
+        <div className="mt-24 relative overflow-hidden">
+          {/* Decorative Background */}
+          <div className="absolute inset-0">
+            <div className="absolute inset-0 bg-gradient-to-br from-brand-sage-light/10 via-transparent to-brand-yellow/5"></div>
+            <div className="absolute inset-0 bg-[url('/patterns/herbs-bg.png')] opacity-5 animate-pulse-slow"></div>
+            <div className="absolute top-0 right-0 w-[40rem] h-[40rem] bg-brand-teal/5 rounded-full blur-3xl transform -translate-y-1/2 translate-x-1/3"></div>
+            <div className="absolute bottom-0 left-0 w-[30rem] h-[30rem] bg-brand-yellow/5 rounded-full blur-2xl transform translate-y-1/4 -translate-x-1/4"></div>
+          </div>
+
+          <div className="relative">
+            <div className="text-center mb-16">
+              <div className="inline-block relative">
+                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 w-16 h-16 bg-[url('/patterns/mandala-small.svg')] opacity-10 animate-spin-slow"></div>
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-display mb-4 relative">
+                  <span
+                    className="relative inline-block animate-fade-in-up"
+                    style={{ animationDelay: "0.2s" }}
+                  >
+                    What is
+                  </span>
+                  <span
+                    className="bg-gradient-to-r from-brand-red to-brand-teal bg-clip-text text-transparent relative inline-block animate-fade-in-up ml-2"
+                    style={{ animationDelay: "0.4s" }}
+                  >
+                    Panchakarma?
+                  </span>
+                </h2>
+              </div>
+              <p
+                className="text-xl text-brand-sage-dark font-decorative mt-2 opacity-0 animate-fade-in"
+                style={{ animationDelay: "0.6s" }}
+              >
+                पंचकर्म चिकित्सा
+              </p>
+              <div className="w-24 h-1 bg-gradient-to-r from-brand-yellow via-brand-red to-brand-teal mx-auto mt-6 rounded-full"></div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="prose prose-lg max-w-none">
+                <div
+                  className="relative p-6 rounded-2xl bg-gradient-to-br from-white/80 to-white/40 backdrop-blur-md shadow-elevation-1 hover:shadow-elevation-2 transition-all duration-500 animate-fade-in-up"
+                  style={{ animationDelay: "0.4s" }}
+                >
+                  <div className="absolute -top-4 -left-4 w-12 h-12 bg-[url('/patterns/corner-mandala.svg')] opacity-20"></div>
+                  <p className="text-lg text-brand-sage-dark leading-relaxed mb-6">
+                    Panchakarma is a treatment program for the body, mind, and
+                    consciousness that cleanses and rejuvenates. It is based on
+                    Ayurvedic principles, every human is a unique phenomenon
+                    manifested through the five basic elements of Ether, Air,
+                    Fire, Water, and Earth.
+                  </p>
+                </div>
+
+                <div
+                  className="relative mt-8 p-8 rounded-2xl bg-gradient-to-br from-brand-sage-light/30 to-brand-sage-light/10 backdrop-blur-sm border border-brand-sage-light/20 transform hover:-translate-y-1 transition-all duration-500 animate-fade-in-up"
+                  style={{ animationDelay: "0.6s" }}
+                >
+                  <div className="absolute -right-3 -top-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg">
+                    <span className="text-xl">💫</span>
+                  </div>
+                  <p className="text-lg text-brand-sage-dark leading-relaxed">
+                    The combination of these elements are three doshas
+                    (tridosha):{" "}
+                    <span className="font-medium text-brand-teal">Vata</span>,{" "}
+                    <span className="font-medium text-brand-red">Pitta</span>,
+                    and{" "}
+                    <span className="font-medium text-brand-yellow">Kapha</span>
+                    , and their balance is unique to each individual. When this
+                    doshic balance is disturbed it creates disorder resulting in
+                    disease.
+                  </p>
+                </div>
+
+                <div
+                  className="relative mt-8 p-6 rounded-2xl bg-white/80 backdrop-blur-sm shadow-elevation-1 animate-fade-in-up"
+                  style={{ animationDelay: "0.8s" }}
+                >
+                  <div className="absolute -bottom-4 -right-4 w-12 h-12 bg-[url('/patterns/corner-mandala.svg')] opacity-20 transform rotate-180"></div>
+                  <p className="text-lg text-brand-sage-dark leading-relaxed">
+                    Panchakarma is done individually for each person with their
+                    specific constitution and specific disorder in mind, thus it
+                    requires close observation and supervision. Treatment starts
+                    with pre-purification Measures of Snehan and Svedana, and
+                    then cleansing methods – Shodanas, are applied.
+                  </p>
+                </div>
+              </div>
+
+              <div
+                className="relative group animate-fade-in-up"
+                style={{ animationDelay: "1s" }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-brand-yellow via-brand-red to-brand-teal rounded-3xl blur-xl opacity-20 group-hover:opacity-30 transform group-hover:scale-105 transition-all duration-500"></div>
+                <div className="relative bg-white/90 backdrop-blur-md rounded-2xl shadow-elevation-2 p-8 transform hover:-translate-y-2 transition-all duration-500">
+                  {/* Five Elements Card */}
+                  <div className="space-y-8">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-2xl font-display text-brand-sage-dark">
+                        The Five Elements
+                      </h3>
+                      <div className="w-12 h-12 bg-brand-sage-light/20 rounded-full flex items-center justify-center">
+                        <span className="text-2xl animate-spin-slow">🌀</span>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-6">
+                      {[
+                        {
+                          element: "Ether",
+                          icon: "🌌",
+                          sanskrit: "आकाश",
+                          color: "from-purple-500/20 to-purple-600/20",
+                        },
+                        {
+                          element: "Air",
+                          icon: "💨",
+                          sanskrit: "वायु",
+                          color: "from-blue-500/20 to-blue-600/20",
+                        },
+                        {
+                          element: "Fire",
+                          icon: "🔥",
+                          sanskrit: "अग्नि",
+                          color: "from-red-500/20 to-red-600/20",
+                        },
+                        {
+                          element: "Water",
+                          icon: "💧",
+                          sanskrit: "जल",
+                          color: "from-cyan-500/20 to-cyan-600/20",
+                        },
+                        {
+                          element: "Earth",
+                          icon: "🌍",
+                          sanskrit: "पृथ्वी",
+                          color: "from-green-500/20 to-green-600/20",
+                        },
+                      ].map((el, index) => (
+                        <div
+                          key={index}
+                          className={`group relative overflow-hidden rounded-xl p-5 bg-gradient-to-br ${el.color} hover:scale-105 transform transition-all duration-300`}
+                        >
+                          <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                          <div className="relative z-10">
+                            <div className="text-3xl mb-3 transform group-hover:scale-110 transition-transform duration-300">
+                              {el.icon}
+                            </div>
+                            <div className="text-brand-sage-dark font-medium text-lg">
+                              {el.element}
+                            </div>
+                            <div className="text-brand-red font-decorative text-lg mt-1 opacity-80">
+                              {el.sanskrit}
+                            </div>
+                          </div>
+                          <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-brand-yellow via-brand-red to-brand-teal transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Essential Elements of Wellness */}
         <div className="mt-24 relative">
           {/* Background Decoration */}
@@ -671,16 +836,6 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Begin Journey Button */}
-        <div className="text-center mt-12 mb-20">
-          <button
-            onClick={onGetStarted}
-            className="bg-brand-teal hover:bg-brand-teal-dark text-white px-8 py-3 rounded-lg transition-colors"
-          >
-            Begin Your Healing Journey
-          </button>
         </div>
 
         {/* Floating Herbs Animation */}

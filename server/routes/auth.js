@@ -89,5 +89,18 @@ router.get("/patients", async (req, res) => {
   }
 });
 
+// ======================
+// Get All Practitioners (for patients)
+// ======================
+router.get("/practitioners", async (req, res) => {
+  try {
+    const practitioners = await User.find({ userType: "practitioner" }).select("name email _id phone");
+    res.json(practitioners);
+  } catch (err) {
+    console.error("Fetch practitioners error:", err.message);
+    res.status(500).send("Server error");
+  }
+});
+
 module.exports = router;
 

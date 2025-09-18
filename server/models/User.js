@@ -25,9 +25,7 @@ const UserSchema = new mongoose.Schema({
   assignedPractitioner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: function() {
-      return this.userType === 'patient';
-    }
+    // Make this optional to allow patient signup without assigning a practitioner immediately
   },
   status: {
     type: String,

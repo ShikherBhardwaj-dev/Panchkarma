@@ -2,8 +2,9 @@ import React from "react";
 import NotificationPreferences from "./notifications/NotificationPreferences";
 import NotificationsList from "./notifications/NotificationsList";
 import PrecautionGuidelines from "./notifications/PrecautionGuidelines";
+import ChatPanel from './ChatPanel';
 
-const Notifications = ({ notifications, setNotifications }) => {
+const Notifications = ({ notifications, setNotifications, currentUserId, currentUserEmail, userType }) => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -29,6 +30,11 @@ const Notifications = ({ notifications, setNotifications }) => {
         setNotifications={setNotifications}
       />
       <PrecautionGuidelines />
+      {/* Chat moved into Notifications & Care page */}
+      <div className="bg-white p-4 rounded shadow border">
+        <h3 className="text-lg font-semibold mb-2">Care Chat</h3>
+        <ChatPanel currentUserId={currentUserId} currentUserEmail={currentUserEmail} userType={userType} />
+      </div>
     </div>
   );
 };

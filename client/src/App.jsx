@@ -11,6 +11,7 @@ import AuthContainer from "./components/auth/AuthContainer";
 import LandingPage from "./components/LandingPage";
 import PractitionerHomePage from "./components/PractitionerHomePage";
 import { useAppData } from "./hooks/useAppData";
+import ChatbotWidget from "./components/Dashboard/ChatbotWidget"; // ✅ import chatbot
 
 const App = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -80,7 +81,7 @@ const App = () => {
         return (
           <TherapyScheduling
             userRole={userRole}
-            user={user} // ✅ pass user for backend calls
+            user={user}
             therapySessions={therapySessions}
           />
         );
@@ -90,6 +91,9 @@ const App = () => {
           <Notifications
             notifications={notifications}
             setNotifications={setNotifications}
+            currentUserId={user?._id}
+            currentUserEmail={user?.email}
+            userType={user?.userType}
           />
         );
 
@@ -145,6 +149,11 @@ const App = () => {
         <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
 
         <main>{renderActiveTab()}</main>
+      </div>
+
+      {/* ✅ Floating chatbot widget available everywhere */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <ChatbotWidget />
       </div>
 
       <FloatingActionButton

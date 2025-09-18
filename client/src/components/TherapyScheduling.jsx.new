@@ -20,10 +20,6 @@ const TherapyScheduling = ({ userRole, user }) => {
 
   // -------------------- Session Management --------------------
   const handleEditSession = (session) => {
-    if (session.status !== 'scheduled') {
-      alert('Only scheduled sessions can be rescheduled.');
-      return;
-    }
     setEditingSession(session);
     setEditDate(new Date(session.date));
     setEditTime(session.startTime);
@@ -33,18 +29,6 @@ const TherapyScheduling = ({ userRole, user }) => {
   const handleReschedule = async () => {
     if (!editingSession || !user?.email) return;
 
-    // Additional validation
-    if (editingSession.status !== 'scheduled') {
-      setError('Only scheduled sessions can be rescheduled.');
-      return;
-    }
-
-    // Validate the selected date is in the future
-    if (editDate < new Date(new Date().setHours(0, 0, 0, 0))) {
-      setError('Cannot reschedule to a past date.');
-      return;
-    }
-
     try {
       const formattedDate = editDate.toISOString().split('T')[0];
       await axios.put(`http://localhost:5000/sessions/${editingSession._id}`, {
@@ -52,19 +36,12 @@ const TherapyScheduling = ({ userRole, user }) => {
         startTime: editTime,
         userId: user.email,
         userType: userRole,
-        role: user.role || 'patient',
-        status: 'scheduled',
-        // Preserve existing session data
-        sessionName: editingSession.sessionName,
-        phase: editingSession.phase,
-        therapyType: editingSession.therapyType
+        role: user.role || 'patient'
       });
       
       await fetchSessions();
       setEditingSession(null);
       setError('');
-      // Close the modal
-      setEditingSession(null);
       // Show success message
       alert('Session rescheduled successfully!');
     } catch (err) {
@@ -88,14 +65,7 @@ const TherapyScheduling = ({ userRole, user }) => {
         status: 'cancelled',
         userId: user.email,
         userType: userRole,
-        role: user.role || 'patient',
-        // Preserve existing session data without modifying it
-        sessionName: cancellingSession.sessionName,
-        phase: cancellingSession.phase,
-        therapyType: cancellingSession.therapyType,
-        // Keep the original date and time
-        date: new Date(cancellingSession.date).toISOString().split('T')[0],
-        startTime: cancellingSession.startTime
+        role: user.role || 'patient'
       });
       
       await fetchSessions();
@@ -137,15 +107,16 @@ const TherapyScheduling = ({ userRole, user }) => {
         patientId: user.email,
         therapyType,
         startDate: startDate.toISOString().split("T")[0],
-        status: 'scheduled' // Explicitly set lowercase status
+        status: 'scheduled'
       });
+      await fetchSessions();
       alert("Therapy schedule generated successfully!");
-      fetchSessions();
     } catch (err) {
       console.error("Error generating schedule:", err);
-      alert("Failed to generate schedule");
+      alert("Failed to generate schedule: " + (err.response?.data?.msg || err.message));
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   // -------------------- Render --------------------
@@ -233,16 +204,10 @@ const TherapyScheduling = ({ userRole, user }) => {
                       <div className={`px-2 py-0.5 rounded-full text-xs ${
                         session.status === 'completed' ? 'bg-green-100 text-green-800' :
                         session.status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                        session.status === 'scheduled' ? 'bg-blue-100 text-blue-800' :
-                        'bg-gray-100 text-gray-800'
+                        'bg-blue-100 text-blue-800'
                       }`}>
-                        {session.status.charAt(0).toUpperCase() + session.status.slice(1)}
+                        {session.status}
                       </div>
-                      {session.status === 'cancelled' && (
-                        <span className="ml-2 text-xs text-gray-500">
-                          This session cannot be modified
-                        </span>
-                      )}
                     </div>
                     {session.notes && (
                       <p className="mt-2 text-sm text-gray-600">
@@ -251,7 +216,7 @@ const TherapyScheduling = ({ userRole, user }) => {
                     )}
                   </div>
 
-                  {session.status === 'scheduled' && (
+                  {session.status !== 'completed' && session.status !== 'cancelled' && (
                     <div className="flex items-center mt-4 md:mt-0 space-x-2">
                       <button
                         onClick={() => handleEditSession(session)}
@@ -360,4 +325,3 @@ const TherapyScheduling = ({ userRole, user }) => {
 };
 
 export default TherapyScheduling;
-

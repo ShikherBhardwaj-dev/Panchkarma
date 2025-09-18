@@ -71,24 +71,70 @@ router.post("/", async (req, res) => {
       const sessionDate = date.toISOString().split("T")[0];
       const startTime = slotTimes && slotTimes[idx] ? slotTimes[idx] : "10:00";
 
-      // Conflict check: is there already a session at this date/time?
-      const conflict = await TherapySession.findOne({ date: sessionDate, startTime });
+      // Skip creating sessions that would be in the past
+      const sessionDateObj = new Date(sessionDate);
+      if (sessionDateObj < new Date(new Date().setHours(0,0,0,0))) {
+        // return null for past session entries so we can filter them out later
+        return null;
+      }
+
+      // Conflict check: is there already a session at this date/time? Ignore cancelled
+      const conflict = await TherapySession.findOne({
+        date: sessionDate,
+        startTime,
+        status: { $ne: 'cancelled' }
+      });
       if (conflict) {
         throw new Error(`Slot conflict on ${sessionDate} at ${startTime}`);
       }
 
+      // Create new session with default practitioner
+      let defaultPractitioner = await User.findOne({ userType: 'practitioner' });
+      if (!defaultPractitioner) {
+        defaultPractitioner = new User({
+          name: "Default Practitioner",
+          email: "default.practitioner@ayurveda.com",
+          password: "defaultPass123",
+          userType: "practitioner",
+          status: "active"
+        });
+        await defaultPractitioner.save();
+      }
+
       return {
         patient: patient._id,
+        practitioner: defaultPractitioner._id,
         therapyType,
         phase: item.phase,
         sessionName: item.sessionName,
         date: sessionDate,
         startTime,
-        status: "Scheduled",
+        status: 'scheduled', // Make sure this is lowercase
       };
     }));
 
-    const createdSessions = await TherapySession.insertMany(sessions);
+    // Find a default practitioner
+    let defaultPractitioner = await User.findOne({ userType: 'practitioner' });
+    if (!defaultPractitioner) {
+      // Create a default practitioner if none exists
+      defaultPractitioner = new User({
+        name: "Default Practitioner",
+        email: "default.practitioner@ayurveda.com",
+        password: "defaultPass123", // You should use proper password hashing in production
+        userType: "practitioner",
+        status: "active"
+      });
+      await defaultPractitioner.save();
+    }
+
+    // Filter out nulls (past sessions) and ensure practitioner/status are set
+    const sessionsFiltered = sessions.filter(Boolean).map(session => ({
+      ...session,
+      practitioner: session.practitioner || defaultPractitioner._id,
+      status: String(session.status || 'scheduled').toLowerCase()
+    }));
+
+    const createdSessions = await TherapySession.insertMany(sessionsFiltered);
 
     res.json(createdSessions);
   } catch (err) {
@@ -97,10 +143,11 @@ router.post("/", async (req, res) => {
   }
 });
 
-// -------------------- PUT: Edit session --------------------
-router.put("/edit/:id", async (req, res) => {
+// -------------------- PUT: Update session --------------------
+router.put("/:id", async (req, res) => {
   try {
-    const { date, startTime, notes, userId, userType } = req.body;
+    console.log('PUT /sessions/:id body =>', req.body);
+    const { date, startTime, notes, userId, userType, status, sessionName, phase, therapyType } = req.body;
     const session = await TherapySession.findById(req.params.id).populate('patient');
     if (!session) return res.status(404).json({ msg: "Session not found" });
 
@@ -109,22 +156,139 @@ router.put("/edit/:id", async (req, res) => {
       return res.status(403).json({ msg: "Not authorized to edit this session" });
     }
 
-    // Conflict check for new date/time
-    if (date && startTime) {
-      const conflict = await TherapySession.findOne({ date, startTime, _id: { $ne: session._id } });
-      if (conflict) {
-        return res.status(400).json({ msg: `Slot conflict on ${date} at ${startTime}` });
+    // Preserve existing values if not provided
+    if (sessionName) session.sessionName = sessionName;
+    if (phase) session.phase = phase;
+    if (therapyType) session.therapyType = therapyType;
+
+    // Status update
+    // Status update
+    if (status) {
+      // Normalize status (lowercase + trim) and log for debugging
+      const normalizedStatus = String(status).toLowerCase().trim();
+      console.log('Received status update:', status, '->', normalizedStatus);
+
+      // If the update is a cancellation (accept common variants), perform a direct update
+      // to avoid triggering full document validation. This allows cancelling even if
+      // some required fields are missing on the stored document.
+      if (normalizedStatus.startsWith('cancel')) {
+        const updated = await TherapySession.findByIdAndUpdate(
+          req.params.id,
+          { $set: { status: 'cancelled' } },
+          { new: true }
+        ).populate('patient');
+
+        if (!updated) return res.status(404).json({ msg: 'Session not found' });
+        return res.json({ msg: 'Session updated', session: updated });
       }
-      session.date = date;
-      session.startTime = startTime;
-    } else {
-      if (date) session.date = date;
-      if (startTime) session.startTime = startTime;
+
+      try {
+        // For non-cancellation statuses, use the model setter which performs
+        // normalization/validation.
+        session.status = status;
+      } catch (err) {
+        console.error('Status validation error:', err);
+        return res.status(400).json({ 
+          msg: err.message,
+          debug: { 
+            receivedStatus: status,
+            allowedValues: ['scheduled', 'completed', 'cancelled', 'in-progress']
+          }
+        });
+      }
+
+      // If session doesn't have a practitioner, assign a default one
+      if (!session.practitioner) {
+        let defaultPractitioner = await User.findOne({ userType: 'practitioner' });
+        if (!defaultPractitioner) {
+          // Create a default practitioner if none exists
+          defaultPractitioner = new User({
+            name: "Default Practitioner",
+            email: "default.practitioner@ayurveda.com",
+            password: "defaultPass123", // You should use proper password hashing in production
+            userType: "practitioner",
+            status: "active"
+          });
+          await defaultPractitioner.save();
+        }
+        session.practitioner = defaultPractitioner._id;
+      }
+
+      session.status = String(status).toLowerCase();
     }
+
+    // Date/Time update (reschedule): perform safe partial update to avoid full
+    // document validation (which can fail when other required fields are missing).
+    if (date || startTime) {
+      try {
+        // If cancelling, we handled above. For rescheduling, validate inputs.
+        // Only check conflicts for rescheduling.
+        if (date && startTime) {
+          const conflict = await TherapySession.findOne({
+            date,
+            startTime,
+            _id: { $ne: session._id },
+            status: { $ne: 'cancelled' }
+          });
+          if (conflict) {
+            return res.status(400).json({ msg: `Slot conflict on ${date} at ${startTime}` });
+          }
+
+          // Validate the date
+          if (new Date(date) < new Date(new Date().setHours(0,0,0,0))) {
+            return res.status(400).json({ msg: 'Cannot schedule session in the past' });
+          }
+        }
+
+        // Validate time format if provided
+        if (startTime && !/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(startTime)) {
+          return res.status(400).json({ msg: 'Invalid time format. Use HH:MM' });
+        }
+
+        // Build the $set object only with scheduling fields
+        const setObj = {};
+        if (date) setObj.date = new Date(date);
+        if (startTime) setObj.startTime = startTime;
+
+        // Perform a partial update (no validation of other fields)
+        const updated = await TherapySession.findByIdAndUpdate(
+          req.params.id,
+          { $set: setObj },
+          { new: true }
+        ).populate('patient');
+
+        if (!updated) return res.status(404).json({ msg: 'Session not found' });
+        return res.json({ msg: 'Session rescheduled', session: updated });
+      } catch (err) {
+        console.error('Error updating session date/time:', err);
+        return res.status(500).json({ msg: err.message || 'Error updating session' });
+      }
+    }
+
+    // Notes update
     if (notes) session.notes = notes;
 
-    await session.save();
-    res.json({ msg: "Session updated", session });
+    try {
+      const updatedSession = await session.save();
+      res.json({ 
+        msg: "Session updated", 
+        session: updatedSession,
+        debug: {
+          originalStatus: status,
+          finalStatus: updatedSession.status
+        }
+      });
+    } catch (err) {
+      console.error('Error saving session:', err);
+      return res.status(400).json({ 
+        msg: err.message || 'Failed to update session',
+        debug: {
+          receivedStatus: status,
+          normalizedStatus: session.status,
+          validStatuses: ['scheduled', 'completed', 'cancelled', 'in-progress']
+        }
+      });
+    }
   } catch (err) {
     console.error(err);
     res.status(500).json({ msg: err.message || "Server error" });

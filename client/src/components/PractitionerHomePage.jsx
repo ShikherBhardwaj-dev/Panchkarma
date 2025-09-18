@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+// ChatPanel removed from practitioner dashboard; moved to Notifications & Care page
+import NotificationsPanel from './NotificationsPanel';
 
 const PractitionerHomePage = ({ user }) => {
   const [data, setData] = useState(null);
@@ -59,6 +61,13 @@ const PractitionerHomePage = ({ user }) => {
             </li>
           ))}
         </ul>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-2">
+          {/* Notifications & Chat combined */}
+          <NotificationsPanel userEmail={user?.email} currentUserId={user?._id} userType={user?.userType} />
+        </div>
       </div>
     </div>
   );

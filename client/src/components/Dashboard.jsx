@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+// ChatPanel removed from dashboard; moved to Notifications & Care page
+import NotificationsPanel from "./NotificationsPanel";
 
 const Dashboard = ({ user }) => {
   const [data, setData] = useState(null);
@@ -28,7 +30,8 @@ const Dashboard = ({ user }) => {
     }
   }, [user]);
 
-  if (!data) return <p className="text-center mt-10">Loading dashboard...</p>;
+  // Render the dashboard immediately and show loading placeholders for data-dependent sections
+  // This ensures ChatPanel and NotificationsPanel are available even while backend data is fetched
 
   // -------------------- PATIENT DASHBOARD --------------------
   if (user?.userType === "patient") {
@@ -134,6 +137,12 @@ const Dashboard = ({ user }) => {
                 <p className="text-xs text-gray-500 mt-1">8.5/10</p>
               </div>
             </div>
+          </div>
+        </div>
+        {/* Notifications & Care (Chat moved to Notifications page/panel) */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="lg:col-span-3">
+            <NotificationsPanel userEmail={user?.email} currentUserId={user?._id} userType={user?.userType} />
           </div>
         </div>
       </div>

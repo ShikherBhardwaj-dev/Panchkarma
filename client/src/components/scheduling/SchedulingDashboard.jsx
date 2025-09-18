@@ -4,6 +4,8 @@ import ProgressOverview from "../Dashboard/ProgressOverview";
 import QuickStats from "../Dashboard/QuickStats";
 import WellnessMetrics from "../Dashboard/WellnessMetrics";
 import UpcomingSessions from "./UpcomingSessions";
+// ChatPanel removed from individual dashboards; now located on Notifications & Care page
+import NotificationsPanel from '../NotificationsPanel';
 
 const Dashboard = ({ user }) => {
   const [patientData, setPatientData] = useState(null);
@@ -45,6 +47,12 @@ const Dashboard = ({ user }) => {
           <QuickStats user={user} data={patientData} />
           <ProgressOverview user={user} data={patientData} />
           <WellnessMetrics user={user} data={patientData} />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="lg:col-span-2">
+              {/* Chat moved into Notifications & Care section */}
+              <NotificationsPanel userEmail={user?.email} currentUserId={user?._id} userType={user?.userType} />
+            </div>
+          </div>
         </div>
       ) : user.userType === "practitioner" ? (
         <div className="space-y-6">

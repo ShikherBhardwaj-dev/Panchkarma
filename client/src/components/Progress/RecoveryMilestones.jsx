@@ -1,12 +1,21 @@
 import React from "react";
-import { Check, Clock, CalendarClock, XCircle, AlertCircle, CheckCircle2 } from "lucide-react";
+import {
+  Check,
+  Clock,
+  CalendarClock,
+  XCircle,
+  AlertCircle,
+  CheckCircle2,
+} from "lucide-react";
 
 const RecoveryMilestones = ({ sessionData }) => {
   const calculateMilestones = (sessions) => {
     if (!sessions || sessions.length === 0) return [];
 
     const totalSessions = sessions.length;
-    const completedSessions = sessions.filter(s => s.status === 'completed').length;
+    const completedSessions = sessions.filter(
+      (s) => s.status === "completed"
+    ).length;
     const progress = (completedSessions / totalSessions) * 100;
 
     const now = new Date();
@@ -20,10 +29,10 @@ const RecoveryMilestones = ({ sessionData }) => {
     };
 
     const formatDate = (date) => {
-      return new Date(date).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric'
+      return new Date(date).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
       });
     };
 
@@ -33,36 +42,36 @@ const RecoveryMilestones = ({ sessionData }) => {
         subtitle: `Started on ${formatDate(firstSession)}`,
         status: "completed",
         icon: Check,
-        description: "Initial health evaluation and treatment plan creation"
+        description: "Initial health evaluation and treatment plan creation",
       },
       {
         title: "Treatment Initiation",
         subtitle: progress >= 25 ? `Completed` : "In progress",
         status: getMilestoneStatus(25),
         icon: progress >= 25 ? CheckCircle2 : Clock,
-        description: "First phase of treatments and monitoring response"
+        description: "First phase of treatments and monitoring response",
       },
       {
         title: "Mid-therapy Assessment",
         subtitle: progress >= 50 ? `Reached on ${formatDate(now)}` : "Upcoming",
         status: getMilestoneStatus(50),
         icon: progress >= 50 ? Check : CalendarClock,
-        description: "Evaluation of progress and treatment adjustments"
+        description: "Evaluation of progress and treatment adjustments",
       },
       {
         title: "Treatment Optimization",
         subtitle: progress >= 75 ? "Completed" : "Pending",
         status: getMilestoneStatus(75),
         icon: progress >= 75 ? CheckCircle2 : AlertCircle,
-        description: "Fine-tuning treatments based on response"
+        description: "Fine-tuning treatments based on response",
       },
       {
         title: "Final Assessment",
         subtitle: `Scheduled for ${formatDate(lastSession)}`,
         status: getMilestoneStatus(100),
         icon: progress >= 100 ? Check : CalendarClock,
-        description: "Comprehensive evaluation of treatment outcomes"
-      }
+        description: "Comprehensive evaluation of treatment outcomes",
+      },
     ];
   };
 
@@ -72,39 +81,42 @@ const RecoveryMilestones = ({ sessionData }) => {
     switch (status) {
       case "completed":
         return {
-          icon: "text-green-500",
-          border: "border-green-200",
-          bg: "bg-green-50",
-          progress: "bg-green-500"
+          icon: "text-amber-600",
+          border: "border-amber-200",
+          bg: "bg-gradient-to-br from-amber-50 to-orange-50",
+          progress: "bg-amber-600",
         };
       case "current":
         return {
-          icon: "text-blue-500",
-          border: "border-blue-200",
-          bg: "bg-blue-50",
-          progress: "bg-blue-500 animate-pulse"
+          icon: "text-orange-600",
+          border: "border-orange-200",
+          bg: "bg-gradient-to-br from-orange-50 to-amber-50",
+          progress: "bg-orange-600 animate-pulse",
         };
       default:
         return {
           icon: "text-gray-400",
           border: "border-gray-200",
-          bg: "bg-gray-50",
-          progress: "bg-gray-300"
+          bg: "bg-gradient-to-br from-gray-50 to-gray-100",
+          progress: "bg-gray-300",
         };
     }
   };
 
   return (
-    <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-      <h3 className="text-lg font-semibold mb-6">Recovery Milestones</h3>
+    <div className="bg-gradient-to-br from-amber-50/50 to-orange-50/50 rounded-lg p-6 shadow-sm border border-amber-100">
+      <h3 className="text-lg font-semibold text-amber-900 mb-6 flex items-center">
+        <div className="mr-2 w-1 h-6 bg-gradient-to-b from-amber-500 to-orange-500 rounded-full"></div>
+        Recovery Milestones
+      </h3>
       <div className="space-y-6">
         {milestones.map((milestone, index) => {
           const styles = getStatusStyles(milestone.status);
           const IconComponent = milestone.icon;
-          
+
           return (
-            <div 
-              key={index} 
+            <div
+              key={index}
               className={`relative p-4 rounded-lg border ${styles.border} ${styles.bg} transition-all duration-300`}
             >
               <div className="flex items-start space-x-4">
@@ -132,7 +144,7 @@ const RecoveryMilestones = ({ sessionData }) => {
                   </p>
                 </div>
               </div>
-              
+
               {index < milestones.length - 1 && (
                 <div className="absolute left-7 top-16 bottom-0 w-px bg-gray-200" />
               )}

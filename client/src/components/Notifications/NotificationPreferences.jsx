@@ -7,31 +7,35 @@ const NotificationPreferences = () => {
       icon: Smartphone,
       title: "In-App Notifications",
       description: "Real-time alerts",
-      bgColor: "bg-blue-50",
-      iconColor: "text-blue-600",
+      bgColor: "bg-gradient-to-br from-amber-50 to-orange-50",
+      iconColor: "text-amber-600",
+      borderColor: "border-amber-200",
       checked: true,
     },
     {
       icon: Phone,
       title: "SMS Alerts",
       description: "Text messages",
-      bgColor: "bg-green-50",
-      iconColor: "text-green-600",
+      bgColor: "bg-gradient-to-br from-orange-50 to-amber-50",
+      iconColor: "text-orange-600",
+      borderColor: "border-orange-200",
       checked: true,
     },
     {
       icon: Mail,
       title: "Email Reminders",
       description: "Daily summaries",
-      bgColor: "bg-purple-50",
-      iconColor: "text-purple-600",
+      bgColor: "bg-gradient-to-br from-amber-50/80 to-orange-50/80",
+      iconColor: "text-amber-700",
+      borderColor: "border-amber-200",
       checked: false,
     },
   ];
 
   return (
-    <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-      <h3 className="text-lg font-semibold mb-4 flex items-center">
+    <div className="bg-gradient-to-br from-amber-50/50 to-orange-50/50 rounded-lg p-6 shadow-sm border border-amber-100">
+      <h3 className="text-lg font-semibold text-amber-900 mb-4 flex items-center">
+        <div className="mr-2 w-1 h-6 bg-gradient-to-b from-amber-500 to-orange-500 rounded-full"></div>
         <Bell className="h-5 w-5 mr-2 text-orange-600" />
         Notification Preferences
       </h3>
@@ -41,16 +45,18 @@ const NotificationPreferences = () => {
           return (
             <div
               key={index}
-              className={`flex items-center space-x-3 p-3 ${pref.bgColor} rounded-lg`}
+              className={`flex items-center space-x-3 p-4 ${pref.bgColor} rounded-lg border ${pref.borderColor}`}
             >
-              <IconComponent className={`h-6 w-6 ${pref.iconColor}`} />
+              <IconComponent
+                className={`h-6 w-6 ${pref.iconColor} drop-shadow-sm`}
+              />
               <div>
-                <p className="font-medium">{pref.title}</p>
-                <p className="text-sm text-gray-600">{pref.description}</p>
+                <p className="font-medium text-amber-900">{pref.title}</p>
+                <p className="text-sm text-amber-700">{pref.description}</p>
               </div>
               <input
                 type="checkbox"
-                className="ml-auto"
+                className="ml-auto h-5 w-5 rounded border-amber-300 text-amber-600 focus:ring-amber-500"
                 defaultChecked={pref.checked}
               />
             </div>

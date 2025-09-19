@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import Header from "./components/Header";
 import Navigation from "./components/Navigation";
-import Dashboard from "./components/Dashboard";
+import PatientDashboard from "./components/Dashboard/PatientDashboard";
+import PractitionerDashboard from "./components/Dashboard/PractitionerDashboard";
 import TherapyScheduling from "./components/TherapyScheduling";
 import Notifications from "./components/Notifications";
 import Progress from "./components/Progress";
@@ -66,11 +67,10 @@ const App = () => {
     switch (activeTab) {
       case "dashboard":
         if (userRole === "practitioner") {
-          return <PractitionerHomePage user={user} />;
+          return <PractitionerDashboard user={user} />;
         }
         return (
-          <Dashboard
-            userRole={userRole}
+          <PatientDashboard
             patientProgress={patientProgress}
             notifications={notifications}
             user={user}
@@ -107,11 +107,10 @@ const App = () => {
 
       default:
         if (userRole === "practitioner") {
-          return <PractitionerHomePage user={user} />;
+          return <PractitionerDashboard user={user} />;
         }
         return (
-          <Dashboard
-            userRole={userRole}
+          <PatientDashboard
             patientProgress={patientProgress}
             notifications={notifications}
             user={user}
@@ -137,7 +136,7 @@ const App = () => {
 
   // ✅ Main application after login/signup
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#FDF7E9]">
       <Header
         userRole={getUserRole()}
         notifications={notifications}
@@ -145,10 +144,12 @@ const App = () => {
         onLogout={handleLogout}
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
 
-        <main>{renderActiveTab()}</main>
+      <div className="w-full bg-[#FDF7E9]">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          {renderActiveTab()}
+        </main>
       </div>
 
       {/* ✅ Floating chatbot widget available everywhere */}

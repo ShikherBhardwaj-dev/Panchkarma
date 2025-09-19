@@ -4,12 +4,23 @@ import SignupPage from "./SignupPage";
 
 const AuthContainer = ({ onAuthSuccess, onBackToLanding }) => {
   const [isLogin, setIsLogin] = useState(true);
+  // store prefill credentials after signup so LoginPage can use them
+  const [prefill, setPrefill] = useState({ email: "", password: "" });
 
   const handleAuthSuccess = (userData) => {
     // ✅ Pass the full user object (_id, name, email, userType) to App.jsx
     if (onAuthSuccess) {
       onAuthSuccess(userData);
     }
+  };
+
+  const handleSignupSuccess = (creds) => {
+    // creds = { email, password } from SignupPage
+    if (creds && creds.email) {
+      setPrefill({ email: creds.email, password: creds.password || "" });
+    }
+    // switch to login view so user can sign in (prefilled)
+    setIsLogin(true);
   };
 
   return (
@@ -19,11 +30,13 @@ const AuthContainer = ({ onAuthSuccess, onBackToLanding }) => {
           onSwitchToSignup={() => setIsLogin(false)}
           onAuthSuccess={handleAuthSuccess}
           onBackToLanding={onBackToLanding}
+          prefillEmail={prefill.email}
+          prefillPassword={prefill.password}
         />
       ) : (
         <SignupPage
           onSwitchToLogin={() => setIsLogin(true)}
-          onAuthSuccess={handleAuthSuccess}
+          onSignupSuccess={handleSignupSuccess}
           onBackToLanding={onBackToLanding}
         />
       )}

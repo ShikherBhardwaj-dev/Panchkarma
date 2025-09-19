@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import axios from "axios";
 import { MessageCircle, X } from "lucide-react"; // nice icons
 
-const ChatbotWidget = () => {
+const ChatbotWidget = ({ user: userProp }) => {
+  // Prefer user from prop, fallback to localStorage
+  const user = userProp || JSON.parse(localStorage.getItem("user"));
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     {
@@ -20,7 +22,10 @@ const ChatbotWidget = () => {
     setInput("");
 
     try {
+
       const res = await axios.post("http://localhost:5000/api/chat", {
+        // Use _id if available, else email, else fallback to 'guest'
+        userId: user?._id || user?.email || "guest",
         message: input,
       });
 
@@ -32,7 +37,7 @@ const ChatbotWidget = () => {
       console.error("❌ Chatbot Error:", error);
       setMessages((prev) => [
         ...prev,
-        { sender: "bot", text: "⚠️ Server error. Please try later." },
+        { sender: "bot", text: "⚠ Server error. Please try later." },
       ]);
     }
   };
@@ -99,4 +104,4 @@ const ChatbotWidget = () => {
   );
 };
 
-export default ChatbotWidget;
+export default ChatbotWidget;

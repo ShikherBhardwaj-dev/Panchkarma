@@ -12,6 +12,8 @@ import LandingPage from "./components/LandingPage";
 import PractitionerHomePage from "./components/PractitionerHomePage";
 import { useAppData } from "./hooks/useAppData";
 import ChatbotWidget from "./components/Dashboard/ChatbotWidget"; // ✅ import chatbot
+import { ToastProvider } from "./contexts/ToastContext.jsx";
+import ToastContainer from "./components/Toast";
 
 const App = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -137,7 +139,8 @@ const App = () => {
 
   // ✅ Main application after login/signup
   return (
-    <div className="min-h-screen bg-gray-50">
+    <ToastProvider>
+      <div className="min-h-screen bg-gray-50">
       <Header
         userRole={getUserRole()}
         notifications={notifications}
@@ -153,7 +156,7 @@ const App = () => {
 
       {/* ✅ Floating chatbot widget available everywhere */}
       <div className="fixed bottom-6 right-6 z-50">
-        <ChatbotWidget />
+        <ChatbotWidget user = {user}/>
       </div>
 
       <FloatingActionButton
@@ -164,7 +167,9 @@ const App = () => {
       />
 
       <Footer />
-    </div>
+      <ToastContainer />
+      </div>
+    </ToastProvider>
   );
 };
 

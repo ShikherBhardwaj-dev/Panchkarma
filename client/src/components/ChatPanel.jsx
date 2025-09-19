@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
+import { useToast } from '../contexts/ToastContext.jsx';
 
 const ChatPanel = ({ currentUserEmail, currentUserId, userType }) => {
   const [messages, setMessages] = useState([]);
@@ -32,12 +33,31 @@ const ChatPanel = ({ currentUserEmail, currentUserId, userType }) => {
     return () => clearInterval(iv);
   }, [currentUserId, selectedContactId]);
 
+  const lastMessageIdRef = useRef(null);
+  const { show } = useToast();
+
   async function fetchConversation() {
     try {
       const res = await axios.get('http://localhost:5000/api/messages/conversation', {
         params: { userAId: currentUserId, userBId: selectedContactId }
       });
-      setMessages(res.data || []);
+      const conv = res.data || [];
+
+      // Detect newly arrived message
+      if (conv.length) {
+        const last = conv[conv.length - 1];
+        if (lastMessageIdRef.current && last._id !== lastMessageIdRef.current) {
+          // If the last message is from the other user, show an in-app toast
+          if (last.from?.email && last.from.email !== currentUserEmail) {
+            show({ title: `New message from ${last.from.name}`, message: last.text });
+          }
+        }
+        lastMessageIdRef.current = last._id;
+      } else {
+        lastMessageIdRef.current = null;
+      }
+
+      setMessages(conv);
     } catch (err) {
       console.error('Fetch conversation error', err);
     }

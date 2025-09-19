@@ -39,7 +39,7 @@ router.post("/signup", async (req, res) => {
     });
   } catch (err) {
     console.error("Signup error:", err.message);
-    res.status(500).send("Server error");
+    res.status(500).json({ msg: 'Server error' });
   }
 });
 
@@ -72,7 +72,7 @@ router.post("/login", async (req, res) => {
     });
   } catch (err) {
     console.error("Login error:", err.message);
-    res.status(500).send("Server error");
+    res.status(500).json({ msg: 'Server error' });
   }
 });
 
@@ -85,7 +85,7 @@ router.get("/patients", async (req, res) => {
     res.json(patients);
   } catch (err) {
     console.error("Fetch patients error:", err.message);
-    res.status(500).send("Server error");
+    res.status(500).json({ msg: 'Server error' });
   }
 });
 
@@ -98,7 +98,7 @@ router.get("/practitioners", async (req, res) => {
     res.json(practitioners);
   } catch (err) {
     console.error("Fetch practitioners error:", err.message);
-    res.status(500).send("Server error");
+    res.status(500).json({ msg: 'Server error' });
   }
 });
 

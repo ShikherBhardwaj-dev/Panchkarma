@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useToast } from '../../contexts/ToastContext.jsx';
 import { Eye, EyeOff, Mail, Lock, User, Phone, ArrowLeft } from "lucide-react";
 
 const SignupPage = ({ onSwitchToLogin, onSignupSuccess, onBackToLanding }) => {
@@ -32,6 +33,8 @@ const SignupPage = ({ onSwitchToLogin, onSignupSuccess, onBackToLanding }) => {
       return;
     }
 
+    const { show } = useToast();
+
     try {
       const res = await fetch("http://localhost:5000/auth/signup", {
         method: "POST",
@@ -39,11 +42,19 @@ const SignupPage = ({ onSwitchToLogin, onSignupSuccess, onBackToLanding }) => {
         body: JSON.stringify(formData), // send name, email, phone, password, userType
       });
 
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch (e) {
+        // server may return plain text error
+        const text = await res.text().catch(() => null);
+        data = { msg: text || 'Unknown server response' };
+      }
+
       console.log("Signup response:", data);
 
       if (res.ok) {
-        alert("Signup successful ✅");
+        show({ title: 'Signup successful', message: 'Account created — please login', duration: 4000 });
         if (onSignupSuccess) {
           onSignupSuccess({
             email: formData.email,
@@ -51,11 +62,11 @@ const SignupPage = ({ onSwitchToLogin, onSignupSuccess, onBackToLanding }) => {
           });
         }
       } else {
-        alert(data.msg || "Signup failed ❌");
+        show({ title: 'Signup failed', message: data.msg || 'Signup failed', duration: 6000 });
       }
     } catch (err) {
       console.error("Signup error:", err);
-      alert("Something went wrong. Please try again.");
+      show({ title: 'Signup error', message: 'Something went wrong. Please try again.', duration: 6000 });
     }
   };
 

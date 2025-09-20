@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users, Clock, Calendar, Activity, AlertCircle } from 'lucide-react';
+import authFetch from '../../utils/apiClient';
 
 const PatientManagement = () => {
   const [patients, setPatients] = useState([]);
@@ -14,10 +15,30 @@ const PatientManagement = () => {
 
   const fetchPatients = async () => {
     try {
-      const response = await fetch('/api/practitioner/patients');
-      const data = await response.json();
-      if (data.success) {
-        setPatients(data.patients);
+      let response;
+      try {
+        response = await authFetch('/api/practitioner/patients');
+      } catch (err) {
+        console.error('authFetch failed', err);
+        response = null;
+      }
+
+      if (!response || response.status === 401 || response.status === 403) {
+        // fallback to public list
+        try {
+          const fb = await fetch('/auth/patients');
+          const fallback = await fb.json().catch(() => null);
+          setPatients(Array.isArray(fallback) ? fallback : []);
+        } catch (err) {
+          console.error('Fallback patients fetch failed', err);
+          setPatients([]);
+        }
+      } else {
+        const data = await response.json().catch(() => null);
+        if (data) {
+          if (data.success) setPatients(Array.isArray(data.patients) ? data.patients : []);
+          else if (Array.isArray(data)) setPatients(data || []);
+        }
       }
     } catch (error) {
       console.error('Error fetching patients:', error);
@@ -105,8 +126,14 @@ const PatientManagement = () => {
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="p-6 border-b border-gray-200">
           <h2 className="text-lg font-semibold">Patient List</h2>
+          <div className="mt-2">
+            <button onClick={() => { setLoading(true); fetchPatients(); }} className="px-3 py-1 bg-blue-600 text-white rounded">Refresh</button>
+          </div>
         </div>
         <div className="overflow-x-auto">
+          {(!Array.isArray(patients) || patients.length === 0) && (
+            <div className="p-6 text-center text-sm text-gray-500">No patients found. If you are a practitioner, ensure patients are assigned to you. Try Refresh.</div>
+          )}
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -131,7 +158,7 @@ const PatientManagement = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {patients.map((patient) => (
+              {Array.isArray(patients) && patients.map((patient) => (
                 <tr 
                   key={patient._id}
                   className="hover:bg-gray-50 transition-colors cursor-pointer"

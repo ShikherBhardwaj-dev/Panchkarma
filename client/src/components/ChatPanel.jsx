@@ -4,7 +4,7 @@ import { useToast } from '../contexts/ToastContext.jsx';
 
 const ChatPanel = ({ currentUserEmail, currentUserId, userType }) => {
   const [messages, setMessages] = useState([]);
-  const [text, setText] = useState('');
+  const [text, setText] = useState("");
   const [contacts, setContacts] = useState([]); // patients or practitioners depending on role
   const [selectedContactId, setSelectedContactId] = useState(null);
 
@@ -12,7 +12,7 @@ const ChatPanel = ({ currentUserEmail, currentUserId, userType }) => {
     // load contacts depending on role: practitioners for patients, patients for practitioners
     async function loadContacts() {
       try {
-        const endpoint = userType === 'patient' ? 'practitioners' : 'patients';
+        const endpoint = userType === "patient" ? "practitioners" : "patients";
         const res = await axios.get(`http://localhost:5000/auth/${endpoint}`);
         setContacts(res.data || []);
         if (res.data && res.data.length) {
@@ -20,7 +20,7 @@ const ChatPanel = ({ currentUserEmail, currentUserId, userType }) => {
           setSelectedContactId(res.data[0]._id);
         }
       } catch (err) {
-        console.error('Fetch contacts error', err);
+        console.error("Fetch contacts error", err);
       }
     }
     loadContacts();
@@ -32,6 +32,8 @@ const ChatPanel = ({ currentUserEmail, currentUserId, userType }) => {
     const iv = setInterval(fetchConversation, 3000);
     return () => clearInterval(iv);
   }, [currentUserId, selectedContactId]);
+
+  // Inbox polling moved to App.jsx so header badge remains consistent
 
   const lastMessageIdRef = useRef(null);
   const { show } = useToast();
@@ -47,9 +49,11 @@ const ChatPanel = ({ currentUserEmail, currentUserId, userType }) => {
       if (conv.length) {
         const last = conv[conv.length - 1];
         if (lastMessageIdRef.current && last._id !== lastMessageIdRef.current) {
-          // If the last message is from the other user, show an in-app toast
+          console.log('ChatPanel: detected new message', { lastId: last._id, lastFrom: last.from?.email, currentUserEmail });
+          // If the last message is from the other user, show an in-app toast and add to global notifications
           if (last.from?.email && last.from.email !== currentUserEmail) {
             show({ title: `New message from ${last.from.name}`, message: last.text });
+            console.log('ChatPanel: showed toast for incoming message (no global notification added)');
           }
         }
         lastMessageIdRef.current = last._id;
@@ -59,42 +63,82 @@ const ChatPanel = ({ currentUserEmail, currentUserId, userType }) => {
 
       setMessages(conv);
     } catch (err) {
-      console.error('Fetch conversation error', err);
+      console.error("Fetch conversation error", err);
     }
   }
 
   async function sendMessage() {
     if (!text.trim() || !selectedContactId) return;
     try {
-      await axios.post('http://localhost:5000/api/messages', { fromId: currentUserId, toId: selectedContactId, text });
-      setText('');
+      await axios.post("http://localhost:5000/api/messages", {
+        fromId: currentUserId,
+        toId: selectedContactId,
+        text,
+      });
+      setText("");
       fetchConversation();
     } catch (err) {
-      console.error('Send message error', err);
+      console.error("Send message error", err);
     }
   }
 
   return (
-    <div className="bg-white p-4 rounded shadow border">
-      <h4 className="font-semibold mb-2">Chat</h4>
-      <div className="mb-2">
-        <label className="text-sm">Select contact</label>
-        <select className="w-full p-2 border rounded" value={selectedContactId || ''} onChange={e => setSelectedContactId(e.target.value)}>
-          {contacts.map(p => <option key={p._id} value={p._id}>{p.name} ({p.email})</option>)}
+    <div className="bg-gradient-to-br from-amber-50/50 to-orange-50/50 p-6 rounded-lg shadow-sm border border-amber-100">
+      <h3 className="text-lg font-semibold text-amber-900 mb-4 flex items-center">
+        <div className="mr-2 w-1 h-6 bg-gradient-to-b from-amber-500 to-orange-500 rounded-full"></div>
+        Chat
+      </h3>
+      <div className="mb-4">
+        <label className="text-sm font-medium text-amber-800 block mb-2">
+          Select contact
+        </label>
+        <select
+          className="w-full p-2.5 bg-white/80 border border-amber-200 text-amber-900 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+          value={selectedContactId || ""}
+          onChange={(e) => setSelectedContactId(e.target.value)}
+        >
+          {contacts.map((p) => (
+            <option key={p._id} value={p._id} className="text-amber-900">
+              {p.name} ({p.email})
+            </option>
+          ))}
         </select>
       </div>
 
-      <div className="h-48 overflow-auto border rounded p-2 mb-2">
-        {messages.map(m => (
-          <div key={m._id} className={`mb-2 ${m.from.email === currentUserEmail ? 'text-right' : 'text-left'}`}>
-            <div className="text-xs text-gray-500">{m.from.name}</div>
-            <div className="bg-gray-100 inline-block p-2 rounded">{m.text}</div>
+      <div className="h-64 overflow-auto border border-amber-200 rounded-lg p-4 mb-4 bg-white/80">
+        {messages.map((m) => (
+          <div
+            key={m._id}
+            className={`mb-3 ${
+              m.from.email === currentUserEmail ? "text-right" : "text-left"
+            }`}
+          >
+            <div className="text-xs text-amber-600 mb-1">{m.from.name}</div>
+            <div
+              className={`inline-block p-3 rounded-lg max-w-[80%] ${
+                m.from.email === currentUserEmail
+                  ? "bg-gradient-to-br from-amber-500 to-orange-500 text-white shadow-sm"
+                  : "bg-gradient-to-br from-amber-50 to-orange-50 text-amber-900 border border-amber-200"
+              }`}
+            >
+              {m.text}
+            </div>
           </div>
         ))}
       </div>
-      <div className="flex gap-2">
-        <input value={text} onChange={e => setText(e.target.value)} className="flex-1 p-2 border rounded" />
-        <button onClick={sendMessage} className="bg-green-500 text-white p-2 rounded">Send</button>
+      <div className="flex gap-3">
+        <input
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          className="flex-1 p-3 bg-white/80 border border-amber-200 rounded-lg text-amber-900 placeholder-amber-400 focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+          placeholder="Type your message..."
+        />
+        <button
+          onClick={sendMessage}
+          className="px-6 py-3 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-lg shadow-md hover:from-amber-500 hover:to-orange-500 transition-all hover:shadow-lg"
+        >
+          Send
+        </button>
       </div>
     </div>
   );

@@ -68,12 +68,16 @@ const LoginPage = ({
 
         if (onAuthSuccess) {
           // ✅ Pass the complete user object from backend
-          onAuthSuccess({
+          // store token for authenticated requests
+          if (data.token) localStorage.setItem('token', data.token);
+          const userObj = {
             _id: data._id,
             name: data.name,
             email: data.email,
             userType: data.userType, // "patient" or "practitioner"
-          });
+          };
+          localStorage.setItem('user', JSON.stringify(userObj));
+          onAuthSuccess(userObj);
         }
       } else {
         alert(data.msg || "Login failed ❌");

@@ -22,51 +22,45 @@ const SignupPage = ({ onSwitchToLogin, onSignupSuccess, onBackToLanding }) => {
     });
   };
 
+  const { show } = useToast();
+
   const handleSignup = async () => {
     if (!formData.name || !formData.email || !formData.password) {
-      alert("Please fill in all required fields");
+      show({ title: 'Missing fields', message: 'Please fill in name, email and password', duration: 4000 });
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match ❌");
+      show({ title: 'Password mismatch', message: 'Passwords do not match', duration: 4000 });
       return;
     }
-
-    const { show } = useToast();
 
     try {
       const res = await fetch("http://localhost:5000/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData), // send name, email, phone, password, userType
+        body: JSON.stringify(formData),
       });
 
-      let data;
+      let data = null;
       try {
         data = await res.json();
       } catch (e) {
-        // server may return plain text error
-        const text = await res.text().catch(() => null);
-        data = { msg: text || 'Unknown server response' };
+        data = { msg: await res.text().catch(() => 'No response body') };
       }
 
-      console.log("Signup response:", data);
+      console.log('Signup status', res.status, data);
 
       if (res.ok) {
-        show({ title: 'Signup successful', message: 'Account created — please login', duration: 4000 });
-        if (onSignupSuccess) {
-          onSignupSuccess({
-            email: formData.email,
-            password: formData.password,
-          });
-        }
+        show({ title: 'Signup successful', message: data.msg || 'Account created', duration: 4000 });
+        // If server returned the created user object, forward it up so App can use phone/_id
+        if (onSignupSuccess) onSignupSuccess(data.user || { email: formData.email, password: formData.password });
       } else {
-        show({ title: 'Signup failed', message: data.msg || 'Signup failed', duration: 6000 });
+        show({ title: 'Signup failed', message: data.msg || `Status ${res.status}`, duration: 6000 });
       }
     } catch (err) {
-      console.error("Signup error:", err);
-      show({ title: 'Signup error', message: 'Something went wrong. Please try again.', duration: 6000 });
+      console.error('Signup error', err);
+      show({ title: 'Signup error', message: err.message || 'Network error', duration: 6000 });
     }
   };
 

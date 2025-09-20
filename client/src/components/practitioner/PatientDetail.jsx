@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Edit3, Save, AlertCircle } from 'lucide-react';
 import WellnessTrend from '../Progress/WellnessTrend';
 import RecoveryMilestones from '../Progress/RecoveryMilestones';
+import authFetch from '../../utils/apiClient';
 
 const PatientDetail = () => {
   const { patientId } = useParams();
@@ -20,13 +21,32 @@ const PatientDetail = () => {
 
   const fetchPatientDetails = async () => {
     try {
-      const response = await fetch(`/api/practitioner/patients/${patientId}`);
-      const data = await response.json();
-      if (data.success) {
-        setPatient(data.patient);
-        setSessions(data.sessions);
-        setNotes(data.patient.practitionerNotes || '');
-        setRecommendations(data.patient.recommendations || '');
+      let response;
+      try {
+        response = await authFetch(`/api/practitioner/patients/${patientId}`);
+      } catch (err) {
+        console.error('authFetch failed', err);
+        response = null;
+      }
+
+      if (!response || response.status === 401 || response.status === 403) {
+        // try public fallback
+        const fb = await fetch(`/auth/patients/${patientId}`).catch(() => null);
+        const data = fb ? await fb.json().catch(() => null) : null;
+        if (data) {
+          setPatient(data.patient || data);
+          setSessions(data.sessions || []);
+          setNotes((data.patient && data.patient.practitionerNotes) || '');
+          setRecommendations((data.patient && data.patient.recommendations) || '');
+        }
+      } else {
+        const data = await response.json();
+        if (data.success) {
+          setPatient(data.patient);
+          setSessions(data.sessions);
+          setNotes(data.patient.practitionerNotes || '');
+          setRecommendations(data.patient.recommendations || '');
+        }
       }
     } catch (error) {
       console.error('Error fetching patient details:', error);
@@ -37,20 +57,43 @@ const PatientDetail = () => {
 
   const saveUpdates = async () => {
     try {
-      const response = await fetch(`/api/practitioner/patients/${patientId}/progress`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          notes,
-          recommendations
-        }),
-      });
+      let response;
+      try {
+        response = await authFetch(`/api/practitioner/patients/${patientId}/progress`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            notes,
+            recommendations
+          }),
+        });
+      } catch (err) {
+        console.error('authFetch failed', err);
+        response = null;
+      }
 
-      if (response.ok) {
+      if (!response || response.status === 401 || response.status === 403) {
+        // try public fallback
+        try {
+          response = await fetch(`/auth/patients/${patientId}/progress`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ notes, recommendations })
+          });
+        } catch (err) {
+          console.error('Fallback update failed', err);
+          response = null;
+        }
+      }
+
+      if (response && response.ok) {
         setIsEditing(false);
         fetchPatientDetails(); // Refresh data
+      } else {
+        const err = response ? await response.text().catch(() => 'Failed') : 'No response';
+        console.error('Save error:', err);
       }
     } catch (error) {
       console.error('Error updating patient:', error);

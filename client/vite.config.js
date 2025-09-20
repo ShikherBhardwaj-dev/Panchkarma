@@ -13,6 +13,19 @@ export default defineConfig({
   server: {
     port: 3000,
     open: true,
+    proxy: {
+      // forward API and auth calls to backend server during development
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/auth': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false,
+      }
+    }
   },
   build: {
     outDir: "dist",

@@ -67,3 +67,23 @@ router.get('/conversation', async (req, res) => {
 });
 
 module.exports = router;
+
+// Inbox route: messages addressed to a user (optionally unread only)
+router.get('/inbox', async (req, res) => {
+  try {
+    const { userId, email, unreadOnly } = req.query;
+    let user;
+    if (userId) user = await User.findById(userId);
+    else if (email) user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ msg: 'User not found' });
+
+    const q = { to: user._id };
+    if (unreadOnly === '1' || unreadOnly === 'true') q.read = false;
+
+    const messages = await Message.find(q).sort({ createdAt: -1 }).populate('from to', 'name email');
+    res.json(messages);
+  } catch (err) {
+    console.error('Error fetching inbox', err);
+    res.status(500).json({ msg: err.message });
+  }
+});

@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
+const jwt = require('jsonwebtoken');
+const config = require('../config/default.json');
 
 // ======================
 // Signup Route
@@ -17,10 +19,30 @@ router.post("/signup", async (req, res) => {
     }
 
     // create new user
+    // Normalize phone: remove non-digit chars and try to format to E.164
+    let phoneFormatted = null;
+    if (phone) {
+      const digits = String(phone).replace(/\D/g, "");
+      if (digits.length === 10) {
+        // assume local India number -> +91
+        phoneFormatted = `+91${digits}`;
+      } else if (digits.length === 11 && digits.startsWith("0")) {
+        // leading 0, drop and assume +91
+        phoneFormatted = `+91${digits.slice(1)}`;
+      } else if (digits.length >= 11 && digits.startsWith("91") && digits.length <= 13) {
+        phoneFormatted = `+${digits}`;
+      } else if (String(phone).startsWith("+")) {
+        phoneFormatted = phone;
+      } else {
+        // fallback: keep raw input
+        phoneFormatted = phone;
+      }
+    }
+
     const user = new User({
       name,
       email,
-      phone,
+      phone: phoneFormatted,
       userType, // ✅ store userType (patient/practitioner)
     });
 
@@ -34,8 +56,13 @@ router.post("/signup", async (req, res) => {
     res.json({
       success: true,
       msg: "User registered successfully",
-      userType: user.userType,
-      email: user.email,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        userType: user.userType,
+      }
     });
   } catch (err) {
     console.error("Signup error:", err.message);
@@ -62,9 +89,13 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ msg: "Invalid credentials" });
     }
 
-    // return user info (include _id so frontend can schedule sessions)
+    // Sign JWT and return token + user info
+    const payload = { user: { _id: user._id, name: user.name, email: user.email, userType: user.userType } };
+    const token = jwt.sign(payload, config.jwtSecret, { expiresIn: config.jwtExpiration || '24h' });
+
     res.json({
       success: true,
+      token,
       _id: user._id,
       name: user.name,
       email: user.email,

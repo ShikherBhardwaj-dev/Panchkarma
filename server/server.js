@@ -1,3 +1,5 @@
+// Load environment variables from .env when present (development)
+require('dotenv').config();
 const express = require("express");
 const connectDB = require("./config/db");
 const cors = require("cors");
@@ -21,6 +23,11 @@ app.use("/api/practitioner", require("./routes/practitioner")); // ✅ Practitio
 // New messaging and notification routes
 app.use('/api/messages', require('./routes/messages'));
 app.use('/api/notifications', require('./routes/notifications'));
+// Admin / debug endpoints (test WhatsApp send, list recent notifications)
+app.use('/admin', require('./routes/adminNotifications'));
+
+// Debug routes (temporary, for auth debugging)
+app.use('/debug', require('./routes/debugRoutes'));
 
 // Start notification worker (sends email/SMS/in-app reminders)
 const { startNotificationWorker } = require('./workers/notificationWorker');

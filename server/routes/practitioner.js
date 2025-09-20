@@ -8,13 +8,19 @@ const practitionerAuth = require('../middleware/practitionerAuth');
 // Get all patients for a practitioner
 router.get('/patients', auth, practitionerAuth, async (req, res) => {
     try {
+        console.log('Fetching patients for practitioner:', req.user._id);
+        console.log('User data in token:', req.user);
+        
         const patients = await User.find({ 
-            role: 'patient',
+            userType: 'patient',
             assignedPractitioner: req.user._id 
         }).select('-password');
         
+        console.log('Found patients:', patients.length);
+        
         res.json({ success: true, patients });
     } catch (error) {
+        console.error('Error fetching patients:', error);
         res.status(500).json({ success: false, message: 'Server error' });
     }
 });
@@ -47,7 +53,7 @@ router.get('/patients/:patientId', auth, practitionerAuth, async (req, res) => {
 // Update patient progress and milestones
 router.put('/patients/:patientId/progress', auth, practitionerAuth, async (req, res) => {
     try {
-        const { milestones, notes, recommendations } = req.body;
+        const { milestones, notes, recommendations, progress } = req.body;
         const patient = await User.findById(req.params.patientId);
         
         if (!patient) {
@@ -59,6 +65,16 @@ router.put('/patients/:patientId/progress', auth, practitionerAuth, async (req, 
             return res.status(403).json({ success: false, message: 'Not authorized' });
         }
 
+        // Persist progress on the User document if provided
+        if (typeof progress !== 'undefined') {
+            const p = Number(progress);
+            if (!isNaN(p) && p >= 0 && p <= 100) {
+                patient.progress = p;
+                await patient.save();
+            }
+        }
+
+        // Update a representative session document (if you want to keep notes/milestones tied to sessions)
         const session = await TherapySession.findOneAndUpdate(
             { patientId: req.params.patientId },
             { 
@@ -71,7 +87,8 @@ router.put('/patients/:patientId/progress', auth, practitionerAuth, async (req, 
             { new: true }
         );
 
-        res.json({ success: true, session });
+        // Return the updated patient and the session for convenience
+        res.json({ success: true, patient, session });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Server error' });
     }

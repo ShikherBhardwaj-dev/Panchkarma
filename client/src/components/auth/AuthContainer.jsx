@@ -16,6 +16,12 @@ const AuthContainer = ({ onAuthSuccess, onBackToLanding }) => {
 
   const handleSignupSuccess = (creds) => {
     // creds = { email, password } from SignupPage
+    // If server returned a user object (with _id) then treat as logged in and forward to App
+    if (creds && creds._id) {
+      if (onAuthSuccess) onAuthSuccess(creds);
+      return;
+    }
+
     if (creds && creds.email) {
       setPrefill({ email: creds.email, password: creds.password || "" });
     }

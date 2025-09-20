@@ -8,7 +8,6 @@ import TherapyScheduling from "./components/TherapyScheduling";
 import Notifications from "./components/Notifications";
 import WhatsAppTester from './components/Admin/WhatsAppTester';
 import Progress from "./components/Progress";
-import FloatingActionButton from "./components/FloatingActionButton";
 import Footer from "./components/Footer";
 import AuthContainer from "./components/auth/AuthContainer";
 import LandingPage from "./components/LandingPage";
@@ -203,19 +202,15 @@ const App = () => {
             </main>
           </div>
 
-          {/* ✅ Floating chatbot widget available everywhere */}
-          <div className="fixed bottom-6 right-6 z-50">
-            <ChatbotWidget user={user} />
-          </div>
-
-          <FloatingActionButton
-            showQuickMenu={showQuickMenu}
-            setShowQuickMenu={setShowQuickMenu}
-            isMenuSticky={isMenuSticky}
-            setIsMenuSticky={setIsMenuSticky}
-          />
+          {/* ✅ Floating chatbot widget for logged-in users except practitioners */}
+          {isAuthenticated && user?.userType !== "practitioner" && (
+            <div className="fixed bottom-6 right-6 z-50">
+              <ChatbotWidget user={user} />
+            </div>
+          )}
 
           <Footer />
+
   </div>
   </ErrorBoundary>
       )}

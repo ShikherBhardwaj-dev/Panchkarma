@@ -24,6 +24,11 @@ const SignupPage = ({ onSwitchToLogin, onSignupSuccess, onBackToLanding }) => {
 
   const { show } = useToast();
 
+  const handleGoogleLogin = () => {
+    // Redirect to Google OAuth endpoint
+    window.location.href = 'http://localhost:5000/api/auth/google';
+  };
+
   const handleSignup = async () => {
     if (!formData.name || !formData.email || !formData.password) {
       show({
@@ -44,7 +49,7 @@ const SignupPage = ({ onSwitchToLogin, onSignupSuccess, onBackToLanding }) => {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/auth/signup", {
+      const res = await fetch("http://localhost:5000/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -469,6 +474,37 @@ const SignupPage = ({ onSwitchToLogin, onSignupSuccess, onBackToLanding }) => {
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Social Login Options */}
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={handleGoogleLogin}
+                className="flex items-center justify-center px-4 py-3 bg-white/70 backdrop-blur-md border-2 border-gray-100 rounded-xl hover:border-ayurveda-kumkum/50 hover:shadow-lg transition-all duration-300 group relative overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-[#4285F4]/10 to-[#34A853]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <img
+                  src="https://developers.google.com/identity/images/g-logo.png"
+                  alt="Google"
+                  className="w-5 h-5 mr-2"
+                />
+                <span className="text-gray-600 group-hover:text-gray-800 transition-colors font-medium">
+                  Google
+                </span>
+              </button>
+              <button
+                type="button"
+                className="flex items-center justify-center px-4 py-3 bg-white/70 backdrop-blur-md border-2 border-gray-100 rounded-xl hover:border-ayurveda-kumkum/50 hover:shadow-lg transition-all duration-300 group relative overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-[#1877f2]/10 to-[#3b5998]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="w-5 h-5 mr-2 bg-[#1877f2] rounded text-white text-xs flex items-center justify-center font-bold">
+                  f
+                </div>
+                <span className="text-gray-600 group-hover:text-gray-800 transition-colors font-medium">
+                  Facebook
+                </span>
+              </button>
             </div>
 
             {/* Switch to Login Link */}

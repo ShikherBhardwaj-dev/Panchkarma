@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { User, MapPin, Phone, Calendar, ArrowRight, CheckCircle, AlertCircle } from "lucide-react";
 import NotificationsPanel from "../NotificationsPanel";
 
 // Import background patterns
@@ -63,6 +64,75 @@ const PatientDashboard = ({ user, patientProgress, notifications }) => {
             </div>
           </div>
         </div>
+
+        {/* Practitioner Assignment Section */}
+        {!data?.hasPractitioner && (
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl shadow-md border border-blue-100 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 opacity-5">
+              <img src={mandalaBackground} alt="" className="w-full h-full" />
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                  <AlertCircle className="h-6 w-6 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-blue-900">No Practitioner Assigned</h3>
+                  <p className="text-blue-700">Find and assign a practitioner to get started with your treatment journey.</p>
+                </div>
+              </div>
+              <button
+                onClick={() => window.location.href = '/?tab=practitioner-search'}
+                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+              >
+                Find Practitioner
+                <ArrowRight className="h-4 w-4 ml-2" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {data?.hasPractitioner && data?.assignedPractitioner && (
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-xl shadow-md border border-green-100 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 opacity-5">
+              <img src={mandalaBackground} alt="" className="w-full h-full" />
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                  <CheckCircle className="h-6 w-6 text-green-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-green-900">Assigned to Dr. {data.assignedPractitioner.name}</h3>
+                  <div className="flex items-center text-green-700 text-sm mt-1">
+                    <MapPin className="h-4 w-4 mr-1" />
+                    {data.assignedPractitioner.practiceLocation?.city}, {data.assignedPractitioner.practiceLocation?.state}
+                  </div>
+                  {data.assignedPractitioner.practiceAreas && data.assignedPractitioner.practiceAreas.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {data.assignedPractitioner.practiceAreas.slice(0, 2).map((area, index) => (
+                        <span key={index} className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">
+                          {area}
+                        </span>
+                      ))}
+                      {data.assignedPractitioner.practiceAreas.length > 2 && (
+                        <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">
+                          +{data.assignedPractitioner.practiceAreas.length - 2} more
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <button
+                onClick={() => window.location.href = '/?tab=practitioner-search'}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+              >
+                View Details
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Quick Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

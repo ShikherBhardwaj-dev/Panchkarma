@@ -1,13 +1,19 @@
 import React from "react";
-import { Layout, Calendar, Bell, TrendingUp } from "lucide-react";
+import { Layout, Calendar, Bell, TrendingUp, User, Search } from "lucide-react";
 
-const Navigation = ({ activeTab, setActiveTab }) => {
-  const tabs = [
+const Navigation = ({ activeTab, setActiveTab, userType }) => {
+  const baseTabs = [
     { id: "dashboard", label: "Dashboard", icon: Layout },
     { id: "scheduling", label: "Therapy Scheduling", icon: Calendar },
     { id: "notifications", label: "Notifications & Care", icon: Bell },
     { id: "progress", label: "Progress Tracking", icon: TrendingUp },
+    { id: "profile", label: "My Profile", icon: User },
   ];
+
+  // Add practitioner search for patients
+  const tabs = userType === 'patient' 
+    ? [...baseTabs, { id: "practitioner-search", label: "Find Practitioner", icon: Search }]
+    : baseTabs;
 
   return (
     <nav className="w-full bg-[#FDF7E9] py-4">

@@ -66,7 +66,7 @@ const LoginPage = ({
     }
 
     try {
-      const res = await fetch("http://localhost:5000/auth/login", {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -119,6 +119,11 @@ const LoginPage = ({
     if (e.key === "Enter") {
       handleLogin();
     }
+  };
+
+  const handleGoogleLogin = () => {
+    // Redirect to Google OAuth endpoint
+    window.location.href = "http://localhost:5000/api/auth/google";
   };
 
   return (
@@ -359,7 +364,8 @@ const LoginPage = ({
             <div className="flex justify-center">
               <button
                 type="button"
-                className="flex items-center justify-center px-6 py-3 bg-white/70 backdrop-blur-md border-2 border-gray-100 rounded-xl hover:border-ayurveda-kumkum/50 hover:shadow-lg transition-all duration-300 group relative overflow-hidden w-full max-w-xs"
+                onClick={handleGoogleLogin}
+                className="flex items-center justify-center px-4 py-3 bg-white/70 backdrop-blur-md border-2 border-gray-100 rounded-xl hover:border-ayurveda-kumkum/50 hover:shadow-lg transition-all duration-300 group relative overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-[#4285F4]/10 to-[#34A853]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <img

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Bell, User, Leaf, LogOut, Settings } from "lucide-react";
+import { Bell, User, Leaf, LogOut, Settings, Shield } from "lucide-react";
 
 // Import background patterns
 const mandalaCorner = "/patterns/corner-mandala.svg";
@@ -95,14 +95,22 @@ const Header = ({ userRole, notifications = [], user, onLogout, setNotifications
 
           {/* Right Section */}
           <div className="flex items-center space-x-6">
-            {/* Admin quick button (visible when enabled via env or admin email) */}
-            {((typeof process !== 'undefined' && process?.env?.REACT_APP_ENABLE_ADMIN === 'true') || (typeof import.meta !== 'undefined' && import.meta.env?.VITE_ENABLE_ADMIN === 'true') || user?.email === 'admin@local') && (
-              <button
-                className="px-3 py-1 bg-primary-600 text-white rounded-md text-sm"
-                onClick={() => setActiveTab('admin-whatsapp')}
-              >
-                Admin
-              </button>
+            {/* Admin quick button (visible only for admin@local) */}
+            {user?.email === 'admin@local' && (
+              <div className="flex space-x-2">
+                <button
+                  className="px-3 py-1 bg-primary-600 text-white rounded-md text-sm"
+                  onClick={() => setActiveTab('admin-whatsapp')}
+                >
+                  WhatsApp
+                </button>
+                <button
+                  className="px-3 py-1 bg-green-600 text-white rounded-md text-sm"
+                  onClick={() => setActiveTab('admin-verification')}
+                >
+                  Verification
+                </button>
+              </div>
             )}
             {/* Role */}
             <span className="text-sm font-medium text-primary-800 px-4 py-1.5 bg-primary-100/60 rounded-full border border-primary-200/50 capitalize">
@@ -216,6 +224,18 @@ const Header = ({ userRole, notifications = [], user, onLogout, setNotifications
                   </div>
 
                   <div className="p-1">
+                    <button
+                      className="flex items-center w-full px-4 py-2.5 text-sm text-amber-800 hover:bg-amber-100/60 rounded-lg transition-colors"
+                      onClick={() => {
+                        setShowUserMenu(false);
+                        setActiveTab('profile');
+                      }}
+                    >
+                      <User className="h-4 w-4 mr-3 text-amber-600" />
+                      My Profile
+                    </button>
+
+
                     <button
                       className="flex items-center w-full px-4 py-2.5 text-sm text-amber-800 hover:bg-amber-100/60 rounded-lg transition-colors"
                       onClick={() => {

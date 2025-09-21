@@ -13,7 +13,7 @@ const ChatPanel = ({ currentUserEmail, currentUserId, userType }) => {
     async function loadContacts() {
       try {
         const endpoint = userType === "patient" ? "practitioners" : "patients";
-        const res = await axios.get(`http://localhost:5000/auth/${endpoint}`);
+        const res = await axios.get(`http://localhost:5000/api/auth/${endpoint}`);
         setContacts(res.data || []);
         if (res.data && res.data.length) {
           // for patients auto-select the first practitioner; for practitioners select first patient

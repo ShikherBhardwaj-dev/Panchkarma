@@ -12,7 +12,19 @@ const UserSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
+    required: function() {
+      return !this.googleId; // Password required only if not OAuth user
+    },
+  },
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true, // Allows multiple null values
+  },
+  provider: {
+    type: String,
+    enum: ['local', 'google'],
+    default: 'local',
   },
   phone: {
     type: String,
@@ -57,6 +69,84 @@ const UserSchema = new mongoose.Schema({
     medications: [String],
     allergies: [String],
     previousTreatments: [String]
+  },
+  address: {
+    street: String,
+    city: String,
+    state: String,
+    pincode: String,
+    country: {
+      type: String,
+      default: 'India'
+    }
+  },
+  caregiverPhone: {
+    type: String,
+  },
+  emergencyContact: {
+    name: String,
+    phone: String,
+    relationship: String
+  },
+  personalDetails: {
+    dateOfBirth: Date,
+    gender: {
+      type: String,
+      enum: ['male', 'female', 'other', 'prefer_not_to_say']
+    },
+    bloodGroup: {
+      type: String,
+      enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', 'Unknown']
+    }
+  },
+  // Practitioner-specific fields
+  licenseNumber: {
+    type: String,
+  },
+  verificationStatus: {
+    type: String,
+    enum: ['pending', 'verified', 'rejected'],
+    default: 'pending'
+  },
+  verificationRequest: {
+    submittedAt: Date,
+    licenseNumber: String,
+    additionalDocuments: String,
+    adminNotes: String,
+    reviewedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    reviewedAt: Date
+  },
+  // Practitioner location and availability
+  practiceLocation: {
+    address: String,
+    city: String,
+    state: String,
+    pincode: String,
+    country: {
+      type: String,
+      default: 'India'
+    },
+    coordinates: {
+      latitude: Number,
+      longitude: Number
+    }
+  },
+  practiceAreas: [String], // e.g., ['Vamana', 'Virechana', 'Basti']
+  consultationFee: {
+    type: Number,
+    default: 0
+  },
+  availableForNewPatients: {
+    type: Boolean,
+    default: true
+  },
+  bio: String,
+  experience: {
+    type: Number, // years of experience
+    default: 0
   }
 }, {
   timestamps: true

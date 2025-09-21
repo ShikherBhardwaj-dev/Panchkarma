@@ -1,5 +1,8 @@
 {
     "mongoURI": "mongodb://localhost:27017/ayursutra",
     "jwtSecret": "ayursutra-secret-token",
-    "jwtExpiration": "24h"
+    "jwtExpiration": "24h",
+    "googleClientId": "your-google-client-id",
+    "googleClientSecret": "your-google-client-secret",
+    "googleCallbackURL": "http://localhost:5000/auth/google/callback"
 }

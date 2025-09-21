@@ -6,8 +6,10 @@ import PatientDashboard from "./components/Dashboard/PatientDashboard";
 import PractitionerDashboard from "./components/Dashboard/PractitionerDashboard";
 import TherapyScheduling from "./components/TherapyScheduling";
 import Notifications from "./components/Notifications";
-import WhatsAppTester from './components/Admin/WhatsAppTester';
+import AdminPanel from './components/Admin/AdminPanel';
 import Progress from "./components/Progress";
+import Profile from "./components/Profile";
+import PractitionerSearch from "./components/PractitionerSearch";
 import Footer from "./components/Footer";
 import AuthContainer from "./components/auth/AuthContainer";
 import LandingPage from "./components/LandingPage";
@@ -46,6 +48,33 @@ const App = () => {
     setShowLanding(false);
     console.log('App: user authenticated', userData);
   };
+
+  // ✅ Handle Google OAuth success
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    const userParam = urlParams.get('user');
+    const auth = urlParams.get('auth');
+    
+    if (token && userParam && auth === 'google' && !isAuthenticated) {
+      try {
+        // Decode user data
+        const userData = JSON.parse(decodeURIComponent(userParam));
+        
+        // Store token and user data
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(userData));
+        
+        // Authenticate the user
+        handleAuthSuccess(userData);
+        
+        // Clean up URL parameters
+        window.history.replaceState({}, document.title, window.location.pathname);
+      } catch (error) {
+        console.error('Google OAuth success error:', error);
+      }
+    }
+  }, [isAuthenticated]);
 
   // ✅ Logout
   const handleLogout = () => {
@@ -111,8 +140,18 @@ const App = () => {
           />
         );
 
+      case "profile":
+        return <Profile user={user} />;
+
+      case "practitioner-search":
+        return <PractitionerSearch user={user} onAssignmentSuccess={(practitioner) => {
+          // Update user state with assigned practitioner
+          setUser(prev => ({ ...prev, assignedPractitioner: practitioner._id }));
+        }} />;
+
       case 'admin-whatsapp':
-        return <WhatsAppTester user={user} />;
+      case 'admin-verification':
+        return <AdminPanel user={user} />;
 
       default:
         if (userRole === "practitioner") {
@@ -194,7 +233,7 @@ const App = () => {
             onLogout={handleLogout}
           />
 
-          <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
+          <Navigation activeTab={activeTab} setActiveTab={setActiveTab} userType={user?.userType} />
 
           <div className="w-full bg-[#FDF7E9]">
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">

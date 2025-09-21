@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const jwt = require('jsonwebtoken');
 const config = require('../config/default.json');
+const passport = require('passport');
 
 // ======================
 // Signup Route
@@ -130,6 +131,70 @@ router.get("/practitioners", async (req, res) => {
   } catch (err) {
     console.error("Fetch practitioners error:", err.message);
     res.status(500).json({ msg: 'Server error' });
+  }
+});
+
+// ======================
+// Google OAuth Routes
+// ======================
+
+// Google OAuth login initiation
+router.get('/google', passport.authenticate('google', {
+  scope: ['profile', 'email']
+}));
+
+// Google OAuth callback
+router.get('/google/callback', 
+  passport.authenticate('google', { failureRedirect: 'http://localhost:3000/login?error=google_auth_failed' }),
+  async (req, res) => {
+    try {
+      // Generate JWT token for the authenticated user
+      const payload = { 
+        user: { 
+          _id: req.user._id, 
+          name: req.user.name, 
+          email: req.user.email, 
+          userType: req.user.userType 
+        } 
+      };
+      const token = jwt.sign(payload, config.jwtSecret, { expiresIn: config.jwtExpiration || '24h' });
+
+      // Redirect to frontend with token and user data
+      const userData = {
+        _id: req.user._id,
+        name: req.user.name,
+        email: req.user.email,
+        userType: req.user.userType,
+        provider: req.user.provider
+      };
+
+      // Encode user data and token for URL
+      const encodedUserData = encodeURIComponent(JSON.stringify(userData));
+      const encodedToken = encodeURIComponent(token);
+      
+      res.redirect(`http://localhost:3000/?token=${encodedToken}&user=${encodedUserData}&auth=google`);
+    } catch (error) {
+      console.error('Google OAuth callback error:', error);
+      res.redirect('http://localhost:3000/login?error=google_auth_failed');
+    }
+  }
+);
+
+// Google OAuth success endpoint (for API calls)
+router.get('/google/success', (req, res) => {
+  if (req.user) {
+    res.json({
+      success: true,
+      user: {
+        _id: req.user._id,
+        name: req.user.name,
+        email: req.user.email,
+        userType: req.user.userType,
+        provider: req.user.provider
+      }
+    });
+  } else {
+    res.status(401).json({ success: false, message: 'Not authenticated' });
   }
 });
 

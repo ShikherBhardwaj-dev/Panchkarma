@@ -7,6 +7,10 @@ import {
   Calendar,
   MessageCircle,
   Leaf,
+  Shield,
+  CheckCircle,
+  Clock,
+  XCircle,
 } from "lucide-react";
 
 // Import background patterns
@@ -17,10 +21,12 @@ const herbsBackground = "/patterns/herbs-bg.svg";
 
 const PractitionerDashboard = ({ user }) => {
   const [data, setData] = useState(null);
+  const [verificationStatus, setVerificationStatus] = useState(null);
 
   useEffect(() => {
     if (!user?._id) return;
 
+    // Fetch dashboard data
     axios
       .get(`http://localhost:5000/api/dashboard/practitioner/${user._id}`)
       .then((res) => {
@@ -28,7 +34,51 @@ const PractitionerDashboard = ({ user }) => {
         setData(res.data);
       })
       .catch((err) => console.error("❌ Practitioner Dashboard Error:", err));
+
+    // Fetch verification status
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetch('http://localhost:5000/api/verification/status', {
+        headers: {
+          'x-auth-token': token,
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setVerificationStatus(data);
+        }
+      })
+      .catch(err => console.error('Error fetching verification status:', err));
+    }
   }, [user]);
+
+  const getVerificationIcon = (status) => {
+    switch (status) {
+      case 'verified':
+        return <CheckCircle className="w-5 h-5 text-green-500" />;
+      case 'rejected':
+        return <XCircle className="w-5 h-5 text-red-500" />;
+      case 'pending':
+        return <Clock className="w-5 h-5 text-yellow-500" />;
+      default:
+        return <Shield className="w-5 h-5 text-gray-500" />;
+    }
+  };
+
+  const getVerificationColor = (status) => {
+    switch (status) {
+      case 'verified':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'rejected':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#FDF7E9] w-full">
@@ -53,6 +103,12 @@ const PractitionerDashboard = ({ user }) => {
                 <h2 className="text-2xl font-semibold text-amber-900">
                   Namaste, Dr. {user.name}
                 </h2>
+                {verificationStatus && (
+                  <div className={`ml-4 flex items-center space-x-2 px-3 py-1 rounded-full text-sm font-medium border ${getVerificationColor(verificationStatus.verificationStatus)}`}>
+                    {getVerificationIcon(verificationStatus.verificationStatus)}
+                    <span className="capitalize">{verificationStatus.verificationStatus}</span>
+                  </div>
+                )}
               </div>
               <p className="text-amber-700 mt-2">
                 Manage your patients, schedule therapies, and track progress all

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useToast } from '../contexts/ToastContext.jsx';
+import { useToast } from "../contexts/ToastContext.jsx";
 import {
   Clock,
   Calendar,
@@ -38,9 +38,9 @@ const TherapyScheduling = ({ userRole, user }) => {
   const handleEditSession = (session) => {
     if (session.status !== "scheduled") {
       show({
-        title: 'Cannot Reschedule',
-        message: 'Only scheduled sessions can be rescheduled.',
-        duration: 4000
+        title: "Cannot Reschedule",
+        message: "Only scheduled sessions can be rescheduled.",
+        duration: 4000,
       });
       return;
     }
@@ -87,16 +87,19 @@ const TherapyScheduling = ({ userRole, user }) => {
       setEditingSession(null);
       // Show success message
       show({
-        title: 'Success',
-        message: 'Session rescheduled successfully!',
-        duration: 4000
+        title: "Success",
+        message: "Session rescheduled successfully!",
+        duration: 4000,
       });
     } catch (err) {
       console.error("Error rescheduling session:", err);
       show({
-        title: 'Error',
-        message: err.response?.data?.msg || err.message || "Failed to reschedule session",
-        duration: 4000
+        title: "Error",
+        message:
+          err.response?.data?.msg ||
+          err.message ||
+          "Failed to reschedule session",
+        duration: 4000,
       });
       // Keep the modal open on error
     }
@@ -135,9 +138,11 @@ const TherapyScheduling = ({ userRole, user }) => {
     } catch (err) {
       console.error("Error cancelling session:", err);
       show({
-        title: 'Error',
-        message: `Failed to cancel session: ${err.response?.data?.msg || "Unknown error"}`,
-        duration: 4000
+        title: "Error",
+        message: `Failed to cancel session: ${
+          err.response?.data?.msg || "Unknown error"
+        }`,
+        duration: 4000,
       });
     }
   };
@@ -164,9 +169,9 @@ const TherapyScheduling = ({ userRole, user }) => {
   const handleGenerateSchedule = async () => {
     if (!therapyType || !startDate) {
       show({
-        title: 'Missing Information',
-        message: 'Please select therapy type and start date',
-        duration: 4000
+        title: "Missing Information",
+        message: "Please select therapy type and start date",
+        duration: 4000,
       });
       return;
     }
@@ -179,17 +184,17 @@ const TherapyScheduling = ({ userRole, user }) => {
         status: "scheduled", // Explicitly set lowercase status
       });
       show({
-        title: 'Success',
-        message: 'Therapy schedule generated successfully!',
-        duration: 4000
+        title: "Success",
+        message: "Therapy schedule generated successfully!",
+        duration: 4000,
       });
       fetchSessions();
     } catch (err) {
       console.error("Error generating schedule:", err);
       show({
-        title: 'Error',
-        message: 'Failed to generate schedule',
-        duration: 4000
+        title: "Error",
+        message: "Failed to generate schedule",
+        duration: 4000,
       });
     }
     setLoading(false);
@@ -256,6 +261,13 @@ const TherapyScheduling = ({ userRole, user }) => {
                   onChange={(d) => setStartDate(d)}
                   dateFormat="yyyy-MM-dd"
                   className="w-full bg-white border border-amber-200 text-amber-900 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                  withPortal
+                  portalId="date-picker-portal"
+                  popperProps={{
+                    positionFixed: true,
+                    strategy: "fixed",
+                  }}
+                  popperClassName="react-datepicker-popper-custom"
                 />
               </div>
 
@@ -446,6 +458,13 @@ const TherapyScheduling = ({ userRole, user }) => {
                   dateFormat="yyyy-MM-dd"
                   minDate={new Date()}
                   className="w-full bg-white border border-amber-200 text-amber-900 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                  withPortal
+                  portalId="date-picker-portal-modal"
+                  popperProps={{
+                    positionFixed: true,
+                    strategy: "fixed",
+                  }}
+                  popperClassName="react-datepicker-popper-custom"
                 />
               </div>
               <div>

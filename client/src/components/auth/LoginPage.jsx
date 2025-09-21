@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Leaf, Eye, EyeOff, Mail, Lock, ArrowLeft } from "lucide-react";
-import { useToast } from '../../contexts/ToastContext.jsx';
+import { useToast } from "../../contexts/ToastContext.jsx";
 
 const LoginPage = ({
   onSwitchToSignup,
@@ -36,31 +36,31 @@ const LoginPage = ({
   };
 
   const { show } = useToast();
-  
+
   const handleLogin = async () => {
     if (!formData.email || !formData.password) {
-      show({ 
-        title: 'Missing Fields', 
-        message: 'Please fill in all fields',
-        duration: 4000
+      show({
+        title: "Missing Fields",
+        message: "Please fill in all fields",
+        duration: 4000,
       });
       return;
     }
 
     if (!formData.email.includes("@")) {
-      show({ 
-        title: 'Invalid Email', 
-        message: 'Please enter a valid email address',
-        duration: 4000
+      show({
+        title: "Invalid Email",
+        message: "Please enter a valid email address",
+        duration: 4000,
       });
       return;
     }
 
     if (formData.password.length < 6) {
-      show({ 
-        title: 'Invalid Password', 
-        message: 'Password must be at least 6 characters',
-        duration: 4000
+      show({
+        title: "Invalid Password",
+        message: "Password must be at least 6 characters",
+        duration: 4000,
       });
       return;
     }
@@ -80,37 +80,37 @@ const LoginPage = ({
 
       if (res.ok) {
         show({
-          title: 'Success',
-          message: 'Login successful ✅',
-          duration: 4000
+          title: "Success",
+          message: "Login successful ✅",
+          duration: 4000,
         });
 
         if (onAuthSuccess) {
           // ✅ Pass the complete user object from backend
           // store token for authenticated requests
-          if (data.token) localStorage.setItem('token', data.token);
+          if (data.token) localStorage.setItem("token", data.token);
           const userObj = {
             _id: data._id,
             name: data.name,
             email: data.email,
             userType: data.userType, // "patient" or "practitioner"
           };
-          localStorage.setItem('user', JSON.stringify(userObj));
+          localStorage.setItem("user", JSON.stringify(userObj));
           onAuthSuccess(userObj);
         }
       } else {
         show({
-          title: 'Login Failed',
-          message: data.msg || 'Login failed ❌',
-          duration: 4000
+          title: "Login Failed",
+          message: data.msg || "Login failed ❌",
+          duration: 4000,
         });
       }
     } catch (err) {
       console.error("Login error:", err);
       show({
-        title: 'Error',
-        message: 'Something went wrong. Please try again.',
-        duration: 4000
+        title: "Error",
+        message: "Something went wrong. Please try again.",
+        duration: 4000,
       });
     }
   };
@@ -356,10 +356,10 @@ const LoginPage = ({
             </div>
 
             {/* Social Login Options */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="flex justify-center">
               <button
                 type="button"
-                className="flex items-center justify-center px-4 py-3 bg-white/70 backdrop-blur-md border-2 border-gray-100 rounded-xl hover:border-ayurveda-kumkum/50 hover:shadow-lg transition-all duration-300 group relative overflow-hidden"
+                className="flex items-center justify-center px-6 py-3 bg-white/70 backdrop-blur-md border-2 border-gray-100 rounded-xl hover:border-ayurveda-kumkum/50 hover:shadow-lg transition-all duration-300 group relative overflow-hidden w-full max-w-xs"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-[#4285F4]/10 to-[#34A853]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <img
@@ -368,19 +368,7 @@ const LoginPage = ({
                   className="w-5 h-5 mr-2"
                 />
                 <span className="text-gray-600 group-hover:text-gray-800 transition-colors font-medium">
-                  Google
-                </span>
-              </button>
-              <button
-                type="button"
-                className="flex items-center justify-center px-4 py-3 bg-white/70 backdrop-blur-md border-2 border-gray-100 rounded-xl hover:border-ayurveda-kumkum/50 hover:shadow-lg transition-all duration-300 group relative overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-[#1877f2]/10 to-[#3b5998]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div className="w-5 h-5 mr-2 bg-[#1877f2] rounded text-white text-xs flex items-center justify-center font-bold">
-                  f
-                </div>
-                <span className="text-gray-600 group-hover:text-gray-800 transition-colors font-medium">
-                  Facebook
+                  Continue with Google
                 </span>
               </button>
             </div>
@@ -403,10 +391,9 @@ const LoginPage = ({
         </div>
       </div>
 
-      {/* Terms and Privacy Policy - Fixed at Bottom */}
-      {/* Terms and Privacy Policy - Fixed at Bottom */}
-      <div className="fixed bottom-4 left-0 right-0 text-center z-50">
-        <div className="text-sm text-gray-500/80 backdrop-blur-sm bg-white/30 py-2 mx-auto inline-block px-6 rounded-full shadow-lg">
+      {/* Terms and Privacy Policy - Positioned to not interfere with buttons */}
+      <div className="absolute bottom-4 left-0 right-0 text-center pointer-events-none z-10">
+        <div className="text-xs text-gray-500/70 backdrop-blur-sm bg-white/20 py-1.5 mx-auto inline-block px-4 rounded-full shadow-sm pointer-events-auto">
           By signing in, you agree to our{" "}
           <a
             href="#"

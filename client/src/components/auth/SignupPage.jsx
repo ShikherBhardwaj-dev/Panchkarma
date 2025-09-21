@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useToast } from '../../contexts/ToastContext.jsx';
+import { useToast } from "../../contexts/ToastContext.jsx";
 import { Eye, EyeOff, Mail, Lock, User, Phone, ArrowLeft } from "lucide-react";
 
 const SignupPage = ({ onSwitchToLogin, onSignupSuccess, onBackToLanding }) => {
@@ -26,12 +26,20 @@ const SignupPage = ({ onSwitchToLogin, onSignupSuccess, onBackToLanding }) => {
 
   const handleSignup = async () => {
     if (!formData.name || !formData.email || !formData.password) {
-      show({ title: 'Missing fields', message: 'Please fill in name, email and password', duration: 4000 });
+      show({
+        title: "Missing fields",
+        message: "Please fill in name, email and password",
+        duration: 4000,
+      });
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      show({ title: 'Password mismatch', message: 'Passwords do not match', duration: 4000 });
+      show({
+        title: "Password mismatch",
+        message: "Passwords do not match",
+        duration: 4000,
+      });
       return;
     }
 
@@ -46,21 +54,36 @@ const SignupPage = ({ onSwitchToLogin, onSignupSuccess, onBackToLanding }) => {
       try {
         data = await res.json();
       } catch (e) {
-        data = { msg: await res.text().catch(() => 'No response body') };
+        data = { msg: await res.text().catch(() => "No response body") };
       }
 
-      console.log('Signup status', res.status, data);
+      console.log("Signup status", res.status, data);
 
       if (res.ok) {
-        show({ title: 'Signup successful', message: data.msg || 'Account created', duration: 4000 });
+        show({
+          title: "Signup successful",
+          message: data.msg || "Account created",
+          duration: 4000,
+        });
         // If server returned the created user object, forward it up so App can use phone/_id
-        if (onSignupSuccess) onSignupSuccess(data.user || { email: formData.email, password: formData.password });
+        if (onSignupSuccess)
+          onSignupSuccess(
+            data.user || { email: formData.email, password: formData.password }
+          );
       } else {
-        show({ title: 'Signup failed', message: data.msg || `Status ${res.status}`, duration: 6000 });
+        show({
+          title: "Signup failed",
+          message: data.msg || `Status ${res.status}`,
+          duration: 6000,
+        });
       }
     } catch (err) {
-      console.error('Signup error', err);
-      show({ title: 'Signup error', message: err.message || 'Network error', duration: 6000 });
+      console.error("Signup error", err);
+      show({
+        title: "Signup error",
+        message: err.message || "Network error",
+        duration: 6000,
+      });
     }
   };
 
@@ -466,9 +489,9 @@ const SignupPage = ({ onSwitchToLogin, onSignupSuccess, onBackToLanding }) => {
         </div>
       </div>
 
-      {/* Terms and Privacy Policy - Fixed at Bottom */}
-      <div className="fixed bottom-4 left-0 right-0 text-center z-50">
-        <div className="text-sm text-gray-500/80 backdrop-blur-sm bg-white/30 py-2 mx-auto inline-block px-6 rounded-full shadow-lg">
+      {/* Terms and Privacy Policy - Positioned to not interfere with buttons */}
+      <div className="absolute bottom-4 left-0 right-0 text-center pointer-events-none z-10">
+        <div className="text-xs text-gray-500/70 backdrop-blur-sm bg-white/20 py-1.5 mx-auto inline-block px-4 rounded-full shadow-sm pointer-events-auto">
           By signing up, you agree to our{" "}
           <a
             href="#"

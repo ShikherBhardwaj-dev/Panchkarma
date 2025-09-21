@@ -81,3 +81,74 @@ input:focus,
 select:focus {
   @apply outline-none ring-2 ring-green-500 ring-opacity-50;
 }
+
+/* DatePicker Calendar z-index fix */
+.react-datepicker-popper,
+.react-datepicker-popper-custom {
+  z-index: 99999 !important;
+  position: fixed !important;
+  transform: none !important;
+}
+
+.react-datepicker-wrapper {
+  position: relative;
+}
+
+.react-datepicker {
+  z-index: 99999 !important;
+  font-family: inherit;
+  border: 1px solid #d4a373;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+/* Ensure the DatePicker is not clipped by parent containers */
+.react-datepicker-popper[data-placement^="bottom"] {
+  position: fixed !important;
+  z-index: 99999 !important;
+}
+
+.react-datepicker-popper[data-placement^="top"] {
+  position: fixed !important;
+  z-index: 99999 !important;
+}
+
+/* Override any overflow hidden that might clip the calendar */
+body .react-datepicker-popper {
+  position: fixed !important;
+  z-index: 99999 !important;
+}
+
+/* Portal specific styles */
+#date-picker-portal,
+#date-picker-portal-modal {
+  z-index: 99999 !important;
+}
+
+#date-picker-portal .react-datepicker,
+#date-picker-portal-modal .react-datepicker {
+  z-index: 99999 !important;
+  position: relative !important;
+}
+
+.react-datepicker__header {
+  background-color: #fdf7e9;
+  border-bottom: 1px solid #e6c99f;
+  border-radius: 0.75rem 0.75rem 0 0;
+}
+
+.react-datepicker__day--selected {
+  background-color: #e17055 !important;
+  color: white !important;
+}
+
+.react-datepicker__day--selected:hover {
+  background-color: #d35400 !important;
+}
+
+.react-datepicker__day:hover {
+  background-color: #ffeaa7;
+  color: #2d3436;
+}

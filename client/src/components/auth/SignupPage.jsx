@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useToast } from "../../contexts/ToastContext.jsx";
 import { Eye, EyeOff, Mail, Lock, User, Phone, ArrowLeft } from "lucide-react";
 
 const SignupPage = ({ onSwitchToLogin, onSignupSuccess, onBackToLanding }) => {
@@ -21,41 +22,73 @@ const SignupPage = ({ onSwitchToLogin, onSignupSuccess, onBackToLanding }) => {
     });
   };
 
+  const { show } = useToast();
+
+  const handleGoogleLogin = () => {
+    // Redirect to Google OAuth endpoint
+    window.location.href = 'http://localhost:5000/api/auth/google';
+  };
+
   const handleSignup = async () => {
     if (!formData.name || !formData.email || !formData.password) {
-      alert("Please fill in all required fields");
+      show({
+        title: "Missing fields",
+        message: "Please fill in name, email and password",
+        duration: 4000,
+      });
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match ❌");
+      show({
+        title: "Password mismatch",
+        message: "Passwords do not match",
+        duration: 4000,
+      });
       return;
     }
 
     try {
-      const res = await fetch("http://localhost:5000/auth/signup", {
+      const res = await fetch("http://localhost:5000/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData), // send name, email, phone, password, userType
+        body: JSON.stringify(formData),
       });
 
-      const data = await res.json();
-      console.log("Signup response:", data);
+      let data = null;
+      try {
+        data = await res.json();
+      } catch (e) {
+        data = { msg: await res.text().catch(() => "No response body") };
+      }
+
+      console.log("Signup status", res.status, data);
 
       if (res.ok) {
-        alert("Signup successful ✅");
-        if (onSignupSuccess) {
-          onSignupSuccess({
-            email: formData.email,
-            password: formData.password,
-          });
-        }
+        show({
+          title: "Signup successful",
+          message: data.msg || "Account created",
+          duration: 4000,
+        });
+        // If server returned the created user object, forward it up so App can use phone/_id
+        if (onSignupSuccess)
+          onSignupSuccess(
+            data.user || { email: formData.email, password: formData.password }
+          );
       } else {
-        alert(data.msg || "Signup failed ❌");
+        show({
+          title: "Signup failed",
+          message: data.msg || `Status ${res.status}`,
+          duration: 6000,
+        });
       }
     } catch (err) {
-      console.error("Signup error:", err);
-      alert("Something went wrong. Please try again.");
+      console.error("Signup error", err);
+      show({
+        title: "Signup error",
+        message: err.message || "Network error",
+        duration: 6000,
+      });
     }
   };
 
@@ -443,6 +476,37 @@ const SignupPage = ({ onSwitchToLogin, onSignupSuccess, onBackToLanding }) => {
               </div>
             </div>
 
+            {/* Social Login Options */}
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={handleGoogleLogin}
+                className="flex items-center justify-center px-4 py-3 bg-white/70 backdrop-blur-md border-2 border-gray-100 rounded-xl hover:border-ayurveda-kumkum/50 hover:shadow-lg transition-all duration-300 group relative overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-[#4285F4]/10 to-[#34A853]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <img
+                  src="https://developers.google.com/identity/images/g-logo.png"
+                  alt="Google"
+                  className="w-5 h-5 mr-2"
+                />
+                <span className="text-gray-600 group-hover:text-gray-800 transition-colors font-medium">
+                  Google
+                </span>
+              </button>
+              <button
+                type="button"
+                className="flex items-center justify-center px-4 py-3 bg-white/70 backdrop-blur-md border-2 border-gray-100 rounded-xl hover:border-ayurveda-kumkum/50 hover:shadow-lg transition-all duration-300 group relative overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-[#1877f2]/10 to-[#3b5998]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="w-5 h-5 mr-2 bg-[#1877f2] rounded text-white text-xs flex items-center justify-center font-bold">
+                  f
+                </div>
+                <span className="text-gray-600 group-hover:text-gray-800 transition-colors font-medium">
+                  Facebook
+                </span>
+              </button>
+            </div>
+
             {/* Switch to Login Link */}
             <div className="mt-4 text-center">
               <div className="flex items-center justify-center space-x-1.5">
@@ -461,9 +525,9 @@ const SignupPage = ({ onSwitchToLogin, onSignupSuccess, onBackToLanding }) => {
         </div>
       </div>
 
-      {/* Terms and Privacy Policy - Fixed at Bottom */}
-      <div className="fixed bottom-4 left-0 right-0 text-center z-50">
-        <div className="text-sm text-gray-500/80 backdrop-blur-sm bg-white/30 py-2 mx-auto inline-block px-6 rounded-full shadow-lg">
+      {/* Terms and Privacy Policy - Positioned to not interfere with buttons */}
+      <div className="absolute bottom-4 left-0 right-0 text-center pointer-events-none z-10">
+        <div className="text-xs text-gray-500/70 backdrop-blur-sm bg-white/20 py-1.5 mx-auto inline-block px-4 rounded-full shadow-sm pointer-events-auto">
           By signing up, you agree to our{" "}
           <a
             href="#"

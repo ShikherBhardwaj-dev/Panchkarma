@@ -2,6 +2,10 @@ const express = require("express");
 const router = express.Router();
 const TherapySession = require("../models/TherapySession");
 const User = require("../models/User");
+const { sendAppointmentConfirmation } = require("../utils/whatsapp");
+
+// For debugging
+const debug = require('debug')('ayursutra:sessions');
 
 // -------------------- GET all sessions --------------------
 router.get("/", async (req, res) => {
@@ -12,7 +16,7 @@ router.get("/", async (req, res) => {
 
     if (role === "practitioner") {
       sessions = await TherapySession.find()
-        .populate("patient", "name email")
+        .populate("patient", "name email phone")
         .sort({ date: 1, startTime: 1 });
     } else {
       // Patient sees only their sessions
@@ -20,7 +24,7 @@ router.get("/", async (req, res) => {
       if (!patient) return res.status(404).json({ msg: "Patient not found" });
 
       sessions = await TherapySession.find({ patient: patient._id })
-        .populate("patient", "name email")
+        .populate("patient", "name email phone")
         .sort({ date: 1, startTime: 1 });
     }
 
@@ -43,6 +47,13 @@ router.post("/", async (req, res) => {
     // Find patient by email
     const patient = await User.findOne({ email: patientId });
     if (!patient) return res.status(404).json({ msg: "Patient not found" });
+    
+    console.log("Found patient:", {
+      id: patient._id,
+      email: patient.email,
+      phone: patient.phone,
+      name: patient.name
+    });
 
     // Panchakarma schedule template
     const therapyTemplate = {
@@ -135,6 +146,31 @@ router.post("/", async (req, res) => {
     }));
 
     const createdSessions = await TherapySession.insertMany(sessionsFiltered);
+
+    // Send WhatsApp notifications for each created session
+    if (patient.phone) {
+      for (const session of createdSessions) {
+        try {
+          console.log(`Sending WhatsApp notification for session ${session._id} to ${patient.phone}`);
+          await sendAppointmentConfirmation({
+            therapyType: session.therapyType,
+            sessionName: session.sessionName,
+            date: session.date,
+            startTime: session.startTime
+          }, patient.phone);
+          console.log(`WhatsApp notification sent successfully for session ${session._id}`);
+        } catch (error) {
+          console.error('Error sending WhatsApp confirmation:', {
+            sessionId: session._id,
+            error: error.message,
+            phone: patient.phone
+          });
+          // Continue with other sessions even if one notification fails
+        }
+      }
+    } else {
+      console.log(`No phone number found for patient: ${patient.email}`);
+    }
 
     res.json(createdSessions);
   } catch (err) {

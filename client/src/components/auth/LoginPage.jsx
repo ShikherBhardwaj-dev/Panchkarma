@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Leaf, Eye, EyeOff, Mail, Lock, ArrowLeft } from "lucide-react";
+import { useToast } from "../../contexts/ToastContext.jsx";
 
 const LoginPage = ({
   onSwitchToSignup,
@@ -34,24 +35,38 @@ const LoginPage = ({
     });
   };
 
+  const { show } = useToast();
+
   const handleLogin = async () => {
     if (!formData.email || !formData.password) {
-      alert("Please fill in all fields");
+      show({
+        title: "Missing Fields",
+        message: "Please fill in all fields",
+        duration: 4000,
+      });
       return;
     }
 
     if (!formData.email.includes("@")) {
-      alert("Please enter a valid email address");
+      show({
+        title: "Invalid Email",
+        message: "Please enter a valid email address",
+        duration: 4000,
+      });
       return;
     }
 
     if (formData.password.length < 6) {
-      alert("Password must be at least 6 characters");
+      show({
+        title: "Invalid Password",
+        message: "Password must be at least 6 characters",
+        duration: 4000,
+      });
       return;
     }
 
     try {
-      const res = await fetch("http://localhost:5000/auth/login", {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -64,23 +79,39 @@ const LoginPage = ({
       console.log("Login response:", data);
 
       if (res.ok) {
-        alert("Login successful ✅");
+        show({
+          title: "Success",
+          message: "Login successful ✅",
+          duration: 4000,
+        });
 
         if (onAuthSuccess) {
           // ✅ Pass the complete user object from backend
-          onAuthSuccess({
+          // store token for authenticated requests
+          if (data.token) localStorage.setItem("token", data.token);
+          const userObj = {
             _id: data._id,
             name: data.name,
             email: data.email,
             userType: data.userType, // "patient" or "practitioner"
-          });
+          };
+          localStorage.setItem("user", JSON.stringify(userObj));
+          onAuthSuccess(userObj);
         }
       } else {
-        alert(data.msg || "Login failed ❌");
+        show({
+          title: "Login Failed",
+          message: data.msg || "Login failed ❌",
+          duration: 4000,
+        });
       }
     } catch (err) {
       console.error("Login error:", err);
-      alert("Something went wrong. Please try again.");
+      show({
+        title: "Error",
+        message: "Something went wrong. Please try again.",
+        duration: 4000,
+      });
     }
   };
 
@@ -88,6 +119,11 @@ const LoginPage = ({
     if (e.key === "Enter") {
       handleLogin();
     }
+  };
+
+  const handleGoogleLogin = () => {
+    // Redirect to Google OAuth endpoint
+    window.location.href = "http://localhost:5000/api/auth/google";
   };
 
   return (
@@ -325,9 +361,10 @@ const LoginPage = ({
             </div>
 
             {/* Social Login Options */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="flex justify-center">
               <button
                 type="button"
+                onClick={handleGoogleLogin}
                 className="flex items-center justify-center px-4 py-3 bg-white/70 backdrop-blur-md border-2 border-gray-100 rounded-xl hover:border-ayurveda-kumkum/50 hover:shadow-lg transition-all duration-300 group relative overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-[#4285F4]/10 to-[#34A853]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -337,19 +374,7 @@ const LoginPage = ({
                   className="w-5 h-5 mr-2"
                 />
                 <span className="text-gray-600 group-hover:text-gray-800 transition-colors font-medium">
-                  Google
-                </span>
-              </button>
-              <button
-                type="button"
-                className="flex items-center justify-center px-4 py-3 bg-white/70 backdrop-blur-md border-2 border-gray-100 rounded-xl hover:border-ayurveda-kumkum/50 hover:shadow-lg transition-all duration-300 group relative overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-[#1877f2]/10 to-[#3b5998]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div className="w-5 h-5 mr-2 bg-[#1877f2] rounded text-white text-xs flex items-center justify-center font-bold">
-                  f
-                </div>
-                <span className="text-gray-600 group-hover:text-gray-800 transition-colors font-medium">
-                  Facebook
+                  Continue with Google
                 </span>
               </button>
             </div>
@@ -372,10 +397,9 @@ const LoginPage = ({
         </div>
       </div>
 
-      {/* Terms and Privacy Policy - Fixed at Bottom */}
-      {/* Terms and Privacy Policy - Fixed at Bottom */}
-      <div className="fixed bottom-4 left-0 right-0 text-center z-50">
-        <div className="text-sm text-gray-500/80 backdrop-blur-sm bg-white/30 py-2 mx-auto inline-block px-6 rounded-full shadow-lg">
+      {/* Terms and Privacy Policy - Positioned to not interfere with buttons */}
+      <div className="absolute bottom-4 left-0 right-0 text-center pointer-events-none z-10">
+        <div className="text-xs text-gray-500/70 backdrop-blur-sm bg-white/20 py-1.5 mx-auto inline-block px-4 rounded-full shadow-sm pointer-events-auto">
           By signing in, you agree to our{" "}
           <a
             href="#"

@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import {
   Leaf,
   Heart,
@@ -26,7 +26,36 @@ const LandingPage = ({ onGetStarted }) => {
   const [showFloatingNav, setShowFloatingNav] = React.useState(false);
   const [scrollProgress, setScrollProgress] = React.useState(0);
   const [activeDosha, setActiveDosha] = React.useState("Vata");
-  const [activeTreatment, setActiveTreatment] = React.useState(null);
+  const [activeTreatment, setActiveTreatment] = React.useState("Vamana");
+
+  // Function to handle treatment selection and scroll
+  const handleTreatmentSelect = (treatmentName) => {
+    setActiveTreatment(treatmentName);
+
+    // Scroll to treatment details section
+    const treatmentDetailsElement =
+      document.getElementById("treatment-details");
+    if (treatmentDetailsElement) {
+      treatmentDetailsElement.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    }
+  };
+
+  // Function to handle dosha selection and scroll
+  const handleDoshaSelect = (doshaName) => {
+    setActiveDosha(doshaName);
+
+    // Scroll to dosha details section
+    const doshaDetailsElement = document.getElementById("dosha-details");
+    if (doshaDetailsElement) {
+      doshaDetailsElement.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    }
+  };
 
   const treatments = [
     {
@@ -221,7 +250,7 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-ayurveda-chandana/20 via-ayurveda-haldi/10 to-ayurveda-kumkum/10 relative">
+    <div className="min-h-screen bg-gradient-to-br from-[#F5E6D3] via-[#FDF6E3] to-[#F3E5AB] relative">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-[url('/patterns/mandala-bg.svg')] opacity-5 pointer-events-none bg-repeat"></div>
       {/* Header */}
@@ -249,10 +278,10 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
             {/* Navigation */}
             <nav className="hidden md:flex space-x-8">
               <button
-                onClick={() => scrollToSection("features")}
+                onClick={() => scrollToSection("what-is-panchakarma")}
                 className="text-sage-700 hover:text-teal-700 font-medium transition-colors cursor-pointer"
               >
-                Features
+                What is Panchkarma?
               </button>
               <button
                 onClick={() => scrollToSection("benefits")}
@@ -280,10 +309,10 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
       </header>
 
       {/* Hero Section */}
-      <section className="min-h-screen flex flex-col justify-center pt-10 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-gradient-to-br from-brand-sage-light/50 via-transparent to-brand-sage-light/30">
+      <section className="min-h-screen flex flex-col justify-center pt-10 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
         {/* Decorative Top Elements */}
-        <div className="absolute top-0 right-0 w-[40rem] h-[40rem] bg-brand-sage-light/30 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
-        <div className="absolute top-0 left-0 w-[30rem] h-[30rem] bg-brand-sage-light/20 rounded-full blur-2xl -translate-y-1/4 -translate-x-1/4"></div>
+        <div className="absolute top-0 right-0 w-[40rem] h-[40rem] bg-ayurveda-chandana/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+        <div className="absolute top-0 left-0 w-[30rem] h-[30rem] bg-ayurveda-haldi/5 rounded-full blur-2xl -translate-y-1/4 -translate-x-1/4"></div>
 
         {/* Main Hero Content */}
         <div className="max-w-7xl mx-auto w-full flex flex-col items-center">
@@ -327,9 +356,9 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
               modern technology for a transformative healing journey.
             </p>
 
-            {/* Action Buttons */}
+            {/* Action Button */}
             <div
-              className="flex flex-col sm:flex-row items-center justify-center mt-12 space-y-4 sm:space-y-0 sm:space-x-8 animate-fade-in"
+              className="flex justify-center mt-12 animate-fade-in"
               style={{ animationDelay: "0.5s" }}
             >
               <button
@@ -343,15 +372,6 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
                   </span>
                 </div>
                 <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform" />
-              </button>
-              <button className="group flex items-center space-x-4 text-brand-teal hover:text-brand-teal-dark transition-colors">
-                <div className="flex flex-col items-start">
-                  <span className="text-lg font-medium">प्रदर्शन</span>
-                  <span className="text-sm">Watch Demo</span>
-                </div>
-                <div className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-elevation-1 group-hover:shadow-elevation-2 transition-all duration-300 border border-brand-sage-light/20">
-                  <div className="w-0 h-0 border-l-[8px] border-l-brand-teal group-hover:border-l-brand-teal-dark border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent ml-1 transition-colors"></div>
-                </div>
               </button>
             </div>
 
@@ -399,12 +419,12 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
 
         {/* What is Panchakarma Section */}
         <div className="mt-24 relative overflow-hidden">
+          {/* Scroll target positioned above the heading */}
+          <div id="what-is-panchakarma" className="absolute -top-20"></div>
+
           {/* Decorative Background */}
           <div className="absolute inset-0">
-            <div className="absolute inset-0 bg-gradient-to-br from-brand-sage-light/10 via-transparent to-brand-yellow/5"></div>
             <div className="absolute inset-0 bg-[url('/patterns/herbs-bg.png')] opacity-5 animate-pulse-slow"></div>
-            <div className="absolute top-0 right-0 w-[40rem] h-[40rem] bg-brand-teal/5 rounded-full blur-3xl transform -translate-y-1/2 translate-x-1/3"></div>
-            <div className="absolute bottom-0 left-0 w-[30rem] h-[30rem] bg-brand-yellow/5 rounded-full blur-2xl transform translate-y-1/4 -translate-x-1/4"></div>
           </div>
 
           <div className="relative">
@@ -600,10 +620,10 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
                   desc: "Steam Therapy",
                 },
                 {
-                  name: "Swedana",
-                  icon: "🌿",
-                  sanskrit: "स्वेदन",
-                  desc: "Herbal Steam",
+                  name: "Basti",
+                  icon: "🌏",
+                  sanskrit: "बस्ति",
+                  desc: "Enema Therapy",
                 },
                 { name: "Vamana", icon: "🌊", sanskrit: "वमन", desc: "Emesis" },
                 {
@@ -624,7 +644,7 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
                   className="group relative transform hover:-translate-y-2 transition-all duration-500"
                 >
                   {/* Card with hover effects */}
-                  <div className="relative bg-white rounded-2xl p-6 shadow-elevation-1 hover:shadow-elevation-3 transition-all duration-500">
+                  <div className="relative bg-white rounded-2xl p-6 shadow-elevation-1 hover:shadow-elevation-3 transition-all duration-500 overflow-hidden">
                     {/* Icon Container */}
                     <div className="relative mb-4">
                       {/* Animated Background Circle */}
@@ -652,7 +672,7 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
                     </div>
 
                     {/* Bottom Border Animation */}
-                    <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-brand-yellow via-brand-red to-brand-teal transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 rounded-b-2xl"></div>
+                    <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-brand-yellow via-brand-red to-brand-teal transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
                   </div>
                 </div>
               ))}
@@ -664,7 +684,6 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
         <div className="mt-32 mb-20 relative">
           {/* Background Elements */}
           <div className="absolute inset-0">
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-brand-sage-light/5 to-transparent"></div>
             <div className="absolute inset-0 bg-[url('/patterns/lotus-bg.png')] opacity-5"></div>
           </div>
 
@@ -759,7 +778,7 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
                 ].map((step, index) => (
                   <div key={index} className="flex-1 relative z-10 group">
                     {/* Step Card */}
-                    <div className="h-full bg-white rounded-2xl p-8 shadow-elevation-2 hover:shadow-elevation-3 transition-all duration-500 transform hover:-translate-y-2">
+                    <div className="h-full bg-white rounded-2xl p-8 shadow-elevation-2 hover:shadow-elevation-3 transition-all duration-500 transform hover:-translate-y-2 overflow-hidden">
                       {/* Top Section */}
                       <div className="relative mb-6">
                         {/* Icon Circle */}
@@ -847,7 +866,7 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
       </section>
 
       {/* Ayurvedic Wisdom Section */}
-      <section className="py-24 relative overflow-hidden bg-gradient-to-b from-white to-brand-sage-light/10">
+      <section className="py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('/patterns/mandala-pattern.png')] opacity-5"></div>
 
         {/* Section Header */}
@@ -892,21 +911,41 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
               ].map((dosha) => (
                 <div
                   key={dosha.name}
-                  className="text-center group cursor-pointer"
+                  className="text-center group cursor-pointer flex flex-col items-center min-w-[120px]"
+                  onClick={() => handleDoshaSelect(dosha.name)}
                 >
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-brand-sage-light to-white flex items-center justify-center text-4xl mb-4 transform group-hover:scale-110 transition-all duration-300 shadow-elevation-2 group-hover:shadow-elevation-3">
+                  <div
+                    className={`w-24 h-24 rounded-full bg-gradient-to-br from-brand-sage-light to-white flex items-center justify-center text-4xl mb-4 transform group-hover:scale-110 transition-all duration-300 shadow-elevation-2 group-hover:shadow-elevation-3 ${
+                      activeDosha === dosha.name
+                        ? "ring-2 ring-brand-teal ring-offset-2"
+                        : ""
+                    }`}
+                  >
                     {dosha.icon}
                   </div>
-                  <h4 className="text-xl font-medium text-brand-sage-dark group-hover:text-brand-teal transition-colors">
-                    {dosha.name}
-                  </h4>
-                  <p className="text-sm text-brand-sage">{dosha.element}</p>
+                  <div className="space-y-1">
+                    <h4
+                      className={`text-xl font-medium group-hover:text-brand-teal transition-colors leading-tight ${
+                        activeDosha === dosha.name
+                          ? "text-brand-teal"
+                          : "text-brand-sage-dark"
+                      }`}
+                    >
+                      {dosha.name}
+                    </h4>
+                    <p className="text-sm text-brand-sage leading-tight">
+                      {dosha.element}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>
 
             {/* Dosha Content Area */}
-            <div className="bg-white rounded-2xl p-8 shadow-elevation-2">
+            <div
+              id="dosha-details"
+              className="bg-white rounded-2xl p-8 shadow-elevation-2"
+            >
               <div className="flex justify-center mb-8">
                 {["Vata", "Pitta", "Kapha"].map((dosha, index) => (
                   <button
@@ -1151,21 +1190,41 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
               ].map((treatment) => (
                 <div
                   key={treatment.name}
-                  className="text-center group cursor-pointer"
+                  className="text-center group cursor-pointer flex flex-col items-center min-w-[140px]"
+                  onClick={() => handleTreatmentSelect(treatment.name)}
                 >
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-brand-sage-light to-white flex items-center justify-center text-3xl mb-3 transform group-hover:scale-110 transition-all duration-300 shadow-elevation-1 group-hover:shadow-elevation-2">
+                  <div
+                    className={`w-20 h-20 rounded-full bg-gradient-to-br from-brand-sage-light to-white flex items-center justify-center text-3xl mb-3 transform group-hover:scale-110 transition-all duration-300 shadow-elevation-1 group-hover:shadow-elevation-2 ${
+                      activeTreatment === treatment.name
+                        ? "ring-2 ring-brand-teal ring-offset-2"
+                        : ""
+                    }`}
+                  >
                     {treatment.icon}
                   </div>
-                  <h4 className="text-lg font-medium text-brand-sage-dark group-hover:text-brand-teal transition-colors">
-                    {treatment.name}
-                  </h4>
-                  <p className="text-sm text-brand-sage">{treatment.desc}</p>
+                  <div className="space-y-1">
+                    <h4
+                      className={`text-lg font-medium group-hover:text-brand-teal transition-colors leading-tight ${
+                        activeTreatment === treatment.name
+                          ? "text-brand-teal"
+                          : "text-brand-sage-dark"
+                      }`}
+                    >
+                      {treatment.name}
+                    </h4>
+                    <p className="text-sm text-brand-sage leading-tight">
+                      {treatment.desc}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>
 
             {/* Treatment Details */}
-            <div className="bg-white rounded-2xl p-8 shadow-elevation-2">
+            <div
+              id="treatment-details"
+              className="bg-white rounded-2xl p-8 shadow-elevation-2"
+            >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-4 p-6 bg-brand-sage-light/5 rounded-xl mb-6">
                   <h3 className="text-3xl font-display text-brand-sage-dark">
@@ -1510,7 +1569,7 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
       {/* Features Section */}
       <section id="features" className="py-20 relative overflow-hidden">
         {/* Decorative Background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-white/50 to-brand-sage-light/10">
+        <div className="absolute inset-0">
           <div className="absolute inset-0 bg-[url('/patterns/lotus-bg.png')] opacity-5"></div>
         </div>
 
@@ -1594,7 +1653,6 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
         {/* Decorative Background */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-mandala-pattern bg-fixed opacity-5"></div>
-          <div className="absolute inset-0 bg-gradient-to-br from-brand-sage-light/5 via-transparent to-brand-yellow/5"></div>
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
@@ -1665,7 +1723,7 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
                 onClick={onGetStarted}
                 className="mt-8 bg-gradient-to-r from-brand-teal to-brand-yellow text-white px-8 py-4 rounded-full font-semibold text-lg hover:from-brand-teal-dark hover:to-brand-yellow-dark transform hover:scale-105 transition-all duration-200 shadow-xl"
               >
-                Start Free Trial
+                Sign Up
               </button>
             </div>
 
@@ -1722,7 +1780,6 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
       <section id="testimonials" className="py-20 relative overflow-hidden">
         {/* Decorative Background */}
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-brand-sage-light/10 to-white/50"></div>
           <div className="absolute inset-0 bg-[url('/patterns/herbs-bg.png')] opacity-5"></div>
         </div>
 
@@ -1835,17 +1892,13 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
             Join our growing संघ (community) of practitioners and seekers on the
             path to holistic wellness through the ancient wisdom of Panchakarma.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex justify-center">
             <button
               onClick={onGetStarted}
               className="bg-white/90 backdrop-blur-sm text-brand-sage-dark px-8 py-4 rounded-lotus font-display text-lg hover:bg-white transform hover:scale-105 transition-all duration-200 shadow-xl border border-white/20"
             >
-              प्रारंभ करें
-              <span className="block text-sm">Start Free Trial</span>
-            </button>
-            <button className="border-2 border-brand-sage-light text-white px-8 py-4 rounded-lotus font-display text-lg hover:bg-white/10 transition-all duration-200">
-              परिचय
-              <span className="block text-sm">Schedule Demo</span>
+              साइन अप करें
+              <span className="block text-sm">Sign Up</span>
             </button>
           </div>
           <div className="mt-8 text-brand-sage-light">

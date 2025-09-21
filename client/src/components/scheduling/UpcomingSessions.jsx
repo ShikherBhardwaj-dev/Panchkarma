@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { Clock, Edit3, Droplets, Trash2 } from "lucide-react";
 
 const UpcomingSessions = ({ therapySessions, userType, userId, onSessionUpdated }) => {
-  const upcomingSessions = therapySessions.filter(
+  const sessionsList = Array.isArray(therapySessions) ? therapySessions : [];
+  const upcomingSessions = sessionsList.filter(
     (session) => session.status !== "completed"
   );
   const [editSession, setEditSession] = useState(null);

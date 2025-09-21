@@ -58,6 +58,35 @@ const UserSchema = new mongoose.Schema({
     max: 100,
     default: 0
   },
+  wellnessScore: {
+    type: Number,
+    min: 1,
+    max: 10,
+    default: 0
+  },
+  nextSessionDate: {
+    type: Date
+  },
+  progressHistory: [{
+    date: {
+      type: Date,
+      default: Date.now
+    },
+    progress: {
+      type: Number,
+      min: 0,
+      max: 100
+    },
+    stage: String,
+    status: String,
+    notes: String,
+    recommendations: String,
+    updatedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    updatedByName: String
+  }],
   practitionerNotes: {
     type: String
   },

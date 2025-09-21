@@ -45,6 +45,7 @@ app.use("/api/practitioner", require("./routes/practitioner")); // ✅ Practitio
 app.use("/api/practitioner-search", require("./routes/practitionerSearch")); // ✅ Practitioner search and assignment
 app.use("/api/profile", require("./routes/profile")); // ✅ Profile management
 app.use("/api/verification", require("./routes/verification")); // ✅ Practitioner verification
+app.use("/api/progress", require("./routes/progress")); // ✅ Progress tracking
 // New messaging and notification routes
 app.use('/api/messages', require('./routes/messages'));
 app.use('/api/notifications', require('./routes/notifications'));

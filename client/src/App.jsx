@@ -8,6 +8,7 @@ import TherapyScheduling from "./components/TherapyScheduling";
 import Notifications from "./components/Notifications";
 import AdminPanel from './components/Admin/AdminPanel';
 import Progress from "./components/Progress";
+import PractitionerProgress from "./components/PractitionerProgress";
 import Profile from "./components/Profile";
 import PractitionerSearch from "./components/PractitionerSearch";
 import Footer from "./components/Footer";
@@ -49,12 +50,13 @@ const App = () => {
     console.log('App: user authenticated', userData);
   };
 
-  // ✅ Handle Google OAuth success
+  // ✅ Handle Google OAuth success and tab navigation
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
     const userParam = urlParams.get('user');
     const auth = urlParams.get('auth');
+    const tab = urlParams.get('tab');
     
     if (token && userParam && auth === 'google' && !isAuthenticated) {
       try {
@@ -73,6 +75,14 @@ const App = () => {
       } catch (error) {
         console.error('Google OAuth success error:', error);
       }
+    }
+    
+    // Handle tab navigation
+    if (tab && isAuthenticated) {
+      setActiveTab(tab);
+      // Clean up URL
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, newUrl);
     }
   }, [isAuthenticated]);
 
@@ -132,13 +142,10 @@ const App = () => {
         );
 
       case "progress":
-        return (
-          <Progress
-            patientProgress={patientProgress}
-            feedbackData={feedbackData}
-            user={user}
-          />
-        );
+        if (userRole === "practitioner") {
+          return <PractitionerProgress key={`progress-${activeTab}`} user={user} />;
+        }
+        return <Progress user={user} />;
 
       case "profile":
         return <Profile user={user} />;

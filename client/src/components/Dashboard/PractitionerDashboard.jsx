@@ -11,6 +11,9 @@ import {
   CheckCircle,
   Clock,
   XCircle,
+  User,
+  Phone,
+  MapPin,
 } from "lucide-react";
 
 // Import background patterns
@@ -111,14 +114,16 @@ const PractitionerDashboard = ({ user }) => {
                 )}
               </div>
               <p className="text-amber-700 mt-2">
-                Manage your patients, schedule therapies, and track progress all
-                in one place.
+                {data?.hasAssignedPatients 
+                  ? `You have ${data.totalPatients} assigned patients. Manage their care and track progress.`
+                  : "No patients assigned yet. Patients will appear here once they assign themselves to you."
+                }
               </p>
             </div>
             <div className="text-right">
               <div className="relative">
                 <span className="text-4xl font-bold text-amber-600">
-                  {data?.patients?.length || 0}
+                  {data?.totalPatients || 0}
                 </span>
                 <div className="absolute -top-3 -right-3 w-20 h-20 opacity-10">
                   <img src={herbsBackground} alt="" className="w-full h-full" />
@@ -138,9 +143,9 @@ const PractitionerDashboard = ({ user }) => {
             <Calendar className="h-6 w-6 text-primary-600 mb-3" />
             <p className="text-amber-800 mb-2 font-medium">Appointments</p>
             <p className="text-xl font-semibold text-amber-900">
-              {data?.appointments?.length || 0}
+              {data?.upcomingSessions?.length || 0}
             </p>
-            <p className="text-sm text-amber-700 mt-1">Scheduled Today</p>
+            <p className="text-sm text-amber-700 mt-1">Upcoming Sessions</p>
           </div>
 
           <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-4 rounded-xl shadow-sm border border-amber-100 relative overflow-hidden group hover:shadow-md transition-all">
@@ -150,9 +155,9 @@ const PractitionerDashboard = ({ user }) => {
             <Users className="h-6 w-6 text-primary-600 mb-3" />
             <p className="text-amber-800 mb-2 font-medium">My Patients</p>
             <p className="text-xl font-semibold text-amber-900">
-              {data?.patients?.length || 0}
+              {data?.totalPatients || 0}
             </p>
-            <p className="text-sm text-amber-700 mt-1">Total Active</p>
+            <p className="text-sm text-amber-700 mt-1">Assigned Patients</p>
           </div>
 
           <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-4 rounded-xl shadow-sm border border-amber-100 relative overflow-hidden group hover:shadow-md transition-all">
@@ -162,9 +167,9 @@ const PractitionerDashboard = ({ user }) => {
             <BookOpen className="h-6 w-6 text-primary-600 mb-3" />
             <p className="text-amber-800 mb-2 font-medium">Therapies</p>
             <p className="text-xl font-semibold text-amber-900">
-              {data?.therapies || 0}
+              {data?.totalSessions || 0}
             </p>
-            <p className="text-sm text-amber-700 mt-1">Active Programs</p>
+            <p className="text-sm text-amber-700 mt-1">Total Sessions</p>
           </div>
 
           <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-4 rounded-xl shadow-sm border border-amber-100 relative overflow-hidden group hover:shadow-md transition-all">
@@ -174,11 +179,81 @@ const PractitionerDashboard = ({ user }) => {
             <MessageCircle className="h-6 w-6 text-primary-600 mb-3" />
             <p className="text-amber-800 mb-2 font-medium">Consultations</p>
             <p className="text-xl font-semibold text-amber-900">
-              {data?.consultations || 0}
+              {data?.completionRate || 0}%
             </p>
-            <p className="text-sm text-amber-700 mt-1">This Week</p>
+            <p className="text-sm text-amber-700 mt-1">Completion Rate</p>
           </div>
         </div>
+
+        {/* Assigned Patients Section */}
+        {data?.hasAssignedPatients && data?.assignedPatients && (
+          <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-xl shadow-sm border border-amber-100 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 opacity-5">
+              <img src={lotusBackground} alt="" className="w-full h-full" />
+            </div>
+            <h3 className="text-xl font-semibold text-amber-900 mb-6 flex items-center">
+              <Users className="h-6 w-6 mr-2" />
+              Your Assigned Patients ({data.assignedPatients.length})
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {data.assignedPatients.map((patient, index) => (
+                <div key={patient._id} className="bg-white/70 p-4 rounded-lg border border-amber-200 hover:shadow-md transition-shadow">
+                  <div className="flex items-center mb-3">
+                    <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center mr-3">
+                      <User className="h-5 w-5 text-primary-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-amber-900">{patient.name}</h4>
+                      <p className="text-sm text-amber-700">{patient.email}</p>
+                    </div>
+                  </div>
+                  <div className="space-y-2 text-sm">
+                    {patient.phone && (
+                      <div className="flex items-center text-amber-700">
+                        <Phone className="h-4 w-4 mr-2" />
+                        {patient.phone}
+                      </div>
+                    )}
+                    {patient.address?.city && (
+                      <div className="flex items-center text-amber-700">
+                        <MapPin className="h-4 w-4 mr-2" />
+                        {patient.address.city}, {patient.address.state}
+                      </div>
+                    )}
+                    <div className="flex items-center justify-between">
+                      <span className="text-amber-700">Progress:</span>
+                      <span className="font-semibold text-amber-900">{patient.progress || 0}%</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-amber-700">Stage:</span>
+                      <span className="font-semibold text-amber-900">{patient.currentStage || 'Initial Assessment'}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {!data?.hasAssignedPatients && (
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl shadow-md border border-blue-100 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 opacity-5">
+              <img src={mandalaBackground} alt="" className="w-full h-full" />
+            </div>
+            <div className="flex items-center justify-center text-center">
+              <div>
+                <Users className="h-16 w-16 text-blue-400 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-blue-900 mb-2">No Patients Assigned Yet</h3>
+                <p className="text-blue-700 mb-4">
+                  Patients will appear here once they assign themselves to you through the practitioner search.
+                </p>
+                <p className="text-sm text-blue-600">
+                  Make sure your profile is complete and you're verified to attract patients.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Patient Activity & Recent Updates */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

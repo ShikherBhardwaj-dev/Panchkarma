@@ -250,7 +250,7 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-ayurveda-chandana/20 via-ayurveda-haldi/10 to-ayurveda-kumkum/10 relative">
+    <div className="min-h-screen bg-gradient-to-br from-[#F5E6D3] via-[#FDF6E3] to-[#F3E5AB] relative">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-[url('/patterns/mandala-bg.svg')] opacity-5 pointer-events-none bg-repeat"></div>
       {/* Header */}
@@ -311,8 +311,8 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
       {/* Hero Section */}
       <section className="min-h-screen flex flex-col justify-center pt-10 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
         {/* Decorative Top Elements */}
-        <div className="absolute top-0 right-0 w-[40rem] h-[40rem] bg-ayurveda-chandana/15 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
-        <div className="absolute top-0 left-0 w-[30rem] h-[30rem] bg-ayurveda-haldi/15 rounded-full blur-2xl -translate-y-1/4 -translate-x-1/4"></div>
+        <div className="absolute top-0 right-0 w-[40rem] h-[40rem] bg-ayurveda-chandana/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+        <div className="absolute top-0 left-0 w-[30rem] h-[30rem] bg-ayurveda-haldi/5 rounded-full blur-2xl -translate-y-1/4 -translate-x-1/4"></div>
 
         {/* Main Hero Content */}
         <div className="max-w-7xl mx-auto w-full flex flex-col items-center">
@@ -424,10 +424,7 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
 
           {/* Decorative Background */}
           <div className="absolute inset-0">
-            <div className="absolute inset-0 bg-ayurveda-chandana/8"></div>
             <div className="absolute inset-0 bg-[url('/patterns/herbs-bg.png')] opacity-5 animate-pulse-slow"></div>
-            <div className="absolute top-0 right-0 w-[40rem] h-[40rem] bg-ayurveda-haldi/8 rounded-full blur-3xl transform -translate-y-1/2 translate-x-1/3"></div>
-            <div className="absolute bottom-0 left-0 w-[30rem] h-[30rem] bg-ayurveda-kumkum/8 rounded-full blur-2xl transform translate-y-1/4 -translate-x-1/4"></div>
           </div>
 
           <div className="relative">
@@ -687,7 +684,6 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
         <div className="mt-32 mb-20 relative">
           {/* Background Elements */}
           <div className="absolute inset-0">
-            <div className="absolute inset-0 bg-ayurveda-chandana/8"></div>
             <div className="absolute inset-0 bg-[url('/patterns/lotus-bg.png')] opacity-5"></div>
           </div>
 
@@ -872,7 +868,6 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
       {/* Ayurvedic Wisdom Section */}
       <section className="py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('/patterns/mandala-pattern.png')] opacity-5"></div>
-        <div className="absolute inset-0 bg-ayurveda-haldi/8"></div>
 
         {/* Section Header */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative mb-16">
@@ -1575,7 +1570,6 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
       <section id="features" className="py-20 relative overflow-hidden">
         {/* Decorative Background */}
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-ayurveda-chandana/8"></div>
           <div className="absolute inset-0 bg-[url('/patterns/lotus-bg.png')] opacity-5"></div>
         </div>
 
@@ -1659,7 +1653,6 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
         {/* Decorative Background */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-mandala-pattern bg-fixed opacity-5"></div>
-          <div className="absolute inset-0 bg-ayurveda-kumkum/8"></div>
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
@@ -1787,7 +1780,6 @@ This treatment is particularly effective for skin disorders, enlarged liver, spl
       <section id="testimonials" className="py-20 relative overflow-hidden">
         {/* Decorative Background */}
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-ayurveda-haldi/10"></div>
           <div className="absolute inset-0 bg-[url('/patterns/herbs-bg.png')] opacity-5"></div>
         </div>
 

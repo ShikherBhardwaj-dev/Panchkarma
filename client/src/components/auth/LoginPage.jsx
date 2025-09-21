@@ -51,11 +51,11 @@ const LoginPage = ({
     }
 
     try {
-      const res = await fetch("http://localhost:5000/auth/login", {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: formData.email,
+          email: formData.email.trim().toLowerCase(),
           password: formData.password,
         }),
       });
@@ -84,7 +84,9 @@ const LoginPage = ({
       }
     } catch (err) {
       console.error("Login error:", err);
-      alert("Something went wrong. Please try again.");
+      // Show a more specific error message if available from the server
+      const errorMsg = err.response?.data?.msg || "Network error. Please check your connection and try again.";
+      alert(errorMsg);
     }
   };
 

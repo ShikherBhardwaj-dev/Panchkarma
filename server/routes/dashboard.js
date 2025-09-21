@@ -1,12 +1,16 @@
-const express = require("express");
+import express from 'express';
+import TherapySession from '../models/TherapySession.js';
+import User from '../models/User.js';
+
 const router = express.Router();
-const TherapySession = require("../models/TherapySession");
-const User = require("../models/User");
 
 // -------------------- PATIENT DASHBOARD --------------------
 router.get("/patient/:id", async (req, res) => {
   try {
     const patientId = req.params.id;
+
+    // Get patient with practitioner data
+    const patient = await User.findById(patientId).populate('assignedPractitioner', 'name email');
 
     // Find sessions booked by this patient
     const sessions = await TherapySession.find({ patient: patientId });
@@ -17,16 +21,21 @@ router.get("/patient/:id", async (req, res) => {
     res.json({
       completed,
       total,
-      progress: total > 0 ? Math.round((completed / total) * 100) : 0,
+      progress: patient.progress || 0,
       wellnessScore: 8.2, // fake static value for now
       nextSession:
         sessions.length > 0
           ? `${sessions[0].date} ${sessions[0].time}`
           : "No upcoming session",
-      nextMilestone: "Mid-therapy Assessment",
+      nextMilestone: patient.currentStage || "Mid-therapy Assessment",
+      practitionerNotes: patient.practitionerNotes || null,
+      recommendations: patient.recommendations || null,
+      currentStage: patient.currentStage || "Initial Assessment",
+      treatmentStartDate: patient.treatmentStartDate,
+      assignedPractitioner: patient.assignedPractitioner,
       notifications: [
         { id: 1, message: "Your next session is coming up!" },
-        { id: 2, message: "Don’t forget to track your wellness." },
+        { id: 2, message: "Don't forget to track your wellness." },
       ],
     });
   } catch (err) {
@@ -66,4 +75,4 @@ router.get("/practitioner/:id", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

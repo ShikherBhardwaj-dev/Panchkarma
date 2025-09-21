@@ -2,6 +2,7 @@
   "name": "ayursutra-panchakarma-management",
   "version": "1.0.0",
   "description": "A comprehensive Panchakarma management system built with React",
+  "type": "module",
   "main": "src/App.jsx",
   "scripts": {
     "dev": "vite",

@@ -19,7 +19,7 @@ const herbsPattern = "/patterns/herbs-bg.svg";
 
 const TherapyScheduling = ({ userRole, user }) => {
   const [startDate, setStartDate] = useState(new Date());
-  const [therapyType, setTherapyType] = useState("Virechana");
+  const [therapyType, setTherapyType] = useState("Panchkarma");
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [editingSession, setEditingSession] = useState(null);
@@ -29,7 +29,8 @@ const TherapyScheduling = ({ userRole, user }) => {
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [cancellingSession, setCancellingSession] = useState(null);
 
-  const therapyOptions = ["Virechana", "Vamana"];
+  // Only Panchkarma is supported now
+  const therapyOptions = ["Panchkarma"];
 
   // -------------------- Session Management --------------------
   const handleEditSession = (session) => {

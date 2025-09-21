@@ -1,21 +1,19 @@
-const express = require("express");
+import express from 'express';
+import TherapySession from '../models/TherapySession.js';
+import User from '../models/User.js';
+
 const router = express.Router();
-const TherapySession = require("../models/TherapySession");
-const User = require("../models/User");
 
 // --- Panchakarma Therapy Templates ---
+// Single Panchkarma template: 5 days Pre, 5 days Main, 5 days Post (total 15 days)
 const therapyTemplates = {
-  Virechana: [
-    { phase: "Pre", name: "Snehana", days: 3, durationMins: 60 },
-    { phase: "Pre", name: "Swedana", days: 3, durationMins: 30 },
-    { phase: "Main", name: "Virechana", days: 1, durationMins: 180 },
-    { phase: "Post", name: "Recovery", days: 3, durationMins: 20 },
-  ],
-  Vamana: [
-    { phase: "Pre", name: "Snehana", days: 3, durationMins: 60 },
-    { phase: "Pre", name: "Swedana", days: 3, durationMins: 30 },
-    { phase: "Main", name: "Vamana", days: 1, durationMins: 180 },
-    { phase: "Post", name: "Recovery", days: 4, durationMins: 20 },
+  Panchkarma: [
+    // Pre-treatment phase (5 days)
+    { phase: "Pre", name: "Pre-Treatment (Snehana/Swedana)", days: 5, durationMins: 60 },
+    // Main Panchakarma procedures (5 days)
+    { phase: "Main", name: "Panchakarma Main Procedure", days: 5, durationMins: 180 },
+    // Post-treatment recovery (5 days)
+    { phase: "Post", name: "Post-Treatment Recovery", days: 5, durationMins: 30 },
   ],
 };
 
@@ -87,6 +85,48 @@ router.post("/autogenerate", async (req, res) => {
   } catch (err) {
     console.error("Error auto-generating schedule:", err);
     res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Convenience endpoint: autogenerate a 15-day Panchkarma schedule
+router.post('/autogenerate-panchkarma', async (req, res) => {
+  try {
+    const { practitionerEmail, patientEmail, startDate } = req.body;
+    const practitioner = await User.findOne({ email: practitionerEmail });
+    const patient = await User.findOne({ email: patientEmail });
+
+    if (!practitioner || !patient) {
+      return res.status(404).json({ error: 'Practitioner or patient not found' });
+    }
+
+    const therapyType = 'Panchkarma';
+    let currentDate = startDate ? new Date(startDate) : new Date();
+    // normalize to start of day
+    currentDate.setHours(9,0,0,0);
+
+    const sessions = [];
+    therapyTemplates[therapyType].forEach((step) => {
+      for (let i = 0; i < step.days; i++) {
+        sessions.push({
+          practitioner: practitioner._id,
+          patient: patient._id,
+          therapyType,
+          phase: step.phase,
+          sessionName: step.name,
+          date: new Date(currentDate),
+          startTime: '09:00',
+          durationMins: step.durationMins,
+          isBooked: true,
+        });
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+    });
+
+    await TherapySession.insertMany(sessions);
+    res.json({ message: 'Panchkarma schedule created', sessions });
+  } catch (err) {
+    console.error('Error creating Panchkarma schedule:', err);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 
@@ -190,5 +230,30 @@ router.delete("/delete/:id", async (req, res) => {
   }
 });
 
-module.exports = router;
+// Update session status
+router.put("/sessions/:sessionId/status", async (req, res) => {
+  try {
+    const { status } = req.body;
+    if (!["scheduled", "in-progress", "completed", "cancelled"].includes(status)) {
+      return res.status(400).json({ error: "Invalid status value" });
+    }
+
+    const session = await TherapySession.findByIdAndUpdate(
+      req.params.sessionId,
+      { status },
+      { new: true }
+    );
+
+    if (!session) {
+      return res.status(404).json({ error: "Session not found" });
+    }
+
+    res.json({ message: "Status updated successfully", session });
+  } catch (err) {
+    console.error("Error updating session status:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+export default router;
 

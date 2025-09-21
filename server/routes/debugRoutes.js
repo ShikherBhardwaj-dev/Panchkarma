@@ -1,7 +1,8 @@
-const express = require('express');
+import express from 'express';
+import auth from '../middleware/auth.js';
+import User from '../models/User.js';
+
 const router = express.Router();
-const auth = require('../middleware/auth');
-const User = require('../models/User');
 
 // Debug route to check JWT and user info
 router.get('/check-auth', auth, async (req, res) => {
@@ -40,4 +41,4 @@ router.get('/list-users', auth, async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

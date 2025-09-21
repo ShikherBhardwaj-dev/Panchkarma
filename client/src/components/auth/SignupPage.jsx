@@ -36,7 +36,7 @@ const SignupPage = ({ onSwitchToLogin, onSignupSuccess, onBackToLanding }) => {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/auth/signup", {
+      const res = await fetch("http://localhost:5000/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -207,15 +207,15 @@ const SignupPage = ({ onSwitchToLogin, onSignupSuccess, onBackToLanding }) => {
           </p>
 
           {/* Panchakarma Icons */}
-          <div className="mt-12 grid grid-cols-5 gap-6">
+            <div className="mt-12 grid grid-cols-5 gap-6">
             <img
-              src="/public/treatments/vamana.svg"
-              alt="Vamana"
+              src="/public/treatments/basti.svg"
+              alt="Panchkarma"
               className="w-12 h-12 opacity-60 hover:opacity-100 transition-opacity"
             />
             <img
-              src="/public/treatments/virechana.svg"
-              alt="Virechana"
+              src="/public/treatments/basti.svg"
+              alt="Panchkarma"
               className="w-12 h-12 opacity-60 hover:opacity-100 transition-opacity"
             />
             <img
@@ -418,13 +418,13 @@ const SignupPage = ({ onSwitchToLogin, onSignupSuccess, onBackToLanding }) => {
                     </p>
                     <div className="flex items-center space-x-1 mt-1">
                       <img
-                        src="/public/treatments/vamana.svg"
-                        alt="Vamana"
+                        src="/public/treatments/basti.svg"
+                        alt="Panchkarma"
                         className="w-3 h-3 opacity-40"
                       />
                       <img
-                        src="/public/treatments/virechana.svg"
-                        alt="Virechana"
+                        src="/public/treatments/basti.svg"
+                        alt="Panchkarma"
                         className="w-3 h-3 opacity-40"
                       />
                       <img

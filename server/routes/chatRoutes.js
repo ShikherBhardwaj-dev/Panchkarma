@@ -1,8 +1,9 @@
-const express = require("express");
+import express from 'express';
+import twilio from 'twilio';
+import { getAIResponse } from '../aiChatbot.js';
+import { normalizePhone } from '../utils/phone.js';
+
 const router = express.Router();
-const { getAIResponse } = require("../aiChatbot.js");
-const twilio = require("twilio");
-const { normalizePhone } = require('../utils/phone');
 
 // Twilio setup (WhatsApp/SMS)
 const client = twilio(
@@ -54,4 +55,4 @@ router.post("/", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

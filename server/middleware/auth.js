@@ -1,5 +1,11 @@
-const jwt = require('jsonwebtoken');
-const config = require('../config/default.json');
+import jwt from 'jsonwebtoken';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+import { readFileSync } from 'fs';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const config = JSON.parse(readFileSync(join(dirname(__dirname), 'config', 'default.json')));
 
 const auth = async (req, res, next) => {
     // Get token from header
@@ -28,4 +34,4 @@ const auth = async (req, res, next) => {
     }
 };
 
-module.exports = auth;
+export default auth;

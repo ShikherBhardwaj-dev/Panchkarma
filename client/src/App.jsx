@@ -7,7 +7,7 @@ import PractitionerDashboard from "./components/Dashboard/PractitionerDashboard"
 import TherapyScheduling from "./components/TherapyScheduling";
 import Notifications from "./components/Notifications";
 import WhatsAppTester from './components/Admin/WhatsAppTester';
-import Progress from "./components/Progress";
+import ProgressEnhanced from "./components/ProgressEnhanced";
 import FloatingActionButton from "./components/FloatingActionButton";
 import Footer from "./components/Footer";
 import AuthContainer from "./components/auth/AuthContainer";
@@ -34,6 +34,41 @@ const App = () => {
     patientProgress,
     feedbackData,
   } = useAppData();
+
+  // Restore auth from localStorage on mount
+  useEffect(() => {
+    try {
+      const storedUser = localStorage.getItem('user');
+      const token = localStorage.getItem('token');
+      if (storedUser && token) {
+        const parsed = JSON.parse(storedUser);
+        setUser(parsed);
+        setIsAuthenticated(true);
+        setShowLanding(false);
+
+        // Optional: verify token with backend debug endpoint
+        (async () => {
+          try {
+            const res = await fetch('http://localhost:5000/debug/check-auth', {
+              headers: { 'x-auth-token': token }
+            });
+            if (!res.ok) {
+              // token invalid -> clear stored auth
+              localStorage.removeItem('token');
+              localStorage.removeItem('user');
+              setUser(null);
+              setIsAuthenticated(false);
+              setShowLanding(true);
+            }
+          } catch (err) {
+            console.warn('Auth verification failed', err);
+          }
+        })();
+      }
+    } catch (err) {
+      console.error('Failed to restore auth from localStorage', err);
+    }
+  }, []);
 
   // ✅ Called after login/signup success
   const handleAuthSuccess = (userData) => {
@@ -105,7 +140,7 @@ const App = () => {
 
       case "progress":
         return (
-          <Progress
+          <ProgressEnhanced
             patientProgress={patientProgress}
             feedbackData={feedbackData}
             user={user}

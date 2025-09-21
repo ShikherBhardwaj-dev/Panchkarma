@@ -1,15 +1,25 @@
-const express = require("express");
+import express from 'express';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+import { readFileSync } from 'fs';
+import User from '../models/User.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const config = JSON.parse(readFileSync(join(dirname(__dirname), 'config', 'default.json'), 'utf-8'));
 const router = express.Router();
-const bcrypt = require("bcryptjs");
-const User = require("../models/User");
-const jwt = require('jsonwebtoken');
-const config = require('../config/default.json');
 
 // ======================
 // Signup Route
 // ======================
 router.post("/signup", async (req, res) => {
-  const { name, email, password, phone, userType } = req.body;
+  let { name, email, password, phone, userType } = req.body;
+
+  // Normalize email for storage to avoid case-mismatch between signup/login
+  if (email) email = String(email).trim().toLowerCase();
 
   try {
     // check if user already exists
@@ -74,9 +84,14 @@ router.post("/signup", async (req, res) => {
 // Login Route
 // ======================
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  let { email, password } = req.body;
 
   try {
+    // normalize email
+    if (email) {
+      email = email.trim().toLowerCase();
+    }
+
     // find user
     const user = await User.findOne({ email });
     if (!user) {
@@ -133,5 +148,5 @@ router.get("/practitioners", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
 

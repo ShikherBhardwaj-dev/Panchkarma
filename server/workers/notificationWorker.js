@@ -1,10 +1,10 @@
-const cron = require('node-cron');
-const Notification = require('../models/Notification');
-const TherapySession = require('../models/TherapySession');
-const User = require('../models/User');
-const nodemailer = require('nodemailer');
-const twilio = require('twilio');
-const { normalizePhone } = require('../utils/phone');
+import cron from 'node-cron';
+import Notification from '../models/Notification.js';
+import TherapySession from '../models/TherapySession.js';
+import User from '../models/User.js';
+import nodemailer from 'nodemailer';
+import twilio from 'twilio';
+import { normalizePhone } from '../utils/phone.js';
 
 const EMAIL_FROM = process.env.EMAIL_FROM;
 const SMTP_HOST = process.env.SMTP_HOST;
@@ -172,4 +172,4 @@ function startNotificationWorker() {
   });
 }
 
-module.exports = { startNotificationWorker };
+export default startNotificationWorker;

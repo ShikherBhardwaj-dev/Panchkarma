@@ -1,7 +1,8 @@
-const express = require('express');
+import express from 'express';
+import Notification from '../models/Notification.js';
+import User from '../models/User.js';
+
 const router = express.Router();
-const Notification = require('../models/Notification');
-const User = require('../models/User');
 
 // Create a notification (can be used by worker or manually)
 router.post('/', async (req, res) => {
@@ -52,4 +53,4 @@ router.post('/:id/mark-sent', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

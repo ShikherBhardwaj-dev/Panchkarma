@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from 'mongoose';
 
 const TherapySessionSchema = new mongoose.Schema({
   patient: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
@@ -80,7 +80,7 @@ const TherapySessionSchema = new mongoose.Schema({
   timestamps: true
 });
 
-module.exports = mongoose.model("TherapySession", TherapySessionSchema);
+export default mongoose.model("TherapySession", TherapySessionSchema);
 
 
 

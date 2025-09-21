@@ -1,8 +1,8 @@
 // Load environment variables from .env when present (development)
-require('dotenv').config();
-const express = require("express");
-const connectDB = require("./config/db");
-const cors = require("cors");
+import 'dotenv/config';
+import express from 'express';
+import connectDB from './config/db.js';
+import cors from 'cors';
 
 const app = express();
 
@@ -13,24 +13,46 @@ connectDB();
 app.use(express.json());
 app.use(cors());
 
+// Debug middleware
+app.use((req, res, next) => {
+  console.log(`[${req.method}] ${req.path}`, {
+    token: req.header('x-auth-token'),
+    body: req.body
+  });
+  next();
+});
+
 // ---------------- Routes ----------------
-app.use("/auth", require("./routes/auth"));
-app.use("/therapy", require("./routes/therapy"));
-app.use("/sessions", require("./routes/sessions"));
-app.use("/api/dashboard", require("./routes/dashboard")); // ✅ Patient & Practitioner dashboards
-app.use("/api/chat", require("./routes/chatRoutes")); // ✅ AI Chatbot route
-app.use("/api/practitioner", require("./routes/practitioner")); // ✅ Practitioner patient management
+// Import all route modules
+import authRoutes from './routes/auth.js';
+import therapyRoutes from './routes/therapy.js';
+import sessionsRoutes from './routes/sessions.js';
+import dashboardRoutes from './routes/dashboard.js';
+import chatRoutes from './routes/chatRoutes.js';
+import practitionerRoutes from './routes/practitioner.js';
+import messageRoutes from './routes/messages.js';
+import notificationRoutes from './routes/notifications.js';
+import adminNotificationRoutes from './routes/adminNotifications.js';
+import debugRoutes from './routes/debugRoutes.js';
+
+// Apply routes
+app.use("/api/auth", authRoutes);
+app.use("/api/therapy", therapyRoutes);
+app.use("/api/sessions", sessionsRoutes);
+app.use("/api/dashboard", dashboardRoutes); // ✅ Patient & Practitioner dashboards
+app.use("/api/chat", chatRoutes); // ✅ AI Chatbot route
+app.use("/api/practitioner", practitionerRoutes); // ✅ Practitioner patient management
 // New messaging and notification routes
-app.use('/api/messages', require('./routes/messages'));
-app.use('/api/notifications', require('./routes/notifications'));
+app.use('/api/messages', messageRoutes);
+app.use('/api/notifications', notificationRoutes);
 // Admin / debug endpoints (test WhatsApp send, list recent notifications)
-app.use('/admin', require('./routes/adminNotifications'));
+app.use('/admin', adminNotificationRoutes);
 
 // Debug routes (temporary, for auth debugging)
-app.use('/debug', require('./routes/debugRoutes'));
+app.use('/debug', debugRoutes);
 
 // Start notification worker (sends email/SMS/in-app reminders)
-const { startNotificationWorker } = require('./workers/notificationWorker');
+import startNotificationWorker from './workers/notificationWorker.js';
 startNotificationWorker();
 
 // ---------------- Server ----------------

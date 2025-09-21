@@ -1,7 +1,10 @@
-const express = require("express");
+import express from 'express';
+import TherapySession from '../models/TherapySession.js';
+import User from '../models/User.js';
+import auth from '../middleware/auth.js';
+import practitionerAuth from '../middleware/practitionerAuth.js';
+
 const router = express.Router();
-const TherapySession = require("../models/TherapySession");
-const User = require("../models/User");
 
 // -------------------- GET all sessions --------------------
 router.get("/", async (req, res) => {
@@ -44,21 +47,13 @@ router.post("/", async (req, res) => {
     const patient = await User.findOne({ email: patientId });
     if (!patient) return res.status(404).json({ msg: "Patient not found" });
 
-    // Panchakarma schedule template
+    // Therapy templates - support Panchkarma (15-day: 5 Pre, 5 Main, 5 Post)
     const therapyTemplate = {
-      Virechana: [
-        { phase: "Pre", sessionName: "Preparation 1", daysAfterStart: 0 },
-        { phase: "Pre", sessionName: "Preparation 2", daysAfterStart: 1 },
-        { phase: "Main", sessionName: "Virechana Procedure", daysAfterStart: 2 },
-        { phase: "Post", sessionName: "Dietary Follow-up", daysAfterStart: 3 },
-        { phase: "Post", sessionName: "Check-up", daysAfterStart: 4 },
-      ],
-      Vamana: [
-        { phase: "Pre", sessionName: "Preparation 1", daysAfterStart: 0 },
-        { phase: "Main", sessionName: "Vamana Procedure", daysAfterStart: 1 },
-        { phase: "Post", sessionName: "Dietary Follow-up", daysAfterStart: 2 },
-        { phase: "Post", sessionName: "Check-up", daysAfterStart: 3 },
-      ],
+      Panchkarma: Array.from({ length: 15 }).map((_, idx) => {
+        if (idx < 5) return { phase: 'Pre', sessionName: `Pre-Treatment Day ${idx+1}`, daysAfterStart: idx };
+        if (idx < 10) return { phase: 'Main', sessionName: `Main Panchakarma Day ${idx-4}`, daysAfterStart: idx };
+        return { phase: 'Post', sessionName: `Post-Treatment Day ${idx-9}`, daysAfterStart: idx };
+      })
     };
 
     const template = therapyTemplate[therapyType];
@@ -295,6 +290,56 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+// -------------------- PUT: Practitioner-only: Update session status --------------------
+// Simple endpoint for practitioners to mark a session completed/incomplete and
+// optionally sync the patient's overall progress on the User document.
+router.put('/:id/status', auth, practitionerAuth, async (req, res) => {
+  try {
+    const { status } = req.body;
+    if (!status) return res.status(400).json({ msg: 'Please provide status' });
+
+    const session = await TherapySession.findById(req.params.id).populate('patient');
+    if (!session) return res.status(404).json({ msg: 'Session not found' });
+
+    // Verify the patient is assigned to this practitioner
+    if (!session.patient || !session.patient.assignedPractitioner || session.patient.assignedPractitioner.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ msg: 'Not authorized to modify this session' });
+    }
+
+    // Normalize status
+    const normalized = String(status).toLowerCase().trim();
+    if (!['scheduled', 'completed', 'cancelled', 'in-progress'].includes(normalized)) {
+      return res.status(400).json({ msg: 'Invalid status value' });
+    }
+
+    session.status = normalized;
+    await session.save();
+
+    // If session marked completed, optionally update patient's progress percentage
+    if (normalized === 'completed') {
+      try {
+        // Recompute patient's completed / total sessions to derive a progress percent
+        const total = await TherapySession.countDocuments({ patient: session.patient._id, status: { $ne: 'cancelled' } });
+        const completed = await TherapySession.countDocuments({ patient: session.patient._id, status: 'completed' });
+        const pct = total === 0 ? 0 : Math.round((completed / total) * 100);
+
+        const patient = await User.findById(session.patient._id);
+        if (patient) {
+          patient.progress = pct;
+          await patient.save();
+        }
+      } catch (err) {
+        console.warn('Failed to sync patient progress after session completion', err.message);
+      }
+    }
+
+    return res.json({ msg: 'Session status updated', session });
+  } catch (err) {
+    console.error('Error updating session status by practitioner:', err);
+    return res.status(500).json({ msg: err.message || 'Server error' });
+  }
+});
+
 // -------------------- DELETE: Cancel session --------------------
 router.delete("/delete/:id", async (req, res) => {
   try {
@@ -315,7 +360,7 @@ router.delete("/delete/:id", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
 
 
 

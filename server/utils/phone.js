@@ -16,4 +16,4 @@ function normalizePhone(raw) {
   return digits; // fallback
 }
 
-module.exports = { normalizePhone };
+export { normalizePhone };

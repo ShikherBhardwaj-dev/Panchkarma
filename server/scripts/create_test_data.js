@@ -1,90 +1,65 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const config = require('../config/default.json');
-const User = require('../models/User');
+import mongoose from 'mongoose';
+import User from '../models/User.js';
+import TherapySession from '../models/TherapySession.js';
+import connectDB from '../config/db.js';
+import bcrypt from 'bcryptjs';
 
-async function main() {
-    try {
-        // Connect to MongoDB
-        await mongoose.connect(config.mongoURI);
-        console.log('Connected to MongoDB...');
+const createTestData = async () => {
+  try {
+    await connectDB();
 
-        // Create a test practitioner if none exists
-        let practitioner = await User.findOne({ email: 'doctor@test.com' });
-        if (!practitioner) {
-            const salt = await bcrypt.genSalt(10);
-            const hashedPassword = await bcrypt.hash('password123', salt);
-            
-            practitioner = new User({
-                name: 'Dr. Test',
-                email: 'doctor@test.com',
-                password: hashedPassword,
-                userType: 'practitioner',
-                phone: '+919876543210'
-            });
-            await practitioner.save();
-            console.log('Created test practitioner:', practitioner.email);
-        } else {
-            console.log('Found existing practitioner:', practitioner.email);
-        }
+    // Clear existing data
+    await User.deleteMany({});
+    await TherapySession.deleteMany({});
 
-        // Create some test patients if none exist
-        const testPatients = [
-            { name: 'Patient One', email: 'patient1@test.com' },
-            { name: 'Patient Two', email: 'patient2@test.com' },
-            { name: 'Patient Three', email: 'patient3@test.com' }
-        ];
+    const salt = await bcrypt.genSalt(10);
 
-        for (const patientData of testPatients) {
-            let patient = await User.findOne({ email: patientData.email });
-            if (!patient) {
-                const salt = await bcrypt.genSalt(10);
-                const hashedPassword = await bcrypt.hash('password123', salt);
-                
-                patient = new User({
-                    name: patientData.name,
-                    email: patientData.email,
-                    password: hashedPassword,
-                    userType: 'patient',
-                    phone: '+91987654321' + testPatients.indexOf(patientData),
-                    assignedPractitioner: practitioner._id // Assign to our test practitioner
-                });
-                await patient.save();
-                console.log('Created test patient:', patient.email);
-            } else {
-                // Ensure patient is assigned to practitioner
-                if (!patient.assignedPractitioner) {
-                    patient.assignedPractitioner = practitioner._id;
-                    await patient.save();
-                    console.log('Assigned existing patient to practitioner:', patient.email);
-                } else {
-                    console.log('Patient already exists and is assigned:', patient.email);
-                }
-            }
-        }
+    const practitionerPassword = await bcrypt.hash('test1234', salt);
+    const practitioner = new User({
+      name: 'Dr. Test Practitioner',
+      email: 'practitioner@test.com',
+      password: practitionerPassword,
+      userType: 'practitioner',
+    });
+    await practitioner.save();
 
-        // List all users for verification
-        console.log('\nCurrent Users in System:');
-        const users = await User.find().select('name email userType assignedPractitioner');
-        users.forEach(user => {
-            console.log(`- ${user.name} (${user.email})`);
-            console.log(`  Type: ${user.userType}`);
-            console.log(`  Assigned To: ${user.assignedPractitioner || 'None'}\n`);
-        });
+    const patientPassword = await bcrypt.hash('test1234', salt);
+    const patient = new User({
+      name: 'Test Patient',
+      email: 'patient@test.com',
+      password: patientPassword,
+      userType: 'patient',
+      assignedPractitioner: practitioner._id,
+      progress: 20,
+      practitionerNotes: 'Initial notes',
+      recommendations: 'Initial recommendations',
+      currentStage: 'Initial Assessment',
+      treatmentStartDate: new Date(),
+    });
+    await patient.save();
 
-        console.log('\nTest Credentials:');
-        console.log('Practitioner Login:');
-        console.log('Email: doctor@test.com');
-        console.log('Password: password123');
-        console.log('\nPatient Logins:');
-        console.log('Email: patient1@test.com (or patient2@test.com, patient3@test.com)');
-        console.log('Password: password123');
+    const session = new TherapySession({
+      patient: patient._id,
+      practitioner: practitioner._id,
+      date: new Date(),
+      time: '10:00',
+      isBooked: true,
+      sessionName: 'Initial Therapy Session',
+      phase: 'Phase 1',
+      therapyType: 'Panchakarma',
+      practitionerNotes: {
+        sessionNotes: 'Session initial notes',
+      },
+      recommendations: 'Session recommendations',
+    });
+    await session.save();
 
-    } catch (err) {
-        console.error('Error:', err);
-    } finally {
-        await mongoose.disconnect();
-    }
-}
+    console.log('Test data created successfully');
+    process.exit(0);
+  } catch (error) {
+    console.error('Error creating test data:', error);
+    process.exit(1);
+  }
+};
 
-main();
+createTestData();

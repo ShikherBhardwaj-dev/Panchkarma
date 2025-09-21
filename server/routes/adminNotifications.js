@@ -1,9 +1,10 @@
-const express = require('express');
+import express from 'express';
+import twilio from 'twilio';
+import Notification from '../models/Notification.js';
+import User from '../models/User.js';
+import { normalizePhone } from '../utils/phone.js';
+
 const router = express.Router();
-const twilio = require('twilio');
-const Notification = require('../models/Notification');
-const User = require('../models/User');
-const { normalizePhone } = require('../utils/phone');
 
 // Support both naming conventions: TWILIO_SID/TWILIO_TOKEN or TWILIO_ACCOUNT_SID/TWILIO_AUTH_TOKEN
 const TWILIO_SID = process.env.TWILIO_SID || process.env.TWILIO_ACCOUNT_SID;
@@ -126,5 +127,5 @@ router.post('/twilio-status', express.urlencoded({ extended: true }), async (req
   }
 });
 
-module.exports = router;
+export default router;
 

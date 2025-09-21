@@ -1,7 +1,8 @@
-const express = require('express');
+import express from 'express';
+import Message from '../models/Message.js';
+import User from '../models/User.js';
+
 const router = express.Router();
-const Message = require('../models/Message');
-const User = require('../models/User');
 
 // Send a message
 router.post('/', async (req, res) => {
@@ -66,7 +67,7 @@ router.get('/conversation', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
 
 // Inbox route: messages addressed to a user (optionally unread only)
 router.get('/inbox', async (req, res) => {

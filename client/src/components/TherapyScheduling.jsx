@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { useToast } from '../contexts/ToastContext.jsx';
 import {
   Clock,
   Calendar,
@@ -32,9 +33,15 @@ const TherapyScheduling = ({ userRole, user }) => {
   const therapyOptions = ["Virechana", "Vamana"];
 
   // -------------------- Session Management --------------------
+  const { show } = useToast();
+
   const handleEditSession = (session) => {
     if (session.status !== "scheduled") {
-      alert("Only scheduled sessions can be rescheduled.");
+      show({
+        title: 'Cannot Reschedule',
+        message: 'Only scheduled sessions can be rescheduled.',
+        duration: 4000
+      });
       return;
     }
     setEditingSession(session);
@@ -79,12 +86,18 @@ const TherapyScheduling = ({ userRole, user }) => {
       // Close the modal
       setEditingSession(null);
       // Show success message
-      alert("Session rescheduled successfully!");
+      show({
+        title: 'Success',
+        message: 'Session rescheduled successfully!',
+        duration: 4000
+      });
     } catch (err) {
       console.error("Error rescheduling session:", err);
-      setError(
-        err.response?.data?.msg || err.message || "Failed to reschedule session"
-      );
+      show({
+        title: 'Error',
+        message: err.response?.data?.msg || err.message || "Failed to reschedule session",
+        duration: 4000
+      });
       // Keep the modal open on error
     }
   };
@@ -121,10 +134,11 @@ const TherapyScheduling = ({ userRole, user }) => {
       setCancellingSession(null);
     } catch (err) {
       console.error("Error cancelling session:", err);
-      alert(
-        "Failed to cancel session: " +
-          (err.response?.data?.msg || "Unknown error")
-      );
+      show({
+        title: 'Error',
+        message: `Failed to cancel session: ${err.response?.data?.msg || "Unknown error"}`,
+        duration: 4000
+      });
     }
   };
 
@@ -149,7 +163,11 @@ const TherapyScheduling = ({ userRole, user }) => {
   // -------------------- Generate Therapy Schedule --------------------
   const handleGenerateSchedule = async () => {
     if (!therapyType || !startDate) {
-      alert("Please select therapy type and start date");
+      show({
+        title: 'Missing Information',
+        message: 'Please select therapy type and start date',
+        duration: 4000
+      });
       return;
     }
     setLoading(true);
@@ -160,11 +178,19 @@ const TherapyScheduling = ({ userRole, user }) => {
         startDate: startDate.toISOString().split("T")[0],
         status: "scheduled", // Explicitly set lowercase status
       });
-      alert("Therapy schedule generated successfully!");
+      show({
+        title: 'Success',
+        message: 'Therapy schedule generated successfully!',
+        duration: 4000
+      });
       fetchSessions();
     } catch (err) {
       console.error("Error generating schedule:", err);
-      alert("Failed to generate schedule");
+      show({
+        title: 'Error',
+        message: 'Failed to generate schedule',
+        duration: 4000
+      });
     }
     setLoading(false);
   };

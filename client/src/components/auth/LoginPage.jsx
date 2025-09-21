@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Leaf, Eye, EyeOff, Mail, Lock, ArrowLeft } from "lucide-react";
+import { useToast } from '../../contexts/ToastContext.jsx';
 
 const LoginPage = ({
   onSwitchToSignup,
@@ -34,19 +35,33 @@ const LoginPage = ({
     });
   };
 
+  const { show } = useToast();
+  
   const handleLogin = async () => {
     if (!formData.email || !formData.password) {
-      alert("Please fill in all fields");
+      show({ 
+        title: 'Missing Fields', 
+        message: 'Please fill in all fields',
+        duration: 4000
+      });
       return;
     }
 
     if (!formData.email.includes("@")) {
-      alert("Please enter a valid email address");
+      show({ 
+        title: 'Invalid Email', 
+        message: 'Please enter a valid email address',
+        duration: 4000
+      });
       return;
     }
 
     if (formData.password.length < 6) {
-      alert("Password must be at least 6 characters");
+      show({ 
+        title: 'Invalid Password', 
+        message: 'Password must be at least 6 characters',
+        duration: 4000
+      });
       return;
     }
 
@@ -64,7 +79,11 @@ const LoginPage = ({
       console.log("Login response:", data);
 
       if (res.ok) {
-        alert("Login successful ✅");
+        show({
+          title: 'Success',
+          message: 'Login successful ✅',
+          duration: 4000
+        });
 
         if (onAuthSuccess) {
           // ✅ Pass the complete user object from backend
@@ -80,11 +99,19 @@ const LoginPage = ({
           onAuthSuccess(userObj);
         }
       } else {
-        alert(data.msg || "Login failed ❌");
+        show({
+          title: 'Login Failed',
+          message: data.msg || 'Login failed ❌',
+          duration: 4000
+        });
       }
     } catch (err) {
       console.error("Login error:", err);
-      alert("Something went wrong. Please try again.");
+      show({
+        title: 'Error',
+        message: 'Something went wrong. Please try again.',
+        duration: 4000
+      });
     }
   };
 

@@ -1,10 +1,8 @@
-import React from "react";
-import ChatbotWidget from "./Dashboard/ChatbotWidget";
-
-const GlobalChatbot = () => {
+// GlobalChatbot component
+const GlobalChatbot = ({ user }) => {
   return (
     <div className="fixed bottom-6 right-6 z-50">
-      <ChatbotWidget />
+      <ChatbotWidget user={user} />
     </div>
   );
 };

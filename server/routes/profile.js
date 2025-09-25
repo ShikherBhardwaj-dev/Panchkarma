@@ -10,12 +10,12 @@ router.get("/", auth, async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select("-password");
     if (!user) {
-      return res.status(404).json({ msg: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
     res.json(user);
   } catch (err) {
     console.error("Get profile error:", err.message);
-    res.status(500).json({ msg: 'Server error' });
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
@@ -49,12 +49,15 @@ router.put("/", auth, async (req, res) => {
     if (caregiverPhone !== undefined) updateData.caregiverPhone = caregiverPhone;
     if (licenseNumber !== undefined) updateData.licenseNumber = licenseNumber;
     
-    // Practitioner-specific fields
-    if (practiceAreas !== undefined) updateData.practiceAreas = practiceAreas;
-    if (consultationFee !== undefined) updateData.consultationFee = consultationFee;
-    if (availableForNewPatients !== undefined) updateData.availableForNewPatients = availableForNewPatients;
-    if (bio !== undefined) updateData.bio = bio;
-    if (experience !== undefined) updateData.experience = experience;
+    // Practitioner-specific fields (only writable by practitioners)
+  const currentUser = await User.findById(req.user._id);
+    if (currentUser && currentUser.userType === 'practitioner') {
+      if (practiceAreas !== undefined) updateData.practiceAreas = practiceAreas;
+      if (consultationFee !== undefined) updateData.consultationFee = consultationFee;
+      if (availableForNewPatients !== undefined) updateData.availableForNewPatients = availableForNewPatients;
+      if (bio !== undefined) updateData.bio = bio;
+      if (experience !== undefined) updateData.experience = experience;
+    }
     
     // Handle nested objects
     if (address) {
@@ -98,6 +101,7 @@ router.put("/", auth, async (req, res) => {
       };
     }
 
+    console.log('Profile update requested by:', req.user && req.user._id, 'updateData:', JSON.stringify(updateData));
     const user = await User.findByIdAndUpdate(
       req.user._id,
       { $set: updateData },

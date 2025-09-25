@@ -1,7 +1,7 @@
 // server/aiChatbot.js
-import fetch from "node-fetch";
-import dotenv from "dotenv";
-import { faqs, precautions } from "./knowledgeBase.js";
+const fetch = require("node-fetch");
+const dotenv = require("dotenv");
+const { faqs, precautions } = require("./knowledgeBase.js");
 
 dotenv.config();
 
@@ -14,7 +14,7 @@ const conversationMemory = {};
  * @param {string} message - User message
  * @returns {Promise<string>} AI response
  */
-export async function getAIResponse(userId, message) {
+async function getAIResponse(userId, message) {
   if (!conversationMemory[userId]) conversationMemory[userId] = [];
 
   // Push new user message
@@ -68,3 +68,5 @@ You are "Ayursutra", an Ayurvedic Panchkarma wellness assistant.
     return "Sorry, something went wrong. Please try again.";
   }
 }
+
+module.exports = { getAIResponse };

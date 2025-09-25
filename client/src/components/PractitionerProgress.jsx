@@ -1,6 +1,8 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { User, Edit3, Save, X, Calendar, TrendingUp, FileText, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext.jsx';
+import authFetch from '../utils/apiClient.js';
 
 const PractitionerProgress = ({ user }) => {
   const [patients, setPatients] = useState([]);
@@ -54,30 +56,22 @@ const PractitionerProgress = ({ user }) => {
   const fetchPatients = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
-      
-      if (!token) {
-        showToast('Please login again', 'error');
-        return;
-      }
-      
-      const response = await fetch('http://localhost:5000/api/progress/patients', {
+      const response = await authFetch('http://localhost:5000/api/progress/patients', {
         method: 'GET',
         headers: {
-          'x-auth-token': token,
           'Content-Type': 'application/json',
           'Cache-Control': 'no-cache',
           'Pragma': 'no-cache'
         }
       });
-      
       if (response.ok) {
         const data = await response.json();
         setPatients(data.patients || []);
         hasFetched.current = true; // Mark as fetched
       } else {
         const errorText = await response.text();
-        showToast(`Failed to fetch patients: ${response.status}`, 'error');
+        console.error('Fetch patients failed:', response.status, errorText);
+        showToast(`Failed to fetch patients: ${response.status} - ${errorText}`, 'error');
         setPatients([]);
       }
     } catch (error) {
@@ -90,14 +84,11 @@ const PractitionerProgress = ({ user }) => {
 
   const fetchPatientDetails = async (patientId) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/progress/patient/${patientId}`, {
+      const response = await authFetch(`http://localhost:5000/api/progress/patient/${patientId}`, {
         headers: {
-          'x-auth-token': token,
           'Content-Type': 'application/json'
         }
       });
-
       if (response.ok) {
         const data = await response.json();
         setSelectedPatient(data.patient);
@@ -111,7 +102,9 @@ const PractitionerProgress = ({ user }) => {
           wellnessScore: data.patient.wellnessScore || 0
         });
       } else {
-        showToast('Failed to fetch patient details', 'error');
+        const errText = await response.text();
+        console.error('Failed to fetch patient details:', response.status, errText);
+        showToast(`Failed to fetch patient details: ${response.status} - ${errText}`, 'error');
       }
     } catch (error) {
       console.error('Error fetching patient details:', error);
@@ -129,23 +122,24 @@ const PractitionerProgress = ({ user }) => {
 
     try {
       setSaving(true);
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/progress/patient/${editingPatient._id}`, {
+      const response = await authFetch(`http://localhost:5000/api/progress/patient/${editingPatient._id}`, {
         method: 'PUT',
         headers: {
-          'x-auth-token': token,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(formData)
       });
-
       if (response.ok) {
+        const data = await response.json();
+        console.log('Progress update response:', data);
         showToast('Progress updated successfully', 'success');
         setEditingPatient(null);
         setSelectedPatient(null);
         fetchPatients(); // Refresh the list
       } else {
-        showToast('Failed to update progress', 'error');
+        const errText = await response.text();
+        console.error('Failed to update progress:', response.status, errText);
+        showToast(`Failed to update progress: ${response.status} - ${errText}`, 'error');
       }
     } catch (error) {
       console.error('Error updating progress:', error);

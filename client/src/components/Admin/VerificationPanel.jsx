@@ -1,6 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import { Shield, CheckCircle, XCircle, Clock, User, FileText, Eye, Check, X } from 'lucide-react';
 import { useToast } from '../../contexts/ToastContext.jsx';
+import authFetch from '../../utils/apiClient.js';
 
 const VerificationPanel = ({ user }) => {
   const [verificationRequests, setVerificationRequests] = useState([]);
@@ -19,14 +21,11 @@ const VerificationPanel = ({ user }) => {
 
   const fetchVerificationRequests = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/verification/requests', {
+      const response = await authFetch('http://localhost:5000/api/verification/requests', {
         headers: {
-          'x-auth-token': token,
           'Content-Type': 'application/json'
         }
       });
-
       if (response.ok) {
         const data = await response.json();
         setVerificationRequests(data.requests);
@@ -38,14 +37,11 @@ const VerificationPanel = ({ user }) => {
 
   const fetchPractitioners = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/verification/practitioners', {
+      const response = await authFetch('http://localhost:5000/api/verification/practitioners', {
         headers: {
-          'x-auth-token': token,
           'Content-Type': 'application/json'
         }
       });
-
       if (response.ok) {
         const data = await response.json();
         setPractitioners(data.practitioners);
@@ -58,11 +54,9 @@ const VerificationPanel = ({ user }) => {
   const handleReview = async (practitionerId, action) => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/verification/review/${practitionerId}`, {
+      const response = await authFetch(`http://localhost:5000/api/verification/review/${practitionerId}`, {
         method: 'POST',
         headers: {
-          'x-auth-token': token,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -70,7 +64,6 @@ const VerificationPanel = ({ user }) => {
           adminNotes
         })
       });
-
       if (response.ok) {
         show({
           title: 'Success',

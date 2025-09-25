@@ -44,7 +44,7 @@ const UserSchema = new mongoose.Schema(
     },
     userType: {
       type: String,
-      enum: ["patient", "practitioner"],
+      enum: ["patient", "practitioner", "admin"],
       default: "patient",
     },
     assignedPractitioner: {

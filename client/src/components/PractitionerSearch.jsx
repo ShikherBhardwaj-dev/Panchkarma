@@ -1,6 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import { Search, MapPin, Star, Clock, DollarSign, User, CheckCircle, XCircle, Phone, Mail } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext.jsx';
+import authFetch from '../utils/apiClient.js';
 
 const PractitionerSearch = ({ user, onAssignmentSuccess }) => {
   const [searchParams, setSearchParams] = useState({
@@ -35,14 +37,8 @@ const PractitionerSearch = ({ user, onAssignmentSuccess }) => {
 
   const fetchAssignedPractitioner = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/practitioner-search/assigned/current', {
-        headers: {
-          'x-auth-token': token
-        }
-      });
+      const response = await authFetch('http://localhost:5000/api/practitioner-search/assigned/current');
       const data = await response.json();
-      
       if (data.success && data.assigned) {
         setAssignedPractitioner(data.practitioner);
       }
@@ -63,21 +59,16 @@ const PractitionerSearch = ({ user, onAssignmentSuccess }) => {
 
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
       const queryParams = new URLSearchParams();
-      
       Object.entries(searchParams).forEach(([key, value]) => {
         if (value) queryParams.append(key, value);
       });
-
-      const response = await fetch(`http://localhost:5000/api/practitioner-search/search?${queryParams}`, {
-        headers: {
-          'x-auth-token': token
-        }
-      });
-      
+      // If current user is a practitioner, allow searching for unverified entries (useful during profile updates/testing)
+      if (user?.userType === 'practitioner') {
+        queryParams.append('includeUnverified', 'true');
+      }
+      const response = await authFetch(`http://localhost:5000/api/practitioner-search/search?${queryParams}`);
       const data = await response.json();
-      
       if (data.success) {
         setPractitioners(data.practitioners);
         if (data.practitioners.length === 0) {
@@ -113,20 +104,16 @@ const PractitionerSearch = ({ user, onAssignmentSuccess }) => {
 
   const confirmAssignment = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/practitioner-search/assign', {
+      const response = await authFetch('http://localhost:5000/api/practitioner-search/assign', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'x-auth-token': token
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           practitionerId: selectedPractitioner._id
         })
       });
-      
       const data = await response.json();
-      
       if (data.success) {
         show({
           title: 'Success',
@@ -158,16 +145,10 @@ const PractitionerSearch = ({ user, onAssignmentSuccess }) => {
 
   const handleRemoveAssignment = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/practitioner-search/assigned', {
-        method: 'DELETE',
-        headers: {
-          'x-auth-token': token
-        }
+      const response = await authFetch('http://localhost:5000/api/practitioner-search/assigned', {
+        method: 'DELETE'
       });
-      
       const data = await response.json();
-      
       if (data.success) {
         show({
           title: 'Success',
@@ -285,7 +266,7 @@ const PractitionerSearch = ({ user, onAssignmentSuccess }) => {
           <button
             onClick={handleSearch}
             disabled={loading}
-            className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center"
+            className="px-6 py-3 bg-ayurveda-kumkum text-white rounded-lg hover:bg-ayurveda-brahmi disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center"
           >
             <Search className="h-5 w-5 mr-2" />
             {loading ? 'Searching...' : 'Search Practitioners'}
@@ -301,8 +282,8 @@ const PractitionerSearch = ({ user, onAssignmentSuccess }) => {
                 <div key={practitioner._id} className="bg-white rounded-xl shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center">
-                      <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mr-3">
-                        <User className="h-6 w-6 text-primary-600" />
+                      <div className="w-12 h-12 bg-ayurveda-kumkum/10 rounded-full flex items-center justify-center mr-3">
+                        <User className="h-6 w-6 text-ayurveda-kumkum" />
                       </div>
                       <div>
                         <h3 className="font-semibold text-gray-900">Dr. {practitioner.name}</h3>
@@ -328,7 +309,7 @@ const PractitionerSearch = ({ user, onAssignmentSuccess }) => {
                         <span className="text-sm font-medium text-gray-700">Specializations:</span>
                         <div className="flex flex-wrap gap-1 mt-1">
                           {practitioner.practiceAreas.slice(0, 2).map((area, index) => (
-                            <span key={index} className="px-2 py-1 bg-primary-100 text-primary-700 text-xs rounded-full">
+                            <span key={index} className="px-2 py-1 bg-ayurveda-kumkum/10 text-ayurveda-kumkum text-xs rounded-full">
                               {area}
                             </span>
                           ))}
@@ -357,7 +338,7 @@ const PractitionerSearch = ({ user, onAssignmentSuccess }) => {
                   
                   <button
                     onClick={() => handleAssignPractitioner(practitioner)}
-                    className="w-full px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                    className="w-full px-4 py-2 bg-ayurveda-kumkum text-white rounded-lg hover:bg-ayurveda-brahmi transition-colors"
                   >
                     Assign to Me
                   </button>
@@ -385,7 +366,7 @@ const PractitionerSearch = ({ user, onAssignmentSuccess }) => {
                 </button>
                 <button
                   onClick={confirmAssignment}
-                  className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                  className="flex-1 px-4 py-2 bg-ayurveda-kumkum text-white rounded-lg hover:bg-ayurveda-brahmi transition-colors"
                 >
                   Confirm Assignment
                 </button>

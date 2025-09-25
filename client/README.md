@@ -2,7 +2,7 @@
 
 A comprehensive, modern web application for managing Panchakarma therapy sessions, patient progress tracking, and wellness monitoring. Built with React, Tailwind CSS, and modern web technologies.
 
-![AyurSutra Screenshot](./public/screenshot.png)
+![AyurSutra Screenshot](/screenshot.png)
 
 ## ✨ Features
 

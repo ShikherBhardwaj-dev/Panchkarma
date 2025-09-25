@@ -17,8 +17,8 @@ const auth = async (req, res, next) => {
         // Verify token
         const decoded = jwt.verify(token, config.jwtSecret);
         
-        // Add user from payload (handle both nested and direct user structure)
-        req.user = decoded.user || decoded;
+        // Add user from payload
+        req.user = decoded.user;
         next();
     } catch (err) {
         res.status(401).json({ 

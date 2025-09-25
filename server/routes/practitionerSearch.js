@@ -11,29 +11,53 @@ router.get("/search", auth, async (req, res) => {
     const { city, state, pincode, practiceArea, maxDistance } = req.query;
     const user = await User.findById(req.user._id);
 
-    if (user.userType !== 'patient') {
+    // Allow both patients and practitioners (and admins if present) to search for practitioners.
+    // Keep the restriction that only verified practitioners are returned and must be available for new patients.
+    if (!user || !['patient', 'practitioner', 'admin'].includes(user.userType)) {
       return res.status(403).json({ 
         success: false, 
-        message: 'Only patients can search for practitioners' 
+        message: 'Access denied. Only registered patients or practitioners can search for practitioners.' 
       });
     }
 
     // Build search query
-    let query = {
-      userType: 'practitioner',
-      verificationStatus: 'verified', // Only show verified practitioners
-      availableForNewPatients: true
-    };
+    let query = { userType: 'practitioner' };
 
-    // Add location filters
+    // By default, only show verified practitioners available for new patients.
+    let requireVerified = true;
+    let requireAvailable = true;
+
+    // Allow practitioners or admins to request unverified results by passing includeUnverified=true
+    // (useful for finding recently-updated profiles during testing). This is restricted to
+    // requester roles 'practitioner' and 'admin' only.
+    const includeUnverified = req.query.includeUnverified === 'true';
+    if (includeUnverified && ['practitioner', 'admin'].includes(user.userType)) {
+      requireVerified = false;
+      // When includeUnverified is requested we still respect availableForNewPatients unless explicitly overridden
+      if (req.query.includeUnavailable === 'true' && user.userType === 'admin') {
+        requireAvailable = false;
+      }
+    }
+
+    if (requireVerified) query.verificationStatus = 'verified';
+    if (requireAvailable) query.availableForNewPatients = true;
+
+    // Add location filters. Match both practiceLocation.* and the user's address.* fields
+    // to handle cases where practitioners filled address.city instead of practiceLocation.city
     if (city) {
-      query['practiceLocation.city'] = new RegExp(city, 'i');
+      query['$or'] = query['$or'] || [];
+      query['$or'].push({ 'practiceLocation.city': new RegExp(city, 'i') });
+      query['$or'].push({ 'address.city': new RegExp(city, 'i') });
     }
     if (state) {
-      query['practiceLocation.state'] = new RegExp(state, 'i');
+      query['$or'] = query['$or'] || [];
+      query['$or'].push({ 'practiceLocation.state': new RegExp(state, 'i') });
+      query['$or'].push({ 'address.state': new RegExp(state, 'i') });
     }
     if (pincode) {
-      query['practiceLocation.pincode'] = pincode;
+      query['$or'] = query['$or'] || [];
+      query['$or'].push({ 'practiceLocation.pincode': pincode });
+      query['$or'].push({ 'address.pincode': pincode });
     }
     if (practiceArea) {
       query['practiceAreas'] = { $in: [new RegExp(practiceArea, 'i')] };
@@ -44,11 +68,28 @@ router.get("/search", auth, async (req, res) => {
       .select('name email practiceLocation practiceAreas consultationFee bio experience verificationStatus')
       .sort({ experience: -1, name: 1 });
 
-    res.json({
+    // Debugging: include debugMatches array when requested by practitioners/admins, and always log constructed query
+    let debugMatches = undefined;
+    console.log('Practitioner search - requester:', user.email || user._id, 'queryParams:', req.query, 'constructedQuery:', JSON.stringify(query));
+    if (includeUnverified && ['practitioner', 'admin'].includes(user.userType)) {
+      try {
+        debugMatches = practitioners.map(p => ({ _id: p._id, name: p.name, city: p.practiceLocation?.city, state: p.practiceLocation?.state, verified: p.verificationStatus }));
+        console.log('Practitioner search debug - matches:', debugMatches);
+      } catch (e) {
+        console.error('Error building debugMatches:', e);
+      }
+    } else {
+      console.log('Practitioner search - count:', practitioners.length);
+    }
+
+    const resp = {
       success: true,
       practitioners: practitioners,
       count: practitioners.length
-    });
+    };
+    if (debugMatches) resp.debugMatches = debugMatches;
+
+    res.json(resp);
 
   } catch (err) {
     console.error("Search practitioners error:", err.message);
@@ -67,10 +108,11 @@ router.get("/:practitionerId", auth, async (req, res) => {
     const { practitionerId } = req.params;
     const user = await User.findById(req.user._id);
 
-    if (user.userType !== 'patient') {
+    // Allow authenticated patients and practitioners to view practitioner details
+    if (!user || !['patient', 'practitioner', 'admin'].includes(user.userType)) {
       return res.status(403).json({ 
         success: false, 
-        message: 'Only patients can view practitioner details' 
+        message: 'Access denied. Only registered patients or practitioners can view practitioner details.' 
       });
     }
 

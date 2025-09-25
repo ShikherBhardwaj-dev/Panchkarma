@@ -20,6 +20,7 @@ router.get("/patient/:patientId", auth, practitionerAuth, async (req, res) => {
     }).select("-password");
 
     if (!patient) {
+      console.warn(`Patient progress GET: patient not found or not assigned. patientId=${patientId} practitionerId=${practitionerId}`);
       return res.status(404).json({
         success: false,
         message: "Patient not found or not assigned to you",
@@ -75,6 +76,7 @@ router.put("/patient/:patientId", auth, practitionerAuth, async (req, res) => {
     });
 
     if (!patient) {
+      console.warn(`Patient progress PUT: patient not found or not assigned. patientId=${patientId} practitionerId=${practitionerId} body=${JSON.stringify(req.body)}`);
       return res.status(404).json({
         success: false,
         message: "Patient not found or not assigned to you",

@@ -1,13 +1,15 @@
+
 import React, { useState, useEffect } from "react";
 import { TrendingUp, Calendar, User, CheckCircle, Clock, AlertCircle, FileText, Star } from "lucide-react";
 import { useToast } from '../contexts/ToastContext.jsx';
+import authFetch from '../utils/apiClient.js';
 
 const Progress = ({ user }) => {
   const [progressData, setProgressData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState(null);
   const [previousProgress, setPreviousProgress] = useState(null);
-  const { showToast } = useToast();
+  const { show } = useToast();
 
   useEffect(() => {
     if (user?.userType === 'patient') {
@@ -25,40 +27,29 @@ const Progress = ({ user }) => {
   const fetchMyProgress = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
-      
-      if (!token) {
-        showToast('Please login again', 'error');
-        return;
-      }
-      
-      const response = await fetch('http://localhost:5000/api/progress/my-progress', {
+      const response = await authFetch('http://localhost:5000/api/progress/my-progress', {
         method: 'GET',
         headers: {
-          'x-auth-token': token,
           'Content-Type': 'application/json',
           'Cache-Control': 'no-cache',
           'Pragma': 'no-cache'
         }
       });
-      
       if (response.ok) {
         const data = await response.json();
-        
         // Check if progress has been updated
         if (previousProgress && data.patient.progress !== previousProgress.progress) {
-          showToast(`Progress updated! Now at ${data.patient.progress}%`, 'success');
+          show({ title: 'Progress Updated!', message: `Now at ${data.patient.progress}%` });
         }
-        
         setPreviousProgress(progressData);
         setProgressData(data.patient);
         setLastUpdated(new Date());
       } else {
         const errorText = await response.text();
-        showToast(`Failed to fetch progress data: ${response.status}`, 'error');
+        show({ title: 'Failed to fetch progress', message: `Server returned status ${response.status}` });
       }
     } catch (error) {
-      showToast(`Error fetching progress data: ${error.message}`, 'error');
+      show({ title: 'Error', message: `Error fetching progress data: ${error.message}` });
     } finally {
       setLoading(false);
     }

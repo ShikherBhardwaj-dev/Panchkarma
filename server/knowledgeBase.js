@@ -1,5 +1,5 @@
 // server/knowledgeBase.js
-export const faqs = [
+module.exports.faqs = [
   {
   "FAQs": [
     {
@@ -87,7 +87,7 @@ export const faqs = [
 
 ];
 
-export const precautions = [
+module.exports.precautions = [
   "Follow Panchakarma procedures under the supervision of a qualified Vaidya.",
   "Plan therapies according to the specific pathology and patient condition.",
   "Ensure sequential conduct of Panchakarma therapies for best results.",

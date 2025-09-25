@@ -94,7 +94,7 @@ router.get("/requests", auth, async (req, res) => {
   try {
     // Check if user is admin (you can add admin role check here)
     const currentUser = await User.findById(req.user._id);
-    if (currentUser.userType !== 'practitioner') {
+    if (currentUser.userType !== 'admin') {
       return res.status(403).json({ 
         success: false, 
         message: 'Access denied. Admin access required.' 
@@ -127,7 +127,7 @@ router.post("/review/:userId", auth, async (req, res) => {
 
     // Check if user is admin
     const currentUser = await User.findById(req.user._id);
-    if (currentUser.userType !== 'practitioner') {
+    if (currentUser.userType !== 'admin') {
       return res.status(403).json({ 
         success: false, 
         message: 'Access denied. Admin access required.' 
@@ -173,7 +173,7 @@ router.get("/practitioners", auth, async (req, res) => {
   try {
     // Check if user is admin
     const currentUser = await User.findById(req.user._id);
-    if (currentUser.userType !== 'practitioner') {
+    if (currentUser.userType !== 'admin') {
       return res.status(403).json({ 
         success: false, 
         message: 'Access denied. Admin access required.' 

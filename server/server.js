@@ -13,9 +13,21 @@ connectDB();
 
 // ---------------- Middleware ----------------
 app.use(express.json());
+// Allow the frontend dev server origins (Vite may use 3000 or 3001)
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:3001'
+];
 app.use(cors({
-  origin: 'http://localhost:3000', // Frontend URL
-  credentials: true
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like curl, mobile apps, or server-to-server)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      return callback(null, true);
+    }
+    return callback(new Error('CORS policy: This origin is not allowed'), false);
+  },
+  credentials: true,
 }));
 
 // Session configuration for Passport

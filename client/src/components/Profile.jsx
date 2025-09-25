@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import authFetch from '../utils/apiClient';
 import { User, MapPin, Phone, Heart, Calendar, Users, Save, Edit3, Shield, CheckCircle, Clock, XCircle } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext.jsx';
 
@@ -66,26 +67,14 @@ const Profile = ({ user }) => {
 
   const fetchProfile = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        show({
-          title: 'Error',
-          message: 'No authentication token found. Please log in again.',
-          duration: 4000
-        });
-        return;
-      }
-
-      const response = await fetch('http://localhost:5000/api/profile', {
+      const response = await authFetch('http://localhost:5000/api/profile', {
         headers: {
-          'x-auth-token': token,
           'Content-Type': 'application/json'
         }
       });
 
       if (response.ok) {
         const data = await response.json();
-        
         // Merge with default structure to ensure all fields exist
         const mergedData = {
           name: data.name || '',
@@ -134,19 +123,22 @@ const Profile = ({ user }) => {
         setInitialData(mergedData);
         setDataLoaded(true);
       } else {
-        const errorData = await response.json();
-        show({
-          title: 'Error',
-          message: errorData.message || 'Failed to load profile data',
-          duration: 4000
-        });
+        // Handle common error cases (401 unauthorized, 403 forbidden, etc.)
+        let errMsg = 'Failed to load profile data';
+        try {
+          const errorData = await response.json();
+          errMsg = errorData.message || errMsg;
+        } catch (e) {
+          // ignore JSON parse errors
+        }
+        show({ title: 'Error', message: errMsg, duration: 4000 });
+        // Avoid infinite loading spinner — mark data as loaded and let UI show fallback with retry
+        setDataLoaded(true);
       }
     } catch (error) {
-      show({
-        title: 'Error',
-        message: 'Failed to load profile data',
-        duration: 4000
-      });
+      show({ title: 'Error', message: 'Failed to load profile data', duration: 4000 });
+      // Avoid infinite spinner
+      setDataLoaded(true);
     }
   };
 
@@ -172,23 +164,42 @@ const Profile = ({ user }) => {
   const handleSave = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        show({
-          title: 'Error',
-          message: 'No authentication token found. Please log in again.',
-          duration: 4000
-        });
-        return;
+      // Build role-specific payload to avoid sending practitioner-only fields from patients
+      let payload = {};
+      const commonFields = {
+        name: profileData.name,
+        phone: profileData.phone,
+        address: profileData.address,
+        personalDetails: profileData.personalDetails,
+        bio: profileData.bio
+      };
+
+      if (user?.userType === 'practitioner') {
+        // Practitioner can update practice-specific fields + common fields
+        payload = {
+          ...commonFields,
+          licenseNumber: profileData.licenseNumber,
+          practiceLocation: profileData.practiceLocation,
+          practiceAreas: profileData.practiceAreas,
+          consultationFee: profileData.consultationFee,
+          availableForNewPatients: profileData.availableForNewPatients,
+          experience: profileData.experience
+        };
+      } else {
+        // Patient (or other roles) can only update patient-relevant fields
+        payload = {
+          ...commonFields,
+          caregiverPhone: profileData.caregiverPhone,
+          emergencyContact: profileData.emergencyContact
+        };
       }
 
-      const response = await fetch('http://localhost:5000/api/profile', {
+      const response = await authFetch('http://localhost:5000/api/profile', {
         method: 'PUT',
         headers: {
-          'x-auth-token': token,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(profileData)
+        body: JSON.stringify(payload)
       });
 
       if (response.ok) {
@@ -234,10 +245,8 @@ const Profile = ({ user }) => {
 
   const fetchVerificationStatus = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/verification/status', {
+      const response = await authFetch('http://localhost:5000/api/verification/status', {
         headers: {
-          'x-auth-token': token,
           'Content-Type': 'application/json'
         }
       });
@@ -263,11 +272,9 @@ const Profile = ({ user }) => {
 
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/verification/submit', {
+      const response = await authFetch('http://localhost:5000/api/verification/submit', {
         method: 'POST',
         headers: {
-          'x-auth-token': token,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -346,6 +353,33 @@ const Profile = ({ user }) => {
           <p className="text-gray-500">
             Please wait while we load your profile data.
           </p>
+        </div>
+      </div>
+    );
+  }
+
+  // If dataLoaded is true but profileData is essentially empty (fetch failed), show retry UI
+  const isProfileEmpty = dataLoaded && !profileData?.email;
+  if (isProfileEmpty) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-ayurveda-chandana/20 via-ayurveda-haldi/10 to-ayurveda-kumkum/20 p-6 flex items-center justify-center">
+        <div className="max-w-md w-full bg-white/90 backdrop-blur-lg rounded-2xl shadow-lg p-8 border border-ayurveda-kumkum/20 text-center">
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">Unable to load profile</h2>
+          <p className="text-gray-600 mb-4">We couldn't load your profile data. This may be due to an expired or missing login session.</p>
+          <div className="flex items-center justify-center space-x-3">
+            <button
+              onClick={() => { setDataLoaded(false); fetchProfile(); }}
+              className="px-4 py-2 bg-ayurveda-kumkum text-white rounded-lg hover:bg-ayurveda-brahmi transition-colors"
+            >
+              Retry
+            </button>
+            <button
+              onClick={() => { localStorage.removeItem('token'); window.location.reload(); }}
+              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+            >
+              Re-login
+            </button>
+          </div>
         </div>
       </div>
     );

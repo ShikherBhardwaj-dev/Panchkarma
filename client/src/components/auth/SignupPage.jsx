@@ -237,27 +237,27 @@ const SignupPage = ({ onSwitchToLogin, onSignupSuccess, onBackToLanding }) => {
           {/* Panchakarma Icons */}
           <div className="mt-12 grid grid-cols-5 gap-6">
             <img
-              src="/public/treatments/vamana.svg"
+              src="/treatments/vamana.svg"
               alt="Vamana"
               className="w-12 h-12 opacity-60 hover:opacity-100 transition-opacity"
             />
             <img
-              src="/public/treatments/virechana.svg"
+              src="/treatments/virechana.svg"
               alt="Virechana"
               className="w-12 h-12 opacity-60 hover:opacity-100 transition-opacity"
             />
             <img
-              src="/public/treatments/basti.svg"
+              src="/treatments/basti.svg"
               alt="Basti"
               className="w-12 h-12 opacity-60 hover:opacity-100 transition-opacity"
             />
             <img
-              src="/public/treatments/nasya.svg"
+              src="/treatments/nasya.svg"
               alt="Nasya"
               className="w-12 h-12 opacity-60 hover:opacity-100 transition-opacity"
             />
             <img
-              src="/public/treatments/raktamoksha.svg"
+              src="/treatments/raktamoksha.svg"
               alt="Raktamoksha"
               className="w-12 h-12 opacity-60 hover:opacity-100 transition-opacity"
             />
@@ -446,27 +446,27 @@ const SignupPage = ({ onSwitchToLogin, onSignupSuccess, onBackToLanding }) => {
                     </p>
                     <div className="flex items-center space-x-1 mt-1">
                       <img
-                        src="/public/treatments/vamana.svg"
+                        src="/treatments/vamana.svg"
                         alt="Vamana"
                         className="w-3 h-3 opacity-40"
                       />
                       <img
-                        src="/public/treatments/virechana.svg"
+                        src="/treatments/virechana.svg"
                         alt="Virechana"
                         className="w-3 h-3 opacity-40"
                       />
                       <img
-                        src="/public/treatments/basti.svg"
+                        src="/treatments/basti.svg"
                         alt="Basti"
                         className="w-3 h-3 opacity-40"
                       />
                       <img
-                        src="/public/treatments/nasya.svg"
+                        src="/treatments/nasya.svg"
                         alt="Nasya"
                         className="w-3 h-3 opacity-40"
                       />
                       <img
-                        src="/public/treatments/raktamoksha.svg"
+                        src="/treatments/raktamoksha.svg"
                         alt="Raktamoksha"
                         className="w-3 h-3 opacity-40"
                       />

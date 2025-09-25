@@ -38,16 +38,54 @@ const App = () => {
   } = useAppData();
 
   // ✅ Called after login/signup success
-  const handleAuthSuccess = (userData) => {
-    setUser({
-      _id: userData._id,
-      name: userData.name,
-      email: userData.email,
-      userType: userData.userType,
-    });
-    setIsAuthenticated(true);
-    setShowLanding(false);
-    console.log('App: user authenticated', userData);
+  const handleAuthSuccess = async (authData) => {
+    // Determine token: prefer explicit token on authData, otherwise use what's in localStorage
+    const tokenFromArg = authData?.token;
+    const storedToken = localStorage.getItem('token');
+    const tokenToUse = tokenFromArg || storedToken;
+
+    if (tokenToUse) {
+      localStorage.setItem('token', tokenToUse);
+    }
+
+    try {
+      // Fetch full user profile using authFetch which will attach token from localStorage
+      // import dynamically to avoid top-level changes
+      // eslint-disable-next-line no-undef
+      const authFetch = (await import('./utils/apiClient')).default;
+      const response = await authFetch('http://localhost:5000/api/profile', {
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (response.ok) {
+        const fullUser = await response.json();
+        setUser(fullUser);
+        setIsAuthenticated(true);
+        setShowLanding(false);
+        console.log('App: user authenticated and profile fetched', fullUser);
+      } else {
+        // Fallback to basic data if profile fetch fails
+        setUser({
+          _id: authData._id || authData?._id || null,
+          name: authData.name || authData?.name || null,
+          email: authData.email || authData?.email || null,
+          userType: authData.userType || authData?.userType || null,
+        });
+        setIsAuthenticated(true);
+        setShowLanding(false);
+      }
+    } catch (error) {
+      console.error('Error fetching full profile after login:', error);
+      // Fallback to basic data on error
+      setUser({
+        _id: authData._id || authData?._id || null,
+        name: authData.name || authData?.name || null,
+        email: authData.email || authData?.email || null,
+        userType: authData.userType || authData?.userType || null,
+      });
+      setIsAuthenticated(true);
+      setShowLanding(false);
+    }
   };
 
   // ✅ Handle Google OAuth success and tab navigation

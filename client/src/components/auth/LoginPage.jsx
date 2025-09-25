@@ -180,27 +180,27 @@ const LoginPage = ({
           {/* Panchakarma Icons */}
           <div className="mt-12 grid grid-cols-5 gap-6">
             <img
-              src="/public/treatments/vamana.svg"
+              src="/treatments/vamana.svg"
               alt="Vamana"
               className="w-12 h-12 opacity-60 hover:opacity-100 transition-opacity"
             />
             <img
-              src="/public/treatments/virechana.svg"
+              src="/treatments/virechana.svg"
               alt="Virechana"
               className="w-12 h-12 opacity-60 hover:opacity-100 transition-opacity"
             />
             <img
-              src="/public/treatments/basti.svg"
+              src="/treatments/basti.svg"
               alt="Basti"
               className="w-12 h-12 opacity-60 hover:opacity-100 transition-opacity"
             />
             <img
-              src="/public/treatments/nasya.svg"
+              src="/treatments/nasya.svg"
               alt="Nasya"
               className="w-12 h-12 opacity-60 hover:opacity-100 transition-opacity"
             />
             <img
-              src="/public/treatments/raktamoksha.svg"
+              src="/treatments/raktamoksha.svg"
               alt="Raktamoksha"
               className="w-12 h-12 opacity-60 hover:opacity-100 transition-opacity"
             />
@@ -226,8 +226,8 @@ const LoginPage = ({
           </h2>
 
           {/* Panchakarma Treatment Icons */}
-          <div className="absolute -right-16 -top-16 w-32 h-32 opacity-5 bg-[url('/public/treatments/basti.svg')] bg-no-repeat bg-contain rotate-12"></div>
-          <div className="absolute -left-16 -bottom-16 w-32 h-32 opacity-5 bg-[url('/public/treatments/nasya.svg')] bg-no-repeat bg-contain -rotate-12"></div>
+          <div className="absolute -right-16 -top-16 w-32 h-32 opacity-5 bg-[url('/treatments/basti.svg')] bg-no-repeat bg-contain rotate-12"></div>
+          <div className="absolute -left-16 -bottom-16 w-32 h-32 opacity-5 bg-[url('/treatments/nasya.svg')] bg-no-repeat bg-contain -rotate-12"></div>
           <div className="space-y-6">
             {/* Email Field */}
             <div className="space-y-2">
@@ -330,17 +330,17 @@ const LoginPage = ({
                     </p>
                     <div className="flex items-center space-x-2 mt-1">
                       <img
-                        src="/public/treatments/vamana.svg"
+                        src="/treatments/vamana.svg"
                         alt="Vamana"
                         className="w-4 h-4 opacity-40"
                       />
                       <img
-                        src="/public/treatments/virechana.svg"
+                        src="/treatments/virechana.svg"
                         alt="Virechana"
                         className="w-4 h-4 opacity-40"
                       />
                       <img
-                        src="/public/treatments/basti.svg"
+                        src="/treatments/basti.svg"
                         alt="Basti"
                         className="w-4 h-4 opacity-40"
                       />
